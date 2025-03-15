@@ -9,7 +9,7 @@ topics:
   - ohlc
   - candlestick
   - stock
-publish_to: "none"
+# publish_to: "none"
 
 version: 0.1.0
 
