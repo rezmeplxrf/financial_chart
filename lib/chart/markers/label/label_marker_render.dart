@@ -10,7 +10,8 @@ import '../../components/viewport_h.dart';
 import '../../components/viewport_v.dart';
 import 'label_marker.dart';
 
-class GLabelMarkerRender extends GGraphMarkerRender<GLabelMarker, GGraphMarkerTheme> {
+class GLabelMarkerRender
+    extends GGraphMarkerRender<GLabelMarker, GGraphMarkerTheme> {
   const GLabelMarkerRender();
   @override
   void doRenderMarker({
@@ -24,11 +25,14 @@ class GLabelMarkerRender extends GGraphMarkerRender<GLabelMarker, GGraphMarkerTh
     required GPointViewPort pointViewPort,
     required GValueViewPort valueViewPort,
   }) {
-    if(marker.keyCoordinates.isEmpty) {
+    if (marker.keyCoordinates.isEmpty) {
       return;
     }
-    final anchor =
-        marker.keyCoordinates[0].toPosition(area: area, valueViewPort: valueViewPort, pointViewPort: pointViewPort);
+    final anchor = marker.keyCoordinates[0].toPosition(
+      area: area,
+      valueViewPort: valueViewPort,
+      pointViewPort: pointViewPort,
+    );
     drawText(
       canvas: canvas,
       text: marker.text,

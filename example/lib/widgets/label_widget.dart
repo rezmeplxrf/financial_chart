@@ -4,11 +4,7 @@ class AppLabelWidget extends StatelessWidget {
   final String label;
   final Widget child;
 
-  const AppLabelWidget({
-    super.key,
-    required this.label,
-    required this.child,
-  });
+  const AppLabelWidget({super.key, required this.label, required this.child});
 
   @override
   Widget build(BuildContext context) {

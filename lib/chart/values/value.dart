@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 
 bool _defaultValidator(dynamic value) => true;
@@ -14,7 +13,8 @@ class GValue<T> extends ValueNotifier<T> {
     super.value = newValue;
   }
 
-  GValue(T initialValue, {this.validator = _defaultValidator}) : super(initialValue) {
+  GValue(T initialValue, {this.validator = _defaultValidator})
+    : super(initialValue) {
     assert(validator(initialValue), 'Invalid value');
   }
 

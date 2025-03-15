@@ -53,7 +53,7 @@ extension Vector2Extension on Vector2 {
 
   /// Check if two points are the same
   bool isSame(Vector2 point, {double epsilon = 0.0001}) {
-    if(epsilon == 0) {
+    if (epsilon == 0) {
       return x == point.x && y == point.y;
     }
     return (x - point.x).abs() <= epsilon && (y - point.y).abs() <= epsilon;
@@ -128,12 +128,12 @@ extension Vector2Extension on Vector2 {
   ///
   /// [other] needs to have a length > 0;
   /// If [out] is specified, it will be used to provide the result.
-  Vector2 projection(Vector2 other, {Vector2? out, bool clamp=false}) {
+  Vector2 projection(Vector2 other, {Vector2? out, bool clamp = false}) {
     assert(other.length2 > 0, 'other needs to have a length > 0');
     final dotProduct = dot(other);
     final result = (out?..setFrom(other)) ?? other.clone();
     double t = dotProduct / other.length2;
-    if(clamp) {
+    if (clamp) {
       t = t < 0 ? 0 : (t > 1 ? 1 : t);
     }
     return result..scale(t);
@@ -167,14 +167,12 @@ extension Vector2Extension on Vector2 {
   ///
   /// Note: [ds] is the displacement vector in units of the vector space. It is
   /// **not** a percentage (relative value).
-  void moveToTarget(
-      Vector2 target,
-      double ds,
-      ) {
+  void moveToTarget(Vector2 target, double ds) {
     if (this != target) {
-      final diff = _reusableVector
-        ..setFrom(target)
-        ..sub(this);
+      final diff =
+          _reusableVector
+            ..setFrom(target)
+            ..sub(this);
 
       if (diff.length < ds) {
         setFrom(target);

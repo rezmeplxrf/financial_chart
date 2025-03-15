@@ -22,11 +22,7 @@ class GLabelMarker extends GGraphMarker {
     Alignment alignment = Alignment.center,
     GGraphMarkerTheme? theme,
     super.render = const GLabelMarkerRender(),
-  })  : _text = GValue<String>(text),
-        _alignment = GValue<Alignment>(alignment),
-        super(
-          id: id,
-          keyCoordinates: [anchorCoord],
-          theme: theme,
-        );
+  }) : _text = GValue<String>(text),
+       _alignment = GValue<Alignment>(alignment),
+       super(id: id, keyCoordinates: [anchorCoord], theme: theme);
 }

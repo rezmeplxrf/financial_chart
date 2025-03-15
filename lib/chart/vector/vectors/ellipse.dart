@@ -4,13 +4,26 @@ import 'package:vector_math/vector_math.dart';
 import 'extensions.dart';
 
 class EllipseUtil {
-  static Vector2 pointOnEllipse(double cx, double cy, double a, double b, double t) {
+  static Vector2 pointOnEllipse(
+    double cx,
+    double cy,
+    double a,
+    double b,
+    double t,
+  ) {
     double x = cx + a * cos(t);
     double y = cy + b * sin(t);
     return Vector2(x, y);
   }
 
-  static Vector2 pointOnEllipseRotated(double cx, double cy, double a, double b, double t, double theta) {
+  static Vector2 pointOnEllipseRotated(
+    double cx,
+    double cy,
+    double a,
+    double b,
+    double t,
+    double theta,
+  ) {
     // theta is the angle of rotation in pi radians
     double x = cx + a * cos(t) * cos(theta) - b * sin(t) * sin(theta);
     double y = cy + a * cos(t) * sin(theta) + b * sin(t) * cos(theta);
@@ -91,11 +104,24 @@ class EllipseUtil {
     double px,
     double py,
   ) {
-    Vector2 nearestPoint = nearestPointOn(Vector2(px, py), cx - a, cy - b, cx + a, cy + b);
+    Vector2 nearestPoint = nearestPointOn(
+      Vector2(px, py),
+      cx - a,
+      cy - b,
+      cx + a,
+      cy + b,
+    );
     return Vector2(px, py).distanceTo(nearestPoint);
   }
 
-  static bool isInside(double cx, double cy, double a, double b, double px, double py) {
+  static bool isInside(
+    double cx,
+    double cy,
+    double a,
+    double b,
+    double px,
+    double py,
+  ) {
     double dx = px - cx;
     double dy = py - cy;
     return (dx * dx) / (a * a) + (dy * dy) / (b * b) <= 1;
@@ -111,7 +137,7 @@ class EllipseUtil {
     bool testArea = false,
     double epsilon = 5.0,
   }) {
-    if(testArea) {
+    if (testArea) {
       return isInside(cx, cy, rx, ry, px, py);
     }
     final distance = distanceTo(cx, cy, rx, ry, px, py);

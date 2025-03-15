@@ -32,7 +32,10 @@ Future<String> _readFile(String name) async {
 
 const _yahooFinanceDataReader = YahooFinanceDailyReader();
 
-Future<YahooFinanceResponse> loadYahooFinanceData(String ticker, {bool fromAsset = false}) async {
+Future<YahooFinanceResponse> loadYahooFinanceData(
+  String ticker, {
+  bool fromAsset = false,
+}) async {
   if (kIsWeb && !fromAsset) {
     return _webLoadYahooFinanceData(ticker);
   }
@@ -47,8 +50,13 @@ Future<YahooFinanceResponse> loadYahooFinanceData(String ticker, {bool fromAsset
       json = jsonDecode(cached);
     } else {
       final now = DateTime.now();
-      final period1 = now.subtract(const Duration(days: 365 * 5)).millisecondsSinceEpoch ~/ 1000;
-      json = await _yahooFinanceDataReader.getDailyData(ticker, startTimestamp: period1);
+      final period1 =
+          now.subtract(const Duration(days: 365 * 5)).millisecondsSinceEpoch ~/
+          1000;
+      json = await _yahooFinanceDataReader.getDailyData(
+        ticker,
+        startTimestamp: period1,
+      );
       await _writeFile(fileName, jsonEncode(json));
     }
   }

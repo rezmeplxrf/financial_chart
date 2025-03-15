@@ -32,7 +32,9 @@ class GGraph<T extends GGraphTheme> extends GComponent {
   /// The hit test mode of the graph.
   ///
   /// see [HitTestMode] for more details.
-  final GValue<HitTestMode> hitTestMode = GValue<HitTestMode>(HitTestMode.border);
+  final GValue<HitTestMode> hitTestMode = GValue<HitTestMode>(
+    HitTestMode.border,
+  );
 
   final List<String> crosshairHighlightValueKeys = [];
 
@@ -56,8 +58,8 @@ class GGraph<T extends GGraphTheme> extends GComponent {
     List<String>? crosshairHighlightValueKeys,
     List<GAxisMarker> axisMarkers = const [],
     List<GGraphMarker> graphMarkers = const [],
-  })  : _layer = GValue<int>(layer),
-        super(id: id, render: render, theme: theme) {
+  }) : _layer = GValue<int>(layer),
+       super(id: id, render: render, theme: theme) {
     this.hitTestMode(newValue: hitTestMode);
     if (axisMarkers.isNotEmpty) {
       _axisMarkers.addAll(axisMarkers);

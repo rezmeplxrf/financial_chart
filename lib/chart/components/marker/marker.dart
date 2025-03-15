@@ -55,10 +55,8 @@ class GAxisMarker extends GMarker {
   });
 }
 
-
 /// Base class for Marker on the graph.
 abstract class GGraphMarker extends GMarker {
-
   /// Key points decides the shape of the marker.
   final List<GCoordinate> keyCoordinates;
 
@@ -75,6 +73,7 @@ abstract class GGraphMarker extends GMarker {
 
   @override
   GGraphMarkerRender<GGraphMarker, GGraphMarkerTheme> getRender() {
-    return super.getRender() as GGraphMarkerRender<GGraphMarker, GGraphMarkerTheme>;
+    return super.getRender()
+        as GGraphMarkerRender<GGraphMarker, GGraphMarkerTheme>;
   }
 }

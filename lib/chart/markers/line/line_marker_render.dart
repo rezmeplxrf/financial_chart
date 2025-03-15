@@ -10,7 +10,8 @@ import '../../components/viewport_h.dart';
 import '../../components/viewport_v.dart';
 import 'line_marker.dart';
 
-class GLineMarkerRender extends GGraphMarkerRender<GLineMarker, GGraphMarkerTheme> {
+class GLineMarkerRender
+    extends GGraphMarkerRender<GLineMarker, GGraphMarkerTheme> {
   const GLineMarkerRender();
 
   @override
@@ -50,10 +51,7 @@ class GLineMarkerRender extends GGraphMarkerRender<GLineMarker, GGraphMarkerThem
   }
 
   @override
-  bool hitTest({
-    required Offset position,
-    double? epsilon,
-  }) {
+  bool hitTest({required Offset position, double? epsilon}) {
     return false;
   }
 }

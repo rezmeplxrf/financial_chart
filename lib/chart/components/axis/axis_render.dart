@@ -24,10 +24,13 @@ class GValueAxisRender extends GAxisRender<GValueAxis> {
   }) {
     final axis = component;
     final valueViewPort = panel!.findValueViewPortById(axis.viewPortId)!;
-    if(!valueViewPort.isValid) {
+    if (!valueViewPort.isValid) {
       return;
     }
-    final List<double> valueTicks = axis.valueTickerStrategy.valueTicks(viewSize: area.height, viewPort: valueViewPort);
+    final List<double> valueTicks = axis.valueTickerStrategy.valueTicks(
+      viewSize: area.height,
+      viewPort: valueViewPort,
+    );
 
     Path linePath = addLinePath(
       x1: axis.isAlignLeft ? area.left : area.right,
@@ -49,8 +52,9 @@ class GValueAxisRender extends GAxisRender<GValueAxis> {
         x2: axis.isAlignLeft ? (area.left + theme.tickerLength) : area.right,
         y2: valuePosition,
       );
-      final labelText =
-          (axis.valueFormatter ?? chart.dataSource.seriesValueFormater).call(value, valueViewPort.valuePrecision);
+      final labelText = (axis.valueFormatter ??
+              chart.dataSource.seriesValueFormater)
+          .call(value, valueViewPort.valuePrecision);
       drawValueAxisLabel(
         canvas: canvas,
         text: labelText,
@@ -64,13 +68,24 @@ class GValueAxisRender extends GAxisRender<GValueAxis> {
 
     if (valueViewPort.selectedRange.isNotEmpty) {
       Path selectedRangePath = addRectPath(
-          rect: Rect.fromLTRB(
-        area.left,
-        valueViewPort.valueToPosition(area, valueViewPort.selectedRange.first!),
-        area.right,
-        valueViewPort.valueToPosition(area, valueViewPort.selectedRange.last!),
-      ));
-      drawPath(canvas: canvas, path: selectedRangePath, style: theme.selectionStyle);
+        rect: Rect.fromLTRB(
+          area.left,
+          valueViewPort.valueToPosition(
+            area,
+            valueViewPort.selectedRange.first!,
+          ),
+          area.right,
+          valueViewPort.valueToPosition(
+            area,
+            valueViewPort.selectedRange.last!,
+          ),
+        ),
+      );
+      drawPath(
+        canvas: canvas,
+        path: selectedRangePath,
+        style: theme.selectionStyle,
+      );
     }
   }
 }
@@ -90,7 +105,7 @@ class GPointAxisRender extends GAxisRender<GPointAxis> {
     final axis = component;
     final dataSource = chart.dataSource;
     final pointViewPort = chart.pointViewPort;
-    if(!pointViewPort.isValid) {
+    if (!pointViewPort.isValid) {
       return;
     }
     List<int> pointTicks = axis.pointTickerStrategy.pointTicks(
@@ -113,36 +128,59 @@ class GPointAxisRender extends GAxisRender<GPointAxis> {
       if (pointValue == null) {
         continue;
       }
-      double pointPosition = pointViewPort.pointToPosition(area, point.toDouble());
+      double pointPosition = pointViewPort.pointToPosition(
+        area,
+        point.toDouble(),
+      );
 
       addLinePath(
         toPath: tickLinesPath,
         x1: pointPosition,
-        y1: component.isAlignTop ? area.top : (area.bottom - theme.tickerLength),
+        y1:
+            component.isAlignTop
+                ? area.top
+                : (area.bottom - theme.tickerLength),
         x2: pointPosition,
-        y2: component.isAlignTop ? (area.top + theme.tickerLength) : area.bottom,
+        y2:
+            component.isAlignTop
+                ? (area.top + theme.tickerLength)
+                : area.bottom,
       );
 
-      final labelText = (component.pointFormatter ?? chart.dataSource.pointValueFormater).call(point, pointValue);
+      final labelText = (component.pointFormatter ??
+              chart.dataSource.pointValueFormater)
+          .call(point, pointValue);
       drawPointAxisLabel(
-          canvas: canvas,
-          text: labelText,
-          axis: axis,
-          position: pointPosition,
-          axisArea: area,
-          labelTheme: theme.labelTheme);
+        canvas: canvas,
+        text: labelText,
+        axis: axis,
+        position: pointPosition,
+        axisArea: area,
+        labelTheme: theme.labelTheme,
+      );
     }
     drawPath(canvas: canvas, path: tickLinesPath, style: theme.tickerStyle);
 
     if (pointViewPort.selectedRange.isNotEmpty) {
       Path selectedRangePath = addRectPath(
-          rect: Rect.fromLTRB(
-        pointViewPort.pointToPosition(area, pointViewPort.selectedRange.first!.toDouble()),
-        area.top,
-        pointViewPort.pointToPosition(area, pointViewPort.selectedRange.last!.toDouble()),
-        area.bottom,
-      ));
-      drawPath(canvas: canvas, path: selectedRangePath, style: theme.selectionStyle);
+        rect: Rect.fromLTRB(
+          pointViewPort.pointToPosition(
+            area,
+            pointViewPort.selectedRange.first!.toDouble(),
+          ),
+          area.top,
+          pointViewPort.pointToPosition(
+            area,
+            pointViewPort.selectedRange.last!.toDouble(),
+          ),
+          area.bottom,
+        ),
+      );
+      drawPath(
+        canvas: canvas,
+        path: selectedRangePath,
+        style: theme.selectionStyle,
+      );
     }
   }
 }

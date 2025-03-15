@@ -1,4 +1,3 @@
-
 import '../../style/paint_style.dart';
 import '../component_theme.dart';
 import '../axis/axis_theme.dart';

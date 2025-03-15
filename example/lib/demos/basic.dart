@@ -29,18 +29,19 @@ class BasicDemoPageState extends State<BasicDemoPage> {
     const String ticker = 'GOOGL';
     loadYahooFinanceData(ticker).then((response) {
       final dataSource = GDataSource<int, GData<int>>(
-        dataList: response.candlesData.map((candle) {
-          return GData<int>(
-            pointValue: candle.date.millisecondsSinceEpoch,
-            seriesValues: [
-              candle.open,
-              candle.high,
-              candle.low,
-              candle.close,
-              candle.volume.toDouble(),
-            ],
-          );
-        }).toList(),
+        dataList:
+            response.candlesData.map((candle) {
+              return GData<int>(
+                pointValue: candle.date.millisecondsSinceEpoch,
+                seriesValues: [
+                  candle.open,
+                  candle.high,
+                  candle.low,
+                  candle.close,
+                  candle.volume.toDouble(),
+                ],
+              );
+            }).toList(),
         seriesProperties: const [
           GDataSeriesProperty(key: 'open', label: 'Open', precision: 2),
           GDataSeriesProperty(key: 'high', label: 'High', precision: 2),
@@ -66,14 +67,19 @@ class BasicDemoPageState extends State<BasicDemoPage> {
             GValueViewPort(
               id: valueViewPortId,
               valuePrecision: 2,
-              autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(dataKeys: ["high", "low"]),
-            )
+              autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
+                dataKeys: ["high", "low"],
+              ),
+            ),
           ],
           valueAxes: [GValueAxis(viewPortId: valueViewPortId)],
           pointAxes: [GPointAxis()],
           graphs: [
             GGraphGrids(valueViewPortId: valueViewPortId),
-            GGraphOhlc(valueViewPortId: valueViewPortId, ohlcValueKeys: const ["open", "high", "low", "close"]),
+            GGraphOhlc(
+              valueViewPortId: valueViewPortId,
+              ohlcValueKeys: const ["open", "high", "low", "close"],
+            ),
           ],
         ),
       ],
@@ -83,14 +89,15 @@ class BasicDemoPageState extends State<BasicDemoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Basic demo"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Basic demo"), centerTitle: true),
       body: Container(
-        child: chart == null
-            ? const Center(child: CircularProgressIndicator())
-            : Padding(padding: const EdgeInsets.all(10), child: GChartWidget(chart: chart!)),
+        child:
+            chart == null
+                ? const Center(child: CircularProgressIndicator())
+                : Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: GChartWidget(chart: chart!),
+                ),
       ),
     );
   }

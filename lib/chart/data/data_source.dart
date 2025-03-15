@@ -15,10 +15,7 @@ class GData<P> extends Equatable {
   final P pointValue;
   final List<double> seriesValues;
 
-  const GData({
-    required this.pointValue,
-    required this.seriesValues,
-  });
+  const GData({required this.pointValue, required this.seriesValues});
 
   double operator [](int index) => seriesValues[index];
   void operator []=(int index, double value) => seriesValues[index] = value;
@@ -33,14 +30,20 @@ class GDataSeriesProperty {
   final String label;
   final int precision;
 
-  const GDataSeriesProperty({required this.key, required this.label, required this.precision});
+  const GDataSeriesProperty({
+    required this.key,
+    required this.label,
+    required this.precision,
+  });
 }
 
 /// Default formatter for point value which assumes the value is milliseconds since epoch.
 String defaultPointValueFormater(int point, dynamic pointValue) {
   // assume the point value is milliseconds since epoch
   if (pointValue is int) {
-    return DateFormat('yyyy-MM-dd').format(DateTime.fromMillisecondsSinceEpoch(pointValue));
+    return DateFormat(
+      'yyyy-MM-dd',
+    ).format(DateTime.fromMillisecondsSinceEpoch(pointValue));
   }
   return pointValue.toString();
 }
@@ -97,8 +100,10 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
     this.afterDataLoader,
     this.pointValueFormater = defaultPointValueFormater,
     this.seriesValueFormater = defaultSeriesValueFormater,
-  })  : _seriesKeyIndexMap =
-            Map.fromIterables(seriesProperties.map((p) => p.key), List.generate(seriesProperties.length, (i) => i));
+  }) : _seriesKeyIndexMap = Map.fromIterables(
+         seriesProperties.map((p) => p.key),
+         List.generate(seriesProperties.length, (i) => i),
+       );
 
   bool get isEmpty => dataList.isEmpty;
   bool get isNotEmpty => dataList.isNotEmpty;
@@ -127,23 +132,35 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
 
   /// Get the data at the given point range.
   List<P> getPointValues({required int fromPoint, required int toPoint}) {
-    return dataList.sublist(pointToIndex(fromPoint), pointToIndex(toPoint)).map((data) => data.pointValue).toList();
+    return dataList
+        .sublist(pointToIndex(fromPoint), pointToIndex(toPoint))
+        .map((data) => data.pointValue)
+        .toList();
   }
 
   /// Get the series value by key at the given point.
   double? getSeriesValue({required int point, required String key}) {
     final index = pointToIndex(point);
-    if (index < 0 || index >= dataList.length || !_seriesKeyIndexMap.containsKey(key)) {
+    if (index < 0 ||
+        index >= dataList.length ||
+        !_seriesKeyIndexMap.containsKey(key)) {
       return null;
     }
     return dataList[index].seriesValues[_seriesKeyIndexMap[key]!];
   }
 
   /// Get the series values by key at the given point range.
-  List<double> getSeriesValues({required int fromPoint, required int toPoint, required String key}) {
+  List<double> getSeriesValues({
+    required int fromPoint,
+    required int toPoint,
+    required String key,
+  }) {
     final fromIndex = pointToIndex(fromPoint);
     final toIndex = pointToIndex(toPoint);
-    return dataList.sublist(fromIndex, toIndex).map((data) => data.seriesValues[_seriesKeyIndexMap[key]!]).toList();
+    return dataList
+        .sublist(fromIndex, toIndex)
+        .map((data) => data.seriesValues[_seriesKeyIndexMap[key]!])
+        .toList();
   }
 
   /// Get the series property by key.
@@ -154,18 +171,27 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
   /// Get the series value as map by keys at the given point.
   ///
   /// return value is a map with series key as key and series value as value.
-  Map<String, double> getSeriesValueAsMap({required int point, required List<String> keys}) {
+  Map<String, double> getSeriesValueAsMap({
+    required int point,
+    required List<String> keys,
+  }) {
     final index = pointToIndex(point);
     if (index < 0 || index >= dataList.length) {
       return <String, double>{};
     }
     final data = dataList[index];
-    return keys.asMap().map((i, key) => MapEntry(key, data.seriesValues[_seriesKeyIndexMap[keys[i]]!]));
+    return keys.asMap().map(
+      (i, key) =>
+          MapEntry(key, data.seriesValues[_seriesKeyIndexMap[keys[i]]!]),
+    );
   }
 
   /// Get the min and max of series values by key at the given point range.
-  (double minvalue, double maxValue) getSeriesMinMax(
-      {required int fromPoint, required int toPoint, required String key}) {
+  (double minvalue, double maxValue) getSeriesMinMax({
+    required int fromPoint,
+    required int toPoint,
+    required String key,
+  }) {
     var fromIndex = pointToIndex(fromPoint);
     var toIndex = pointToIndex(toPoint);
     double minValue = double.infinity;
@@ -179,19 +205,30 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
     if (fromIndex > toIndex) {
       return (minValue, maxValue);
     }
-    final values = getSeriesValues(fromPoint: indexToPoint(fromIndex), toPoint: indexToPoint(toIndex), key: key);
+    final values = getSeriesValues(
+      fromPoint: indexToPoint(fromIndex),
+      toPoint: indexToPoint(toIndex),
+      key: key,
+    );
     minValue = values.fold(minValue, min);
     maxValue = values.fold(maxValue, max);
     return (minValue, maxValue);
   }
 
   /// Get the min and max of series values by keys at the given point range.
-  (double minvalue, double maxValue) getSeriesMinMaxByKeys(
-      {required int fromPoint, required int toPoint, required List<String> keys}) {
+  (double minvalue, double maxValue) getSeriesMinMaxByKeys({
+    required int fromPoint,
+    required int toPoint,
+    required List<String> keys,
+  }) {
     double minValue = double.infinity;
     double maxValue = double.negativeInfinity;
     for (final key in keys) {
-      final rangeOfKey = getSeriesMinMax(fromPoint: fromPoint, toPoint: toPoint, key: key);
+      final rangeOfKey = getSeriesMinMax(
+        fromPoint: fromPoint,
+        toPoint: toPoint,
+        key: key,
+      );
       minValue = min(minValue, rangeOfKey.$1);
       maxValue = max(maxValue, rangeOfKey.$2);
     }
@@ -199,13 +236,20 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
   }
 
   /// Ensure the data is loaded for the given point range.
-  Future<void> ensureData({required int fromPoint, required int toPoint}) async {
-    if (isLoading || toPoint <= fromPoint || toPoint < _minPoint.value || fromPoint > _maxPoint.value || _minPoint.value > _maxPoint.value) {
+  Future<void> ensureData({
+    required int fromPoint,
+    required int toPoint,
+  }) async {
+    if (isLoading ||
+        toPoint <= fromPoint ||
+        toPoint < _minPoint.value ||
+        fromPoint > _maxPoint.value ||
+        _minPoint.value > _maxPoint.value) {
       return;
     }
     try {
       if (dataList.isEmpty) {
-        if(initialDataLoader == null) {
+        if (initialDataLoader == null) {
           return;
         }
         _isLoading.value = true;
@@ -226,38 +270,50 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
           notifyListeners();
         });
       } else {
-        if (priorDataLoader!=null && fromPoint < firstPoint && fromPoint >= _minPoint.value) {
+        if (priorDataLoader != null &&
+            fromPoint < firstPoint &&
+            fromPoint >= _minPoint.value) {
           _isLoading.value = true;
           notifyListeners();
           final expectedCount = firstPoint - fromPoint;
-          await priorDataLoader!(pointCount: expectedCount, toPointExclusive: firstPoint, toPointValueExclusive: getPointValue(firstPoint) as P)
+          await priorDataLoader!(
+                pointCount: expectedCount,
+                toPointExclusive: firstPoint,
+                toPointValueExclusive: getPointValue(firstPoint) as P,
+              )
               .then((data) {
-            if (data.isNotEmpty) {
-              dataList.insertAll(0, data);
-              _basePoint.value = _basePoint.value - data.length;
-            }
-            if (data.length < expectedCount) {
-              // no more data before this point
-              _minPoint.value = firstPoint;
-            }
-            notifyListeners();
-          });
+                if (data.isNotEmpty) {
+                  dataList.insertAll(0, data);
+                  _basePoint.value = _basePoint.value - data.length;
+                }
+                if (data.length < expectedCount) {
+                  // no more data before this point
+                  _minPoint.value = firstPoint;
+                }
+                notifyListeners();
+              });
         }
-        if (afterDataLoader!=null && toPoint > lastPoint && toPoint <= _maxPoint.value) {
+        if (afterDataLoader != null &&
+            toPoint > lastPoint &&
+            toPoint <= _maxPoint.value) {
           _isLoading.value = true;
           notifyListeners();
           final expectedCount = toPoint - lastPoint;
-          await afterDataLoader!(fromPointExclusive: lastPoint, fromPointValueExclusive: getPointValue(lastPoint) as P, pointCount: expectedCount)
+          await afterDataLoader!(
+                fromPointExclusive: lastPoint,
+                fromPointValueExclusive: getPointValue(lastPoint) as P,
+                pointCount: expectedCount,
+              )
               .then((data) {
-            if (data.isNotEmpty) {
-              dataList.addAll(data);
-            }
-            if (data.length < expectedCount) {
-              // no more data after this point
-              _maxPoint.value = lastPoint;
-            }
-            notifyListeners();
-          });
+                if (data.isNotEmpty) {
+                  dataList.addAll(data);
+                }
+                if (data.length < expectedCount) {
+                  // no more data after this point
+                  _maxPoint.value = lastPoint;
+                }
+                notifyListeners();
+              });
         }
       }
     } finally {
@@ -270,8 +326,18 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
   final Future<List<D>> Function({required int pointCount})? initialDataLoader;
 
   /// The function to load prior data before the given point value.
-  final Future<List<D>> Function({required int toPointExclusive, required P toPointValueExclusive, required int pointCount})? priorDataLoader;
+  final Future<List<D>> Function({
+    required int toPointExclusive,
+    required P toPointValueExclusive,
+    required int pointCount,
+  })?
+  priorDataLoader;
 
   /// The function to load after data after the given point value.
-  final Future<List<D>> Function({required int fromPointExclusive, required P fromPointValueExclusive, required int pointCount})? afterDataLoader;
+  final Future<List<D>> Function({
+    required int fromPointExclusive,
+    required P fromPointValueExclusive,
+    required int pointCount,
+  })?
+  afterDataLoader;
 }

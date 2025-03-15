@@ -1,4 +1,3 @@
-
 import 'package:example/demos/dynamic_data.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +11,8 @@ import 'demos/markers.dart';
 import 'demos/tooltip.dart';
 
 final routes = {
-  '/demo': (context) => const MenuPage(pathPrefix: '/demo', title: "Chart demos"),
+  '/demo':
+      (context) => const MenuPage(pathPrefix: '/demo', title: "Chart demos"),
   '/demo/basic': (context) => const BasicDemoPage(),
   '/demo/axes': (context) => const DemoAxesPage(),
   '/demo/crosshair': (context) => const DemoCrosshairPage(),
@@ -50,42 +50,56 @@ class MenuPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pages = routes.keys
-        .toList()
-        .where((route) => route.substring(0, route.lastIndexOf("/")) == pathPrefix && route != pathPrefix);
+    final pages = routes.keys.toList().where(
+      (route) =>
+          route.substring(0, route.lastIndexOf("/")) == pathPrefix &&
+          route != pathPrefix,
+    );
     return Scaffold(
       appBar: AppBar(
         title: Text(title ?? pathPrefix.split('/').last.replaceAll("_", " ")),
       ),
       body: ListView(
-        children: pages
-            .map(
-              (path) => Container(
-                key: Key(path),
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, path);
-                  },
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      child: Row(
-                        children: [
-                          Text(
-                            path.split('/').last[0].toUpperCase() + path.split('/').last.substring(1).replaceAll("_", " "),
-                            style: Theme.of(context).textTheme.titleMedium!,
+        children:
+            pages
+                .map(
+                  (path) => Container(
+                    key: Key(path),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 2,
+                    ),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, path);
+                      },
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 10,
                           ),
-                          Expanded(child: Container()),
-                          const Icon(Icons.keyboard_arrow_right),
-                        ],
+                          child: Row(
+                            children: [
+                              Text(
+                                path.split('/').last[0].toUpperCase() +
+                                    path
+                                        .split('/')
+                                        .last
+                                        .substring(1)
+                                        .replaceAll("_", " "),
+                                style: Theme.of(context).textTheme.titleMedium!,
+                              ),
+                              Expanded(child: Container()),
+                              const Icon(Icons.keyboard_arrow_right),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            )
-            .toList(),
+                )
+                .toList(),
       ),
     );
   }
@@ -98,7 +112,12 @@ class DummyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(title)),
-      body: Center(child: ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text('back'))),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('back'),
+        ),
+      ),
     );
   }
 }

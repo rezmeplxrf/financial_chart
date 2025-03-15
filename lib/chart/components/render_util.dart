@@ -8,7 +8,6 @@ import '../style/paint_style.dart';
 import 'axis/axis.dart';
 import 'axis/axis_theme.dart';
 
-
 /// Utility class for rendering.
 class GRenderUtil {
   static void renderClipped({
@@ -38,20 +37,28 @@ class GRenderUtil {
     if (strokePaint != null) {
       Path? theDashPath;
       if (style.dash != null) {
-        theDashPath = dashPath(path, dashArray: CircularIntervalList(style.dash!), dashOffset: style.dashOffset);
+        theDashPath = dashPath(
+          path,
+          dashArray: CircularIntervalList(style.dash!),
+          dashOffset: style.dashOffset,
+        );
       }
       canvas.drawPath(theDashPath ?? path, strokePaint);
     }
   }
 
-  static (TextPainter painter, Offset textPaintPoint, Rect blockArea) createTextPainter({
+  static (TextPainter painter, Offset textPaintPoint, Rect blockArea)
+  createTextPainter({
     required String text,
     Offset anchor = Offset.zero,
     Alignment defaultAlign = Alignment.center,
     required LabelStyle style,
   }) {
     final painter = TextPainter(
-      text: style.textStyle != null ? TextSpan(text: text, style: style.textStyle) : style.span!(text),
+      text:
+          style.textStyle != null
+              ? TextSpan(text: text, style: style.textStyle)
+              : style.span!(text),
       textAlign: style.textAlign ?? TextAlign.start,
       textDirection: style.textDirection ?? TextDirection.ltr,
       textScaler: style.textScaler ?? TextScaler.noScaling,
@@ -69,10 +76,21 @@ class GRenderUtil {
     final rotationAxis = style.offset == null ? anchor : anchor + style.offset!;
     final padding = style.backgroundPadding?.resolve(style.textDirection);
     final width = painter.width + (padding?.left ?? 0) + (padding?.right ?? 0);
-    final height = painter.height + (padding?.top ?? 0) + (padding?.bottom ?? 0);
-    final point = getBlockPaintPoint(rotationAxis, width, height, style.align ?? defaultAlign);
-    final textPaintPoint = point + Offset((padding?.left ?? 0), (padding?.top ?? 0));
-    return (painter, textPaintPoint, Rect.fromLTWH(point.dx, point.dy, width, height));
+    final height =
+        painter.height + (padding?.top ?? 0) + (padding?.bottom ?? 0);
+    final point = getBlockPaintPoint(
+      rotationAxis,
+      width,
+      height,
+      style.align ?? defaultAlign,
+    );
+    final textPaintPoint =
+        point + Offset((padding?.left ?? 0), (padding?.top ?? 0));
+    return (
+      painter,
+      textPaintPoint,
+      Rect.fromLTWH(point.dx, point.dy, width, height),
+    );
   }
 
   static Rect drawText({
@@ -89,7 +107,10 @@ class GRenderUtil {
       style: style,
     );
     if (style.backgroundStyle != null) {
-      final Path blockPath = addRectPath(rect: blockArea, cornerRadius: style.backgroundCornerRadius ?? 0);
+      final Path blockPath = addRectPath(
+        rect: blockArea,
+        cornerRadius: style.backgroundCornerRadius ?? 0,
+      );
       drawPath(canvas: canvas, path: blockPath, style: style.backgroundStyle!);
     }
     painter.paint(canvas, textPaintPoint);
@@ -150,8 +171,7 @@ class GRenderUtil {
     double height,
     Alignment align, {
     EdgeInsets? padding,
-  }) =>
-      getBlockPaintPoint(axis, width, height, align, padding: padding);
+  }) => getBlockPaintPoint(axis, width, height, align, padding: padding);
 
   static Path addLinePath({
     Path? toPath,
@@ -167,13 +187,16 @@ class GRenderUtil {
     return toPath ?? path;
   }
 
-  static Path addLinesPath({
-    Path? toPath,
-    required List<Offset> points,
-  }) {
+  static Path addLinesPath({Path? toPath, required List<Offset> points}) {
     Path path = toPath ?? Path();
     for (int i = 0; i < points.length - 1; i++) {
-      path = addLinePath(toPath: path, x1: points[i].dx, y1: points[i].dy, x2: points[i + 1].dx, y2: points[i + 1].dy);
+      path = addLinePath(
+        toPath: path,
+        x1: points[i].dx,
+        y1: points[i].dy,
+        x2: points[i + 1].dx,
+        y2: points[i + 1].dy,
+      );
     }
     return path;
   }
@@ -185,7 +208,9 @@ class GRenderUtil {
   }) {
     Path path = toPath ?? Path();
     if (cornerRadius > 0) {
-      path.addRRect(RRect.fromRectAndRadius(rect, Radius.circular(cornerRadius)));
+      path.addRRect(
+        RRect.fromRectAndRadius(rect, Radius.circular(cornerRadius)),
+      );
     } else {
       path.addRect(rect);
     }
@@ -242,9 +267,15 @@ class GRenderUtil {
     bool close = false,
   }) {
     Path path = toPath ?? Path();
-    path.moveTo(center.dx + radius * cos(startAngle), center.dy + radius * sin(startAngle));
+    path.moveTo(
+      center.dx + radius * cos(startAngle),
+      center.dy + radius * sin(startAngle),
+    );
     path.arcToPoint(
-      Offset(center.dx + radius * cos(endAngle), center.dy + radius * sin(endAngle)),
+      Offset(
+        center.dx + radius * cos(endAngle),
+        center.dy + radius * sin(endAngle),
+      ),
       radius: Radius.circular(radius),
       largeArc: endAngle - startAngle > pi,
       clockwise: true,
@@ -263,7 +294,11 @@ class GRenderUtil {
     required GAxisLabelTheme labelTheme,
   }) {
     return Offset(
-        axis.isAlignLeft ? (axisArea.left + labelTheme.spacing) : (axisArea.right - labelTheme.spacing), position);
+      axis.isAlignLeft
+          ? (axisArea.left + labelTheme.spacing)
+          : (axisArea.right - labelTheme.spacing),
+      position,
+    );
   }
 
   static Alignment valueAxisLabelAlignment({required GValueAxis axis}) {
@@ -277,7 +312,11 @@ class GRenderUtil {
     required GAxisLabelTheme labelTheme,
   }) {
     return Offset(
-        position, axis.isAlignTop ? (axisArea.top + labelTheme.spacing) : (axisArea.bottom - labelTheme.spacing));
+      position,
+      axis.isAlignTop
+          ? (axisArea.top + labelTheme.spacing)
+          : (axisArea.bottom - labelTheme.spacing),
+    );
   }
 
   static Alignment pointAxisLabelAlignment({required GPointAxis axis}) {
@@ -292,28 +331,33 @@ class GRenderUtil {
     required Alignment alignment,
     EdgeInsets? padding,
   }) {
-    Offset pt = getBlockPaintPoint(anchor, width, height, alignment, padding: padding);
+    Offset pt = getBlockPaintPoint(
+      anchor,
+      width,
+      height,
+      alignment,
+      padding: padding,
+    );
     return Rect.fromPoints(pt, pt + Offset(width, height));
   }
 
   /// Calculates the real painting offset point for labels.
   static Offset getBlockPaintPoint(
-      Offset axis,
-      double width,
-      double height,
-      Alignment align, {
-        EdgeInsets? padding,
-      }) =>
-      Offset(
-        axis.dx -
-            (width / 2) +
-            ((width / 2) * align.x) +
-            (padding?.left ?? 0) * align.x +
-            (padding?.right ?? 0) * align.x,
-        axis.dy -
-            (height / 2) +
-            ((height / 2) * align.y) +
-            (padding?.top ?? 0) * align.y +
-            (padding?.bottom ?? 0) * align.y,
-      );
+    Offset axis,
+    double width,
+    double height,
+    Alignment align, {
+    EdgeInsets? padding,
+  }) => Offset(
+    axis.dx -
+        (width / 2) +
+        ((width / 2) * align.x) +
+        (padding?.left ?? 0) * align.x +
+        (padding?.right ?? 0) * align.x,
+    axis.dy -
+        (height / 2) +
+        ((height / 2) * align.y) +
+        (padding?.top ?? 0) * align.y +
+        (padding?.bottom ?? 0) * align.y,
+  );
 }

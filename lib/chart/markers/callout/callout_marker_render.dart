@@ -12,7 +12,8 @@ import '../../components/viewport_v.dart';
 import '../../vector/vectors/circle.dart';
 import 'callout_marker.dart';
 
-class GCalloutMarkerRender extends GGraphMarkerRender<GCalloutMarker, GGraphMarkerTheme> {
+class GCalloutMarkerRender
+    extends GGraphMarkerRender<GCalloutMarker, GGraphMarkerTheme> {
   const GCalloutMarkerRender();
   @override
   void doRenderMarker({
@@ -29,8 +30,11 @@ class GCalloutMarkerRender extends GGraphMarkerRender<GCalloutMarker, GGraphMark
     if (marker.keyCoordinates.isEmpty) {
       return;
     }
-    final anchor =
-        marker.keyCoordinates[0].toPosition(area: area, valueViewPort: valueViewPort, pointViewPort: pointViewPort);
+    final anchor = marker.keyCoordinates[0].toPosition(
+      area: area,
+      valueViewPort: valueViewPort,
+      pointViewPort: pointViewPort,
+    );
     final (painter, textPaintPoint, blockArea) = GRenderUtil.createTextPainter(
       text: marker.text,
       anchor: anchor,
@@ -40,26 +44,43 @@ class GCalloutMarkerRender extends GGraphMarkerRender<GCalloutMarker, GGraphMark
     if (theme.labelStyle?.backgroundStyle != null) {
       final alignment = marker.alignment;
       double pointerMargin = marker.pointerMargin;
-      Rect rect = blockArea.translate(alignment.x * pointerMargin, alignment.y * pointerMargin);
+      Rect rect = blockArea.translate(
+        alignment.x * pointerMargin,
+        alignment.y * pointerMargin,
+      );
       final bgPath = _createBackgroundPath(marker, theme, anchor, rect);
-      drawPath(canvas: canvas, path: bgPath, style: theme.labelStyle!.backgroundStyle!);
-      painter.paint(canvas, textPaintPoint.translate(alignment.x * pointerMargin, alignment.y * pointerMargin));
+      drawPath(
+        canvas: canvas,
+        path: bgPath,
+        style: theme.labelStyle!.backgroundStyle!,
+      );
+      painter.paint(
+        canvas,
+        textPaintPoint.translate(
+          alignment.x * pointerMargin,
+          alignment.y * pointerMargin,
+        ),
+      );
     } else {
       painter.paint(canvas, textPaintPoint);
     }
   }
 
-  Path _createBackgroundPath(GCalloutMarker marker, GGraphMarkerTheme theme, Offset anchor, Rect textRect) {
+  Path _createBackgroundPath(
+    GCalloutMarker marker,
+    GGraphMarkerTheme theme,
+    Offset anchor,
+    Rect textRect,
+  ) {
     double pointerSize = marker.pointerSize;
     double borderRadius = theme.labelStyle?.backgroundCornerRadius ?? 0;
     final alignment = marker.alignment;
     Rect rect = textRect;
 
     Path path1 = Path();
-    path1.addRRect(RRect.fromRectAndRadius(
-      rect,
-      Radius.circular(borderRadius),
-    ));
+    path1.addRRect(
+      RRect.fromRectAndRadius(rect, Radius.circular(borderRadius)),
+    );
 
     Path path2 = Path();
     double triangleX1 = 0, triangleY1 = 0, triangleX2 = 0, triangleY2 = 0;
@@ -81,9 +102,23 @@ class GCalloutMarkerRender extends GGraphMarkerRender<GCalloutMarker, GGraphMark
           path2.lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
-              cornerCx1, cornerCy1, borderRadius, triangleX1, triangleY1, targetX, targetY);
+            cornerCx1,
+            cornerCy1,
+            borderRadius,
+            triangleX1,
+            triangleY1,
+            targetX,
+            targetY,
+          );
           final points2 = CircleUtil.intersectionPointsToLine(
-              cornerCx2, cornerCy2, borderRadius, triangleX2, triangleY2, targetX, targetY);
+            cornerCx2,
+            cornerCy2,
+            borderRadius,
+            triangleX2,
+            triangleY2,
+            targetX,
+            targetY,
+          );
           path2.moveTo(points1[0].x, points1[0].y);
           path2.lineTo(points2[0].x, points2[0].y);
         }
@@ -102,9 +137,23 @@ class GCalloutMarkerRender extends GGraphMarkerRender<GCalloutMarker, GGraphMark
           path2.lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
-              cornerCx1, cornerCy1, borderRadius, triangleX1, triangleY1, targetX, targetY);
+            cornerCx1,
+            cornerCy1,
+            borderRadius,
+            triangleX1,
+            triangleY1,
+            targetX,
+            targetY,
+          );
           final points2 = CircleUtil.intersectionPointsToLine(
-              cornerCx2, cornerCy2, borderRadius, triangleX2, triangleY2, targetX, targetY);
+            cornerCx2,
+            cornerCy2,
+            borderRadius,
+            triangleX2,
+            triangleY2,
+            targetX,
+            targetY,
+          );
           path2.moveTo(points1[0].x, points1[0].y);
           path2.lineTo(points2[0].x, points2[0].y);
         }
@@ -123,9 +172,23 @@ class GCalloutMarkerRender extends GGraphMarkerRender<GCalloutMarker, GGraphMark
           path2.lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
-              cornerCx1, cornerCy1, borderRadius, triangleX1, triangleY1, targetX, targetY);
+            cornerCx1,
+            cornerCy1,
+            borderRadius,
+            triangleX1,
+            triangleY1,
+            targetX,
+            targetY,
+          );
           final points2 = CircleUtil.intersectionPointsToLine(
-              cornerCx2, cornerCy2, borderRadius, triangleX2, triangleY2, targetX, targetY);
+            cornerCx2,
+            cornerCy2,
+            borderRadius,
+            triangleX2,
+            triangleY2,
+            targetX,
+            targetY,
+          );
           path2.moveTo(points1[0].x, points1[0].y);
           path2.lineTo(points2[0].x, points2[0].y);
         }
@@ -144,9 +207,23 @@ class GCalloutMarkerRender extends GGraphMarkerRender<GCalloutMarker, GGraphMark
           path2.lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
-              cornerCx1, cornerCy1, borderRadius, triangleX1, triangleY1, targetX, targetY);
+            cornerCx1,
+            cornerCy1,
+            borderRadius,
+            triangleX1,
+            triangleY1,
+            targetX,
+            targetY,
+          );
           final points2 = CircleUtil.intersectionPointsToLine(
-              cornerCx2, cornerCy2, borderRadius, triangleX2, triangleY2, targetX, targetY);
+            cornerCx2,
+            cornerCy2,
+            borderRadius,
+            triangleX2,
+            triangleY2,
+            targetX,
+            targetY,
+          );
           path2.moveTo(points1[0].x, points1[0].y);
           path2.lineTo(points2[0].x, points2[0].y);
         }
@@ -165,9 +242,23 @@ class GCalloutMarkerRender extends GGraphMarkerRender<GCalloutMarker, GGraphMark
           path2.lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
-              cornerCx1, cornerCy1, borderRadius, triangleX1, triangleY1, targetX, targetY);
+            cornerCx1,
+            cornerCy1,
+            borderRadius,
+            triangleX1,
+            triangleY1,
+            targetX,
+            targetY,
+          );
           final points2 = CircleUtil.intersectionPointsToLine(
-              cornerCx2, cornerCy2, borderRadius, triangleX2, triangleY2, targetX, targetY);
+            cornerCx2,
+            cornerCy2,
+            borderRadius,
+            triangleX2,
+            triangleY2,
+            targetX,
+            targetY,
+          );
           path2.moveTo(points1[0].x, points1[0].y);
           path2.lineTo(points2[0].x, points2[0].y);
         }
@@ -186,9 +277,23 @@ class GCalloutMarkerRender extends GGraphMarkerRender<GCalloutMarker, GGraphMark
           path2.lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
-              cornerCx1, cornerCy1, borderRadius, triangleX1, triangleY1, targetX, targetY);
+            cornerCx1,
+            cornerCy1,
+            borderRadius,
+            triangleX1,
+            triangleY1,
+            targetX,
+            targetY,
+          );
           final points2 = CircleUtil.intersectionPointsToLine(
-              cornerCx2, cornerCy2, borderRadius, triangleX2, triangleY2, targetX, targetY);
+            cornerCx2,
+            cornerCy2,
+            borderRadius,
+            triangleX2,
+            triangleY2,
+            targetX,
+            targetY,
+          );
           path2.moveTo(points1[0].x, points1[0].y);
           path2.lineTo(points2[0].x, points2[0].y);
         }
@@ -207,9 +312,23 @@ class GCalloutMarkerRender extends GGraphMarkerRender<GCalloutMarker, GGraphMark
           path2.lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
-              cornerCx1, cornerCy1, borderRadius, triangleX1, triangleY1, targetX, targetY);
+            cornerCx1,
+            cornerCy1,
+            borderRadius,
+            triangleX1,
+            triangleY1,
+            targetX,
+            targetY,
+          );
           final points2 = CircleUtil.intersectionPointsToLine(
-              cornerCx2, cornerCy2, borderRadius, triangleX2, triangleY2, targetX, targetY);
+            cornerCx2,
+            cornerCy2,
+            borderRadius,
+            triangleX2,
+            triangleY2,
+            targetX,
+            targetY,
+          );
           path2.moveTo(points1[0].x, points1[0].y);
           path2.lineTo(points2[0].x, points2[0].y);
         }
@@ -228,9 +347,23 @@ class GCalloutMarkerRender extends GGraphMarkerRender<GCalloutMarker, GGraphMark
           path2.lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
-              cornerCx1, cornerCy1, borderRadius, triangleX1, triangleY1, targetX, targetY);
+            cornerCx1,
+            cornerCy1,
+            borderRadius,
+            triangleX1,
+            triangleY1,
+            targetX,
+            targetY,
+          );
           final points2 = CircleUtil.intersectionPointsToLine(
-              cornerCx2, cornerCy2, borderRadius, triangleX2, triangleY2, targetX, targetY);
+            cornerCx2,
+            cornerCy2,
+            borderRadius,
+            triangleX2,
+            triangleY2,
+            targetX,
+            targetY,
+          );
           path2.moveTo(points1[0].x, points1[0].y);
           path2.lineTo(points2[0].x, points2[0].y);
         }

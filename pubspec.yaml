@@ -1,5 +1,5 @@
 name: financial_chart
-description: Chart library for financial data.
+description: A chart library for financial data. supports candlestick, ohlc, line, area charts and custom chart types.
 repository: https://github.com/cjjapan/financial_chart
 homepage: https://github.com/cjjapan/financial_chart
 topics:

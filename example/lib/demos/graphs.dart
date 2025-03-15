@@ -9,7 +9,8 @@ import 'demo.dart';
 import 'my_graph/step_line_theme.dart';
 
 class DemoGraphsPage extends DemoBasePage {
-  const DemoGraphsPage({super.key, String? title}) : super(title: title ?? 'Graphs');
+  const DemoGraphsPage({super.key, String? title})
+    : super(title: title ?? 'Graphs');
 
   @override
   DemoGraphsPageState createState() => DemoGraphsPageState();
@@ -34,7 +35,15 @@ class DemoGraphsPageState extends DemoBasePageState {
           GValueViewPort(
             id: "price",
             valuePrecision: 2,
-            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(dataKeys: [keyHigh, keyLow, keySMA, keyIchimokuSpanA, keyIchimokuSpanB]),
+            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
+              dataKeys: [
+                keyHigh,
+                keyLow,
+                keySMA,
+                keyIchimokuSpanA,
+                keyIchimokuSpanB,
+              ],
+            ),
           ),
           GValueViewPort(
             id: "volume",
@@ -47,18 +56,23 @@ class DemoGraphsPageState extends DemoBasePageState {
           ),
         ],
         valueAxes: [
-          GValueAxis(viewPortId: 'volume', position: GAxisPosition.start, scaleMode: GAxisScaleMode.none),
-          GValueAxis(viewPortId: 'price', position: GAxisPosition.end, scaleMode: GAxisScaleMode.zoom),
+          GValueAxis(
+            viewPortId: 'volume',
+            position: GAxisPosition.start,
+            scaleMode: GAxisScaleMode.none,
+          ),
+          GValueAxis(
+            viewPortId: 'price',
+            position: GAxisPosition.end,
+            scaleMode: GAxisScaleMode.zoom,
+          ),
         ],
         pointAxes: [
           GPointAxis(position: GAxisPosition.start),
           GPointAxis(position: GAxisPosition.end),
         ],
         graphs: [
-          GGraphGrids(
-            id: "grids",
-            valueViewPortId: 'price',
-          ),
+          GGraphGrids(id: "grids", valueViewPortId: 'price'),
           GGraphOhlc(
             id: "ohlc",
             valueViewPortId: "price",
@@ -71,11 +85,7 @@ class DemoGraphsPageState extends DemoBasePageState {
             valueKey: keyVolume,
             baseValue: 0,
           ),
-          GGraphLine(
-            id: "line",
-            valueViewPortId: "price",
-            valueKey: keySMA,
-          ),
+          GGraphLine(id: "line", valueViewPortId: "price", valueKey: keySMA),
           GGraphArea(
             id: "area",
             valueKey: keyIchimokuSpanA,
@@ -90,7 +100,16 @@ class DemoGraphsPageState extends DemoBasePageState {
         ],
         tooltip: GTooltip(
           position: GTooltipPosition.followPointer,
-          dataKeys: const [keyOpen, keyHigh, keyLow, keyClose, keyVolume, keySMA, keyIchimokuSpanA, keyIchimokuSpanB],
+          dataKeys: const [
+            keyOpen,
+            keyHigh,
+            keyLow,
+            keyClose,
+            keyVolume,
+            keySMA,
+            keyIchimokuSpanA,
+            keyIchimokuSpanB,
+          ],
           followValueKey: keyClose,
           followValueViewPortId: "price",
         ),
@@ -116,10 +135,15 @@ class DemoGraphsPageState extends DemoBasePageState {
           child: AppPopupMenu<String>(
             items: const ["candle", "ohlc"],
             onSelected: (String selected) {
-              (chart!.panels[0].findGraphById("ohlc")! as GGraphOhlc).drawAsCandle = (selected == "candle");
+              (chart!.panels[0].findGraphById("ohlc")! as GGraphOhlc)
+                  .drawAsCandle = (selected == "candle");
               repaintChart();
             },
-            selected: (chart!.panels[0].findGraphById("ohlc")! as GGraphOhlc).drawAsCandle ? "candle" : "ohlc",
+            selected:
+                (chart!.panels[0].findGraphById("ohlc")! as GGraphOhlc)
+                        .drawAsCandle
+                    ? "candle"
+                    : "ohlc",
             labelResolver: (item) => item,
           ),
         ),
@@ -173,10 +197,16 @@ class DemoGraphsPageState extends DemoBasePageState {
             items: const ["top", "bottom"],
             onSelected: (String selected) {
               chart!.panels[0].findGraphById("area")!.layer =
-                  (selected == "top") ? (GGraph.kDefaultLayer + 1) : (GGraph.kDefaultLayer - 1);
+                  (selected == "top")
+                      ? (GGraph.kDefaultLayer + 1)
+                      : (GGraph.kDefaultLayer - 1);
               repaintChart();
             },
-            selected: (chart!.panels[0].findGraphById("area")!.layer < GGraph.kDefaultLayer) ? "bottom" : "top",
+            selected:
+                (chart!.panels[0].findGraphById("area")!.layer <
+                        GGraph.kDefaultLayer)
+                    ? "bottom"
+                    : "top",
             labelResolver: (item) => item,
           ),
         ),

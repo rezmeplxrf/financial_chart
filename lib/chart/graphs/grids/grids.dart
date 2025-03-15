@@ -29,5 +29,4 @@ class GGraphGrids extends GGraph<GGraphGridsTheme> {
 
   @override
   String get type => typeName;
-
 }

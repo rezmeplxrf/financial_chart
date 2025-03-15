@@ -1,4 +1,3 @@
-
 import '../../components/graph/graph.dart';
 import '../../values/value.dart';
 import 'ohlc_render.dart';

@@ -1,4 +1,3 @@
-
 import 'graphs.dart';
 
 class DemoDynamicDataPage extends DemoGraphsPage {
@@ -9,8 +8,6 @@ class DemoDynamicDataPage extends DemoGraphsPage {
 }
 
 class DemoDynamicDataPageState extends DemoGraphsPageState {
-
   @override
   int get simulateDataLatencyMillis => 500;
-
 }

@@ -9,7 +9,8 @@ class ChartPlaygroundDemoPage extends StatefulWidget {
   ChartPlaygroundDemoPageState createState() => ChartPlaygroundDemoPageState();
 }
 
-class ChartPlaygroundDemoPageState extends State<ChartPlaygroundDemoPage> with TickerProviderStateMixin {
+class ChartPlaygroundDemoPageState extends State<ChartPlaygroundDemoPage>
+    with TickerProviderStateMixin {
   ChartPlaygroundDemoPageState();
 
   GChart? chart;
@@ -55,15 +56,15 @@ class ChartPlaygroundDemoPageState extends State<ChartPlaygroundDemoPage> with T
             position: GAxisPosition.start,
             scaleMode: GAxisScaleMode.select,
           ),
-          GPointAxis(
-            position: GAxisPosition.end,
-          ),
+          GPointAxis(position: GAxisPosition.end),
         ],
         valueViewPorts: [
           GValueViewPort(
             id: "vp-price",
             valuePrecision: 2,
-            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(dataKeys: ['high', 'low']),
+            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
+              dataKeys: ['high', 'low'],
+            ),
           ),
           GValueViewPort(
             id: "vp-volume",
@@ -76,10 +77,7 @@ class ChartPlaygroundDemoPageState extends State<ChartPlaygroundDemoPage> with T
           ),
         ],
         graphs: [
-          GGraphGrids(
-            id: "g-grids",
-            valueViewPortId: 'vp-price',
-          ),
+          GGraphGrids(id: "g-grids", valueViewPortId: 'vp-price'),
           GGraphLine(
             id: "g-line",
             valueViewPortId: "vp-price",
@@ -105,41 +103,66 @@ class ChartPlaygroundDemoPageState extends State<ChartPlaygroundDemoPage> with T
                 id: "ichi-base",
                 valueViewPortId: "vp-price",
                 valueKey: "ichimokuBase",
-                theme: (chartTheme.graphThemes[GGraphLine.typeName]! as GGraphLineTheme).copyWith(
-                  lineStyle: PaintStyle(strokeColor: Colors.red, strokeWidth: 1.0),
-                ),
+                theme: (chartTheme.graphThemes[GGraphLine.typeName]!
+                        as GGraphLineTheme)
+                    .copyWith(
+                      lineStyle: PaintStyle(
+                        strokeColor: Colors.red,
+                        strokeWidth: 1.0,
+                      ),
+                    ),
               ),
               GGraphLine(
                 id: "ichi-conv",
                 valueViewPortId: "vp-price",
                 valueKey: "ichimokuConversion",
-                theme: (chartTheme.graphThemes[GGraphLine.typeName]! as GGraphLineTheme).copyWith(
-                  lineStyle: PaintStyle(strokeColor: Colors.yellow, strokeWidth: 1.0),
-                ),
+                theme: (chartTheme.graphThemes[GGraphLine.typeName]!
+                        as GGraphLineTheme)
+                    .copyWith(
+                      lineStyle: PaintStyle(
+                        strokeColor: Colors.yellow,
+                        strokeWidth: 1.0,
+                      ),
+                    ),
               ),
               GGraphLine(
                 id: "ichi-spanA",
                 valueViewPortId: "vp-price",
                 valueKey: "ichimokuSpanA",
-                theme: (chartTheme.graphThemes[GGraphLine.typeName]! as GGraphLineTheme).copyWith(
-                  lineStyle: PaintStyle(strokeColor: Colors.green, strokeWidth: 1.0),
-                ),
+                theme: (chartTheme.graphThemes[GGraphLine.typeName]!
+                        as GGraphLineTheme)
+                    .copyWith(
+                      lineStyle: PaintStyle(
+                        strokeColor: Colors.green,
+                        strokeWidth: 1.0,
+                      ),
+                    ),
               ),
               GGraphLine(
                 id: "ichi-spanB",
                 valueViewPortId: "vp-price",
                 valueKey: "ichimokuSpanB",
-                theme: (chartTheme.graphThemes[GGraphLine.typeName]! as GGraphLineTheme).copyWith(
-                  lineStyle: PaintStyle(strokeColor: Colors.orange, strokeWidth: 1.0),
-                ),
+                theme: (chartTheme.graphThemes[GGraphLine.typeName]!
+                        as GGraphLineTheme)
+                    .copyWith(
+                      lineStyle: PaintStyle(
+                        strokeColor: Colors.orange,
+                        strokeWidth: 1.0,
+                      ),
+                    ),
               ),
               GGraphLine(
                 id: "ichi-lagging",
                 valueViewPortId: "vp-price",
                 valueKey: "ichimokuLagging",
-                theme: (chartTheme.graphThemes[GGraphLine.typeName]! as GGraphLineTheme).copyWith(
-                  lineStyle: PaintStyle(strokeColor: Colors.purple, strokeWidth: 1.0),
-                ),
+                theme: (chartTheme.graphThemes[GGraphLine.typeName]!
+                        as GGraphLineTheme)
+                    .copyWith(
+                      lineStyle: PaintStyle(
+                        strokeColor: Colors.purple,
+                        strokeWidth: 1.0,
+                      ),
+                    ),
               ),
             ],
           ),
@@ -157,7 +180,7 @@ class ChartPlaygroundDemoPageState extends State<ChartPlaygroundDemoPage> with T
             "ichimokuConversion",
             "ichimokuSpanA",
             "ichimokuSpanB",
-            "ichimokuLagging"
+            "ichimokuLagging",
           ],
           followValueKey: "close",
           followValueViewPortId: "vp-price",
@@ -167,21 +190,34 @@ class ChartPlaygroundDemoPageState extends State<ChartPlaygroundDemoPage> with T
         heightWeight: 0.3,
         valueAxes: [
           GValueAxis(viewPortId: 'vp-macd', position: GAxisPosition.end),
-          GValueAxis(viewPortId: 'vp-macd', position: GAxisPosition.start, scaleMode: GAxisScaleMode.move),
+          GValueAxis(
+            viewPortId: 'vp-macd',
+            position: GAxisPosition.start,
+            scaleMode: GAxisScaleMode.move,
+          ),
         ],
         pointAxes: [
-          GPointAxis(position: GAxisPosition.end, scaleMode: GAxisScaleMode.move),
+          GPointAxis(
+            position: GAxisPosition.end,
+            scaleMode: GAxisScaleMode.move,
+          ),
         ],
         valueViewPorts: [
           GValueViewPort(
             id: "vp-macd",
             valuePrecision: 2,
-            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(dataKeys: ['macd']),
+            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
+              dataKeys: ['macd'],
+            ),
           ),
         ],
         graphs: [
           GGraphGrids(id: "g-grids2", valueViewPortId: 'vp-macd'),
-          GGraphLine(id: "g-macd", valueViewPortId: "vp-macd", valueKey: "macd"),
+          GGraphLine(
+            id: "g-macd",
+            valueViewPortId: "vp-macd",
+            valueKey: "macd",
+          ),
         ],
         tooltip: GTooltip(
           position: GTooltipPosition.topLeft,
@@ -213,24 +249,26 @@ class ChartPlaygroundDemoPageState extends State<ChartPlaygroundDemoPage> with T
             height: 60,
             alignment: Alignment.center,
             child: ElevatedButton(
-                onPressed: () {
-                  if (chart != null) {
-                    if (chart!.theme.name == GThemeLight.themeName) {
-                      chart!.theme = GThemeDark();
-                    } else {
-                      chart!.theme = GThemeLight();
-                    }
+              onPressed: () {
+                if (chart != null) {
+                  if (chart!.theme.name == GThemeLight.themeName) {
+                    chart!.theme = GThemeDark();
+                  } else {
+                    chart!.theme = GThemeLight();
                   }
-                },
-                child: const Text("theme")),
+                }
+              },
+              child: const Text("theme"),
+            ),
           ),
           Expanded(
-            child: chart == null
-                ? const CircularProgressIndicator()
-                : Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: GChartWidget(chart: chart!),
-                  ),
+            child:
+                chart == null
+                    ? const CircularProgressIndicator()
+                    : Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: GChartWidget(chart: chart!),
+                    ),
           ),
         ],
       ),

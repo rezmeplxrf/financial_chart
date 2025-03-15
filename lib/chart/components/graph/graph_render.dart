@@ -13,7 +13,8 @@ import '../render.dart';
 import '../marker/marker_theme.dart';
 
 /// Base class for [GGraph] renderers.
-class GGraphRender<C extends GGraph, T extends GGraphTheme> extends GRender<C, T> {
+class GGraphRender<C extends GGraph, T extends GGraphTheme>
+    extends GRender<C, T> {
   const GGraphRender();
   @override
   void render({
@@ -29,20 +30,40 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme> extends GRender<C, T
     }
     assert(panel != null);
     // Render the graph (will call doRender in super)
-    super.render(canvas: canvas, chart: chart, panel: panel, component: component, area: area, theme: theme);
+    super.render(
+      canvas: canvas,
+      chart: chart,
+      panel: panel,
+      component: component,
+      area: area,
+      theme: theme,
+    );
 
     // Render the markers
     if (component.axisMarkers.isNotEmpty || component.graphMarkers.isNotEmpty) {
       Rect panelArea = panel!.panelArea();
       canvas.save();
       canvas.clipPath(Path()..addRect(panelArea));
-      doRenderMarkers(canvas: canvas, chart: chart, panel: panel, graph: component, area: panelArea, theme: theme);
+      doRenderMarkers(
+        canvas: canvas,
+        chart: chart,
+        panel: panel,
+        graph: component,
+        area: panelArea,
+        theme: theme,
+      );
       canvas.restore();
     }
 
     if (component.crosshairHighlightValueKeys.isNotEmpty) {
       doRenderCrosshairHighlightValues(
-          canvas: canvas, chart: chart, panel: panel!, graph: component, area: area, theme: theme);
+        canvas: canvas,
+        chart: chart,
+        panel: panel!,
+        graph: component,
+        area: area,
+        theme: theme,
+      );
     }
   }
 
@@ -90,14 +111,18 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme> extends GRender<C, T
       markers.sort((a, b) => a.layer().compareTo(b.layer()));
       for (final marker in markers) {
         marker.getRender().renderMarker(
-              canvas: canvas,
-              chart: chart,
-              panel: panel,
-              graph: graph,
-              marker: marker,
-              area: area,
-              theme: (marker.theme ?? theme.axisMarkerTheme ?? chart.theme.axisMarkerTheme) as GAxisMarkerTheme,
-            );
+          canvas: canvas,
+          chart: chart,
+          panel: panel,
+          graph: graph,
+          marker: marker,
+          area: area,
+          theme:
+              (marker.theme ??
+                      theme.axisMarkerTheme ??
+                      chart.theme.axisMarkerTheme)
+                  as GAxisMarkerTheme,
+        );
       }
     }
     if (graph.graphMarkers.isNotEmpty) {
@@ -105,14 +130,18 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme> extends GRender<C, T
       markers.sort((a, b) => a.layer().compareTo(b.layer()));
       for (final marker in markers) {
         marker.getRender().renderMarker(
-              canvas: canvas,
-              chart: chart,
-              panel: panel,
-              graph: graph,
-              marker: marker,
-              area: panel.graphArea(),
-              theme: (marker.theme ?? theme.graphMarkerTheme ?? chart.theme.graphMarkerTheme) as GGraphMarkerTheme,
-            );
+          canvas: canvas,
+          chart: chart,
+          panel: panel,
+          graph: graph,
+          marker: marker,
+          area: panel.graphArea(),
+          theme:
+              (marker.theme ??
+                      theme.graphMarkerTheme ??
+                      chart.theme.graphMarkerTheme)
+                  as GGraphMarkerTheme,
+        );
       }
     }
   }
@@ -140,8 +169,14 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme> extends GRender<C, T
     List<Vector2> crosshairHighlightMarks = [];
     for (final valueKey in graph.crosshairHighlightValueKeys) {
       final point = pointViewPort.nearestPoint(area, crossPosition);
-      final pointPosition = pointViewPort.pointToPosition(area, point.toDouble());
-      final value = chart.dataSource.getSeriesValue(point: point, key: valueKey);
+      final pointPosition = pointViewPort.pointToPosition(
+        area,
+        point.toDouble(),
+      );
+      final value = chart.dataSource.getSeriesValue(
+        point: point,
+        key: valueKey,
+      );
       if (value == null) {
         continue;
       }
@@ -204,9 +239,16 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme> extends GRender<C, T
       for (int i = 0; i < highlightMarks.length; i++) {
         final point = highlightMarks[i];
         final p = addOvalPath(
-          rect: Rect.fromCircle(center: Offset(point.x, point.y), radius: theme.highlightMarkerTheme!.size),
+          rect: Rect.fromCircle(
+            center: Offset(point.x, point.y),
+            radius: theme.highlightMarkerTheme!.size,
+          ),
         );
-        drawPath(canvas: canvas, path: p, style: theme.highlightMarkerTheme!.style);
+        drawPath(
+          canvas: canvas,
+          path: p,
+          style: theme.highlightMarkerTheme!.style,
+        );
       }
     }
   }
@@ -225,12 +267,18 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme> extends GRender<C, T
       for (int i = 0; i < highlightMarks.length; i++) {
         final point = highlightMarks[i];
         final p = addOvalPath(
-          rect: Rect.fromCircle(center: Offset(point.x, point.y), radius: theme.highlightMarkerTheme!.crosshairHighlightSize),
+          rect: Rect.fromCircle(
+            center: Offset(point.x, point.y),
+            radius: theme.highlightMarkerTheme!.crosshairHighlightSize,
+          ),
         );
         drawPath(
-            canvas: canvas,
-            path: p,
-            style: theme.highlightMarkerTheme!.crosshairHighlightStyle ?? theme.highlightMarkerTheme!.style);
+          canvas: canvas,
+          path: p,
+          style:
+              theme.highlightMarkerTheme!.crosshairHighlightStyle ??
+              theme.highlightMarkerTheme!.style,
+        );
       }
     }
   }

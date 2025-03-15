@@ -1,4 +1,3 @@
-
 import '../../components/graph/graph.dart';
 import 'line_render.dart';
 import 'line_theme.dart';
@@ -27,5 +26,4 @@ class GGraphLine extends GGraph<GGraphLineTheme> {
 
   @override
   String get type => typeName;
-
 }

@@ -1,4 +1,3 @@
-
 import 'package:financial_chart/chart.dart';
 
 import 'step_ine_render.dart';
@@ -29,5 +28,4 @@ class GGraphStepLine extends GGraph<GGraphStepLineTheme> {
 
   @override
   String get type => typeName;
-
 }

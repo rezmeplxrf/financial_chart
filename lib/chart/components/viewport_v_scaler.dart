@@ -1,4 +1,3 @@
-
 import 'dart:math';
 
 import '../chart.dart';
@@ -9,11 +8,16 @@ import 'viewport_v.dart';
 
 /// Auto scale strategy for value viewport.
 abstract class GValueViewPortAutoScaleStrategy {
-  GRange getScale({required GChart chart, required GPanel panel, required GValueViewPort valueViewPort});
+  GRange getScale({
+    required GChart chart,
+    required GPanel panel,
+    required GValueViewPort valueViewPort,
+  });
 }
 
 /// Auto scale strategy to scale viewport to min and max value of data values so all data points be visible in the view area.
-class GValueViewPortAutoScaleStrategyMinMax implements GValueViewPortAutoScaleStrategy {
+class GValueViewPortAutoScaleStrategyMinMax
+    implements GValueViewPortAutoScaleStrategy {
   /// The data keys to calculate the min and max value from.
   final List<String> dataKeys;
 
@@ -41,7 +45,11 @@ class GValueViewPortAutoScaleStrategyMinMax implements GValueViewPortAutoScaleSt
   }
 
   @override
-  GRange getScale({required GChart chart, required GPanel panel, required GValueViewPort valueViewPort}) {
+  GRange getScale({
+    required GChart chart,
+    required GPanel panel,
+    required GValueViewPort valueViewPort,
+  }) {
     if (dataKeys.isEmpty || !chart.pointViewPort.isValid) {
       return GRange.empty();
     }
@@ -50,8 +58,11 @@ class GValueViewPortAutoScaleStrategyMinMax implements GValueViewPortAutoScaleSt
     }
     int startPoint = chart.pointViewPort.startPoint.floor();
     int endPoint = chart.pointViewPort.endPoint.ceil();
-    var (minValue, maxValue) =
-    chart.dataSource.getSeriesMinMaxByKeys(fromPoint: startPoint, toPoint: endPoint, keys: dataKeys);
+    var (minValue, maxValue) = chart.dataSource.getSeriesMinMaxByKeys(
+      fromPoint: startPoint,
+      toPoint: endPoint,
+      keys: dataKeys,
+    );
     if (minValue == double.infinity || maxValue == double.negativeInfinity) {
       return GRange.empty();
     }
@@ -62,10 +73,19 @@ class GValueViewPortAutoScaleStrategyMinMax implements GValueViewPortAutoScaleSt
       maxValue = fixedEndValue!;
     }
     double marginStartSize = marginStart.toViewSize(
-        area: panel.graphArea(), pointViewPort: chart.pointViewPort, valueViewPort: valueViewPort);
-    double marginEndSize =
-    marginEnd.toViewSize(area: panel.graphArea(), pointViewPort: chart.pointViewPort, valueViewPort: valueViewPort);
-    double availableHeight = max(panel.graphArea().height - marginStartSize - marginEndSize, 1);
+      area: panel.graphArea(),
+      pointViewPort: chart.pointViewPort,
+      valueViewPort: valueViewPort,
+    );
+    double marginEndSize = marginEnd.toViewSize(
+      area: panel.graphArea(),
+      pointViewPort: chart.pointViewPort,
+      valueViewPort: valueViewPort,
+    );
+    double availableHeight = max(
+      panel.graphArea().height - marginStartSize - marginEndSize,
+      1,
+    );
     double valueDensity = (maxValue - minValue) / availableHeight;
     double marginStartValue = marginStartSize * valueDensity;
     double marginEndValue = marginEndSize * valueDensity;

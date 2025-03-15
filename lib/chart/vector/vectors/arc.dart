@@ -46,7 +46,10 @@ class ArcUtil {
     } else {
       // return start or end point
       Vector2 point = Vector2(px, py);
-      Vector2 start = Vector2(cx + r * cos(startTheta), cy + r * sin(startTheta));
+      Vector2 start = Vector2(
+        cx + r * cos(startTheta),
+        cy + r * sin(startTheta),
+      );
       Vector2 end = Vector2(cx + r * cos(endTheta), cy + r * sin(endTheta));
       return point.distanceTo(start) < point.distanceTo(end) ? start : end;
     }
@@ -61,7 +64,15 @@ class ArcUtil {
     double px,
     double py,
   ) {
-    Vector2 nearestPoint = nearestPointOn(cx, cy, r, thetaStart, thetaEnd, px, py);
+    Vector2 nearestPoint = nearestPointOn(
+      cx,
+      cy,
+      r,
+      thetaStart,
+      thetaEnd,
+      px,
+      py,
+    );
     return Vector2(px, py).distanceTo(nearestPoint);
   }
 
@@ -94,7 +105,7 @@ class ArcUtil {
     bool testArea = false,
     double epsilon = 5,
   }) {
-    if(testArea) {
+    if (testArea) {
       return isInside(cx, cy, r, startTheta, endTheta, px, py);
     }
     return distanceTo(cx, cy, r, startTheta, endTheta, px, py) < epsilon;

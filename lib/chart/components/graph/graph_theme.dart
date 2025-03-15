@@ -42,8 +42,10 @@ class GGraphHighlightMarkerTheme extends GComponentTheme {
       style: style ?? this.style,
       size: size ?? this.size,
       interval: interval ?? this.interval,
-      crosshairHighlightStyle: crosshairHighlightStyle ?? this.crosshairHighlightStyle,
-      crosshairHighlightSize: crosshairHighlightSize ?? this.crosshairHighlightSize,
+      crosshairHighlightStyle:
+          crosshairHighlightStyle ?? this.crosshairHighlightStyle,
+      crosshairHighlightSize:
+          crosshairHighlightSize ?? this.crosshairHighlightSize,
     );
   }
 }

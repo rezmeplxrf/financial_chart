@@ -4,18 +4,19 @@ import 'components/render_util.dart';
 
 class GChartRender {
   const GChartRender();
-  void render({
-    required Canvas canvas,
-    required GChart chart,
-  }) {
-    GRenderUtil.renderClipped(canvas: canvas, clipRect: chart.area, render: () {
-      renderBackground(canvas: canvas, chart: chart);
-      renderPanels(canvas: canvas, chart: chart);
-      if(chart.dataSource.isNotEmpty) {
-        renderCrosshair(canvas: canvas, chart: chart);
-      }
-      renderSplitters(canvas: canvas, chart: chart);
-    });
+  void render({required Canvas canvas, required GChart chart}) {
+    GRenderUtil.renderClipped(
+      canvas: canvas,
+      clipRect: chart.area,
+      render: () {
+        renderBackground(canvas: canvas, chart: chart);
+        renderPanels(canvas: canvas, chart: chart);
+        if (chart.dataSource.isNotEmpty) {
+          renderCrosshair(canvas: canvas, chart: chart);
+        }
+        renderSplitters(canvas: canvas, chart: chart);
+      },
+    );
   }
 
   void renderBackground({required Canvas canvas, required GChart chart}) {

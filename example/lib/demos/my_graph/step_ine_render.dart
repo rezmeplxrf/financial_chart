@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'step_line.dart';
 import 'step_line_theme.dart';
 
-class GGraphStepLineRender extends GGraphRender<GGraphStepLine, GGraphStepLineTheme> {
+class GGraphStepLineRender
+    extends GGraphRender<GGraphStepLine, GGraphStepLineTheme> {
   @override
   void doRenderGraph({
     required Canvas canvas,
@@ -24,8 +25,15 @@ class GGraphStepLineRender extends GGraphRender<GGraphStepLine, GGraphStepLineTh
 
     double previousX = double.nan;
     double previousY = double.nan;
-    for (var point = pointViewPort.startPoint.floor(); point <= pointViewPort.endPoint.ceil(); point++) {
-      double? value = dataSource.getSeriesValue(point: point, key: graph.valueKey);
+    for (
+      var point = pointViewPort.startPoint.floor();
+      point <= pointViewPort.endPoint.ceil();
+      point++
+    ) {
+      double? value = dataSource.getSeriesValue(
+        point: point,
+        key: graph.valueKey,
+      );
       if (value == null) {
         continue;
       }
@@ -33,10 +41,21 @@ class GGraphStepLineRender extends GGraphRender<GGraphStepLine, GGraphStepLineTh
       double y = valueViewPort.valueToPosition(area, value);
       if (!previousX.isNaN && point % graph.pointInterval == 0) {
         addLinePath(
-            toPath: (y < previousY) ? upLinesPath : downLinesPath, x1: previousX, y1: previousY, x2: x, y2: previousY);
-        addLinePath(toPath: (y < previousY) ? upLinesPath : downLinesPath, x1: x, y1: previousY, x2: x, y2: y);
+          toPath: (y < previousY) ? upLinesPath : downLinesPath,
+          x1: previousX,
+          y1: previousY,
+          x2: x,
+          y2: previousY,
+        );
+        addLinePath(
+          toPath: (y < previousY) ? upLinesPath : downLinesPath,
+          x1: x,
+          y1: previousY,
+          x2: x,
+          y2: y,
+        );
       }
-      if(point % graph.pointInterval == 0) {
+      if (point % graph.pointInterval == 0) {
         previousX = x;
         previousY = y;
       }

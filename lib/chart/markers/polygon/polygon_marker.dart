@@ -15,10 +15,6 @@ class GPolygonMarker extends GGraphMarker {
     bool close = true,
     GGraphMarkerTheme? theme,
     super.render = const GPolygonMarkerRender(),
-  })  : _close = GValue<bool>(close),
-        super(
-          id: id,
-          keyCoordinates: coordinates,
-          theme: theme,
-        );
+  }) : _close = GValue<bool>(close),
+       super(id: id, keyCoordinates: coordinates, theme: theme);
 }

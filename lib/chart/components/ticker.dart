@@ -23,20 +23,21 @@ class GPointTickerStrategyDefault implements GPointTickerStrategy {
   /// The minimum interval between two ticks in pixel.
   final double tickerMinSize;
 
-  const GPointTickerStrategyDefault({
-    this.tickerMinSize = 100,
-  });
+  const GPointTickerStrategyDefault({this.tickerMinSize = 100});
 
   @override
   List<int> pointTicks({
     required double viewSize,
     required GPointViewPort viewPort,
   }) {
-    if(viewSize <= 0) {
+    if (viewSize <= 0) {
       return [];
     }
     List<int> points = <int>[];
-    int pointTickInterval = max((tickerMinSize / viewPort.pointSize(viewSize)).ceil(), 1); // how many points per tick
+    int pointTickInterval = max(
+      (tickerMinSize / viewPort.pointSize(viewSize)).ceil(),
+      1,
+    ); // how many points per tick
     int left = viewPort.startPoint.toInt();
     int right = viewPort.endPoint.toInt();
     for (int point = left; point < right; point++) {
@@ -56,12 +57,13 @@ class GValueTickerStrategyDefault implements GValueTickerStrategy {
   /// the final tick size will in range valueTickMinSize ~ valueTickMinSize*2
   final double tickerMinSize;
 
-  const GValueTickerStrategyDefault({
-    this.tickerMinSize = 60,
-  });
+  const GValueTickerStrategyDefault({this.tickerMinSize = 60});
 
   double _defaultTickerValueInterval(double valueRange) {
-    return pow(10, (valueRange * 10000).toStringAsFixed(0).length - 5).toDouble();
+    return pow(
+      10,
+      (valueRange * 10000).toStringAsFixed(0).length - 5,
+    ).toDouble();
   }
 
   double _defaultBaseValue(double centerValue, double tickInterval) {
@@ -73,17 +75,17 @@ class GValueTickerStrategyDefault implements GValueTickerStrategy {
     required double viewSize,
     required GValueViewPort viewPort,
   }) {
-    if(viewSize <= 0) {
+    if (viewSize <= 0) {
       return [];
     }
 
     double tickInterval = _defaultTickerValueInterval(viewPort.valueRange);
     double tickSize = viewPort.valueToSize(viewSize, tickInterval);
-    while(tickSize < tickerMinSize) {
+    while (tickSize < tickerMinSize) {
       tickInterval *= 2;
       tickSize *= 2;
     }
-    while(tickSize > tickerMinSize * 2) {
+    while (tickSize > tickerMinSize * 2) {
       tickInterval /= 2;
       tickSize /= 2;
     }
@@ -94,14 +96,14 @@ class GValueTickerStrategyDefault implements GValueTickerStrategy {
 
     double tickValue = baseValue;
     while (tickValue <= valueHigh) {
-      if(tickValue>=valueLow) {
+      if (tickValue >= valueLow) {
         valueTicks.add(tickValue);
       }
       tickValue += tickInterval;
     }
     tickValue = baseValue - tickInterval;
     while (tickValue >= valueLow) {
-      if(tickValue<=valueHigh) {
+      if (tickValue <= valueHigh) {
         valueTicks.add(tickValue);
       }
       tickValue -= tickInterval;
@@ -109,4 +111,3 @@ class GValueTickerStrategyDefault implements GValueTickerStrategy {
     return valueTicks;
   }
 }
-

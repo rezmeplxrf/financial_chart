@@ -30,23 +30,44 @@ class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
     _hitTestRectangles.clear();
     final List<Vector2> highlightMarks = <Vector2>[];
     double highlightInterval = theme.highlightMarkerTheme?.interval ?? 1000.0;
-    int highlightIntervalPoints = (highlightInterval / pointViewPort.pointSize(area.width)).round();
-    for (var point = pointViewPort.startPoint.floor(); point <= pointViewPort.endPoint.ceil(); point++) {
-      double? value = dataSource.getSeriesValue(point: point, key: graph.valueKey);
+    int highlightIntervalPoints =
+        (highlightInterval / pointViewPort.pointSize(area.width)).round();
+    for (
+      var point = pointViewPort.startPoint.floor();
+      point <= pointViewPort.endPoint.ceil();
+      point++
+    ) {
+      double? value = dataSource.getSeriesValue(
+        point: point,
+        key: graph.valueKey,
+      );
       if (value == null) {
         continue;
       }
       double x = pointViewPort.pointToPosition(area, point.toDouble());
       double barTop = valueViewPort.valueToPosition(area, value);
-      final rect = Rect.fromLTRB(x - barWidth / 2, barTop, x + barWidth / 2, barBottom);
+      final rect = Rect.fromLTRB(
+        x - barWidth / 2,
+        barTop,
+        x + barWidth / 2,
+        barBottom,
+      );
       if (barTop <= barBottom) {
         barsAbovePath.reset();
         barsAbovePath.addRect(rect);
-        drawPath(canvas: canvas, path: barsAbovePath, style: theme.barStyleAboveBase);
+        drawPath(
+          canvas: canvas,
+          path: barsAbovePath,
+          style: theme.barStyleAboveBase,
+        );
       } else {
         barsBelowPath.reset();
         barsBelowPath.addRect(rect);
-        drawPath(canvas: canvas, path: barsBelowPath, style: theme.barStyleBelowBase);
+        drawPath(
+          canvas: canvas,
+          path: barsBelowPath,
+          style: theme.barStyleBelowBase,
+        );
       }
       if (graph.hitTestMode() != HitTestMode.none) {
         _hitTestRectangles.add(rect);
@@ -56,17 +77,19 @@ class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
         highlightMarks.add(Vector2(x, barTop));
       }
     }
-    drawHighlightMarks(canvas: canvas, graph: graph, theme: theme, highlightMarks: highlightMarks);
+    drawHighlightMarks(
+      canvas: canvas,
+      graph: graph,
+      theme: theme,
+      highlightMarks: highlightMarks,
+    );
   }
 
   final List<Rect> _hitTestRectangles = [];
   bool _hitTestArea = false;
 
   @override
-  bool hitTest({
-    required Offset position,
-    double? epsilon,
-  }) {
+  bool hitTest({required Offset position, double? epsilon}) {
     if (_hitTestRectangles.isEmpty) {
       return false;
     }

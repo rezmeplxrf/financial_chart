@@ -98,9 +98,15 @@ class GPanel extends GComponent {
 
   void layout(GChart chart, Rect panelArea) {
     _areas.clear();
-    final (axesAreas, graphArea) =
-        GAxis.placeAxes(panelArea, [...pointAxes, ...valueAxes]);
-    final splitterArea = Rect.fromCenter(center: panelArea.bottomCenter, width: panelArea.width, height: splitterHeight);
+    final (axesAreas, graphArea) = GAxis.placeAxes(panelArea, [
+      ...pointAxes,
+      ...valueAxes,
+    ]);
+    final splitterArea = Rect.fromCenter(
+      center: panelArea.bottomCenter,
+      width: panelArea.width,
+      height: splitterHeight,
+    );
     _areas
       ..addAll(axesAreas)
       ..add(graphArea)

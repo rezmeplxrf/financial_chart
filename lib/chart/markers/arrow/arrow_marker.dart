@@ -21,11 +21,7 @@ class GArrowMarker extends GGraphMarker {
     double headLength = 10,
     GGraphMarkerTheme? theme,
     super.render = const GArrowMarkerRender(),
-  })  : _headWidth = GValue<double>(headWidth),
-        _headLength = GValue<double>(headLength),
-        super(
-          id: id,
-          keyCoordinates: [startCoord, endCoord],
-          theme: theme,
-        );
+  }) : _headWidth = GValue<double>(headWidth),
+       _headLength = GValue<double>(headLength),
+       super(id: id, keyCoordinates: [startCoord, endCoord], theme: theme);
 }

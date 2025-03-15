@@ -25,20 +25,21 @@ class DemoCrosshairPageState extends DemoBasePageState {
           GValueViewPort(
             id: "price",
             valuePrecision: 2,
-            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(dataKeys: [keyHigh, keyLow]),
+            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
+              dataKeys: [keyHigh, keyLow],
+            ),
           ),
         ],
         valueAxes: [
-          GValueAxis(viewPortId: 'price', position: GAxisPosition.end, scaleMode: GAxisScaleMode.zoom),
-        ],
-        pointAxes: [
-          GPointAxis(position: GAxisPosition.end),
-        ],
-        graphs: [
-          GGraphGrids(
-            id: "grids",
-            valueViewPortId: 'price',
+          GValueAxis(
+            viewPortId: 'price',
+            position: GAxisPosition.end,
+            scaleMode: GAxisScaleMode.zoom,
           ),
+        ],
+        pointAxes: [GPointAxis(position: GAxisPosition.end)],
+        graphs: [
+          GGraphGrids(id: "grids", valueViewPortId: 'price'),
           GGraphOhlc(
             id: "ohlc",
             valueViewPortId: "price",

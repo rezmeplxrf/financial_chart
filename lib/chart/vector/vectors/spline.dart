@@ -8,12 +8,12 @@ class SplineUtil {
 
   /// Gets control points of a point list.
   static List<Vector2> _catmullRomControlPoints(
-      List<Vector2> vectors,
-      double ratio,
-      bool isLoop,
-      bool hasConstraint, [
-        Rect? constraint,
-      ]) {
+    List<Vector2> vectors,
+    double ratio,
+    bool isLoop,
+    bool hasConstraint, [
+    Rect? constraint,
+  ]) {
     final cps = <Vector2>[];
     Vector2 prevVector;
     Vector2 nextVector;
@@ -34,7 +34,11 @@ class SplineUtil {
       }
       if (constraint != null) {
         Vector2.min(min, Vector2Extension.fromOffset(constraint.topLeft), min);
-        Vector2.max(max, Vector2Extension.fromOffset(constraint.bottomRight), max);
+        Vector2.max(
+          max,
+          Vector2Extension.fromOffset(constraint.bottomRight),
+          max,
+        );
       }
     }
 
@@ -89,15 +93,21 @@ class SplineUtil {
 
   /// Produces a cubic Catmull–Rom spline.
   static List<List<Vector2>> catmullRomSpline(
-      List<Vector2> points,
-      bool isLoop, {
-        bool hasConstraint = false,
-        Rect? constraint,
-        double ratio = 0.5,
-      }) {
+    List<Vector2> points,
+    bool isLoop, {
+    bool hasConstraint = false,
+    Rect? constraint,
+    double ratio = 0.5,
+  }) {
     // Alpha is 0.5, as proposed by Yuksel et al.
     // Thus is called a centripetal spline: https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline
-    final controlPointList = _catmullRomControlPoints(points, ratio, isLoop, hasConstraint, constraint);
+    final controlPointList = _catmullRomControlPoints(
+      points,
+      ratio,
+      isLoop,
+      hasConstraint,
+      constraint,
+    );
     final len = points.length;
     final rst = <List<Vector2>>[];
 
@@ -123,7 +133,12 @@ class SplineUtil {
   }
 
   // Function to calculate a point along a Bézier curve for a given parameter
-  static Vector2 _bezierPoint(Vector2 out, List<Vector2> curve, double t, List<Vector2> tmps) {
+  static Vector2 _bezierPoint(
+    Vector2 out,
+    List<Vector2> curve,
+    double t,
+    List<Vector2> tmps,
+  ) {
     if (curve.length < 2) {
       throw ArgumentError('At least 2 control points are required');
     }
@@ -146,7 +161,11 @@ class SplineUtil {
     return out;
   }
 
-  static List<Vector2> sampleSplines(List<List<Vector2>> controlPoints, int sampleSize, bool isLoop) {
+  static List<Vector2> sampleSplines(
+    List<List<Vector2>> controlPoints,
+    int sampleSize,
+    bool isLoop,
+  ) {
     List<Vector2> samples = [];
     List<Vector2> tmps = [];
     Vector2? last;
@@ -161,63 +180,87 @@ class SplineUtil {
         last = controlPoints[i - 1][2];
       }
       List<Vector2> curve = [last, cps[0], cps[1], cps[2]];
-      sampleSpline(curve[0], curve[1], curve[2], curve[3], sampleSize, samples, tmps);
+      sampleSpline(
+        curve[0],
+        curve[1],
+        curve[2],
+        curve[3],
+        sampleSize,
+        samples,
+        tmps,
+      );
     }
     return samples;
   }
 
   static void sampleSpline(
-      Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, int sampleSize, List<Vector2> out, List<Vector2> tmps) {
+    Vector2 p0,
+    Vector2 p1,
+    Vector2 p2,
+    Vector2 p3,
+    int sampleSize,
+    List<Vector2> out,
+    List<Vector2> tmps,
+  ) {
     for (int i = 0; i <= sampleSize; i++) {
-      out.add(_bezierPoint(Vector2.zero(), [p0, p1, p2, p3], (i / sampleSize).toDouble(), tmps));
+      out.add(
+        _bezierPoint(
+          Vector2.zero(),
+          [p0, p1, p2, p3],
+          (i / sampleSize).toDouble(),
+          tmps,
+        ),
+      );
     }
   }
 
   static Vector2 nearestPointOnSplines(
-      List<List<Vector2>> curves,
-      Vector2 pt,
-      bool isLoop, {
-        int sampleSize = kDefaultSampleSize,
-        double epsilon = 1e-4,
-      }) {
-    final segments = sampleSplines(
-      curves,
-      sampleSize,
-      isLoop,
-    );
+    List<List<Vector2>> curves,
+    Vector2 pt,
+    bool isLoop, {
+    int sampleSize = kDefaultSampleSize,
+    double epsilon = 1e-4,
+  }) {
+    final segments = sampleSplines(curves, sampleSize, isLoop);
     return PolygonUtil.nearestPointOn(vertices: segments, px: pt.x, py: pt.y);
   }
 
   static double distanceToSplines(
-      List<List<Vector2>> curves,
-      Vector2 pt,
-      bool isLoop, {
-        int sampleSize = kDefaultSampleSize,
-        double epsilon = 1e-4,
-      }) {
+    List<List<Vector2>> curves,
+    Vector2 pt,
+    bool isLoop, {
+    int sampleSize = kDefaultSampleSize,
+    double epsilon = 1e-4,
+  }) {
     final segments = sampleSplines(curves, sampleSize, isLoop);
     return PolygonUtil.distanceTo(vertices: segments, px: pt.x, py: pt.y);
   }
 
   static bool isInsideSplines(
-      List<List<Vector2>> curves,
-      Vector2 pt,
-      bool isLoop, {
-        int sampleSize = kDefaultSampleSize,
-      }) {
+    List<List<Vector2>> curves,
+    Vector2 pt,
+    bool isLoop, {
+    int sampleSize = kDefaultSampleSize,
+  }) {
     final segments = sampleSplines(curves, sampleSize, isLoop);
     return PolygonUtil.isInside(vertices: segments, px: pt.x, py: pt.y);
   }
 
   static bool hitTest(
-      List<List<Vector2>> curves,
-      Vector2 pt,
-      bool isLoop, {
-        bool testArea = false,
-        int sampleSize = kDefaultSampleSize,
-        double epsilon = 5,
-      }) {
+    List<List<Vector2>> curves,
+    Vector2 pt,
+    bool isLoop, {
+    bool testArea = false,
+    int sampleSize = kDefaultSampleSize,
+    double epsilon = 5,
+  }) {
     final segments = sampleSplines(curves, sampleSize, isLoop);
-    return PolygonUtil.hitTest(vertices: segments, px: pt.x, py: pt.y, testArea: testArea, epsilon: epsilon);
+    return PolygonUtil.hitTest(
+      vertices: segments,
+      px: pt.x,
+      py: pt.y,
+      testArea: testArea,
+      epsilon: epsilon,
+    );
   }
 }

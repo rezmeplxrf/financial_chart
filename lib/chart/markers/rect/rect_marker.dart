@@ -31,15 +31,11 @@ class GRectMarker extends GGraphMarker {
     GSize? cornerRadiusSize,
     GGraphMarkerTheme? theme,
     super.render = const GRectMarkerRender(),
-  })  : _pointRadiusSize = GValue<GSize?>(null),
-        _valueRadiusSize = GValue<GSize?>(null),
-        _alignment = GValue<Alignment>(Alignment.center),
-        _cornerRadiusSize = GValue<GSize?>(cornerRadiusSize),
-        super(
-          id: id,
-          keyCoordinates: [startCoord, endCoord],
-          theme: theme,
-        );
+  }) : _pointRadiusSize = GValue<GSize?>(null),
+       _valueRadiusSize = GValue<GSize?>(null),
+       _alignment = GValue<Alignment>(Alignment.center),
+       _cornerRadiusSize = GValue<GSize?>(cornerRadiusSize),
+       super(id: id, keyCoordinates: [startCoord, endCoord], theme: theme);
 
   GRectMarker.anchorAndRadius({
     String? id,
@@ -50,13 +46,9 @@ class GRectMarker extends GGraphMarker {
     Alignment alignment = Alignment.center,
     GGraphMarkerTheme? theme,
     super.render = const GRectMarkerRender(),
-  })  : _cornerRadiusSize = GValue<GSize?>(cornerRadiusSize),
-        _pointRadiusSize = GValue<GSize?>(pointRadiusSize),
-        _valueRadiusSize = GValue<GSize?>(valueRadiusSize),
-        _alignment = GValue<Alignment>(alignment),
-        super(
-          id: id,
-          keyCoordinates: [anchorCoord],
-          theme: theme,
-        );
+  }) : _cornerRadiusSize = GValue<GSize?>(cornerRadiusSize),
+       _pointRadiusSize = GValue<GSize?>(pointRadiusSize),
+       _valueRadiusSize = GValue<GSize?>(valueRadiusSize),
+       _alignment = GValue<Alignment>(alignment),
+       super(id: id, keyCoordinates: [anchorCoord], theme: theme);
 }

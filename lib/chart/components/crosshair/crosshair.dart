@@ -28,11 +28,13 @@ class GCrosshair extends GComponent {
   /// Whether the point labels are visible.
   final GValue<bool> _pointAxisLabelsVisible;
   bool get pointAxisLabelsVisible => _pointAxisLabelsVisible.value;
-  set pointAxisLabelsVisible(bool value) => _pointAxisLabelsVisible.value = value;
+  set pointAxisLabelsVisible(bool value) =>
+      _pointAxisLabelsVisible.value = value;
 
   final GValue<bool> _valueAxisLabelsVisible;
   bool get valueAxisLabelsVisible => _valueAxisLabelsVisible.value;
-  set valueAxisLabelsVisible(bool value) => _valueAxisLabelsVisible.value = value;
+  set valueAxisLabelsVisible(bool value) =>
+      _valueAxisLabelsVisible.value = value;
 
   GCrosshair({
     super.id,
@@ -44,11 +46,11 @@ class GCrosshair extends GComponent {
     bool valueLinesVisible = true,
     bool pointLabelsVisible = true,
     bool valueLabelsVisible = true,
-  })  : _snapToPoint = GValue<bool>(snapToPoint),
-        _pointLinesVisible = GValue<bool>(pointLinesVisible),
-        _valueLinesVisible = GValue<bool>(valueLinesVisible),
-        _pointAxisLabelsVisible = GValue<bool>(pointLabelsVisible),
-        _valueAxisLabelsVisible = GValue<bool>(valueLabelsVisible);
+  }) : _snapToPoint = GValue<bool>(snapToPoint),
+       _pointLinesVisible = GValue<bool>(pointLinesVisible),
+       _valueLinesVisible = GValue<bool>(valueLinesVisible),
+       _pointAxisLabelsVisible = GValue<bool>(pointLabelsVisible),
+       _valueAxisLabelsVisible = GValue<bool>(valueLabelsVisible);
 
   setCrossPosition(double x, double y) {
     crossPosition.update(x, y);

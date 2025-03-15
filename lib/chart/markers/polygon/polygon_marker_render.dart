@@ -10,7 +10,8 @@ import '../../components/viewport_h.dart';
 import '../../components/viewport_v.dart';
 import 'polygon_marker.dart';
 
-class GPolygonMarkerRender extends GGraphMarkerRender<GPolygonMarker, GGraphMarkerTheme> {
+class GPolygonMarkerRender
+    extends GGraphMarkerRender<GPolygonMarker, GGraphMarkerTheme> {
   const GPolygonMarkerRender();
   @override
   void doRenderMarker({
@@ -25,7 +26,13 @@ class GPolygonMarkerRender extends GGraphMarkerRender<GPolygonMarker, GGraphMark
     required GValueViewPort valueViewPort,
   }) {
     final points = marker.keyCoordinates
-        .map((e) => e.toPosition(area: area, valueViewPort: valueViewPort, pointViewPort: pointViewPort))
+        .map(
+          (e) => e.toPosition(
+            area: area,
+            valueViewPort: valueViewPort,
+            pointViewPort: pointViewPort,
+          ),
+        )
         .toList(growable: false);
     Path path = addPolygonPath(points: points, close: marker.close);
     drawPath(canvas: canvas, path: path, style: theme.markerStyle);

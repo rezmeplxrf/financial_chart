@@ -44,7 +44,14 @@ class LineUtil {
     required double px,
     required double py,
   }) {
-    Vector2 nearestPoint = nearestPointOn(x1: x1, y1: y1, x2: x2, y2: y2, px: px, py: py);
+    Vector2 nearestPoint = nearestPointOn(
+      x1: x1,
+      y1: y1,
+      x2: x2,
+      y2: y2,
+      px: px,
+      py: py,
+    );
     return Vector2(px, py).distanceTo(nearestPoint);
   }
 
@@ -57,7 +64,14 @@ class LineUtil {
     required double py,
     double epsilon = 5.0,
   }) {
-    double distance = distanceTo(x1: x1, y1: y1, x2: x2, y2: y2, px: px, py: py);
+    double distance = distanceTo(
+      x1: x1,
+      y1: y1,
+      x2: x2,
+      y2: y2,
+      px: px,
+      py: py,
+    );
     return distance <= epsilon;
   }
 }

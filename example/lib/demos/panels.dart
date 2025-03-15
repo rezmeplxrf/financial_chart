@@ -26,35 +26,44 @@ class DemoPanelsPageState extends DemoBasePageState {
           GValueViewPort(
             id: "price",
             valuePrecision: 2,
-            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(dataKeys: [keyHigh, keyLow]),
+            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
+              dataKeys: [keyHigh, keyLow],
+            ),
           ),
         ],
         valueAxes: [
-          GValueAxis(viewPortId: 'price', position: GAxisPosition.end, scaleMode: GAxisScaleMode.zoom),
+          GValueAxis(
+            viewPortId: 'price',
+            position: GAxisPosition.end,
+            scaleMode: GAxisScaleMode.zoom,
+          ),
         ],
         pointAxes: [
-          GPointAxis(position: GAxisPosition.start, scaleMode: GAxisScaleMode.select),
+          GPointAxis(
+            position: GAxisPosition.start,
+            scaleMode: GAxisScaleMode.select,
+          ),
           GPointAxis(position: GAxisPosition.end),
         ],
         graphs: [
-          GGraphGrids(
-            id: "grids",
-            valueViewPortId: 'price',
-          ),
+          GGraphGrids(id: "grids", valueViewPortId: 'price'),
           GGraphOhlc(
             id: "ohlc",
             valueViewPortId: "price",
             ohlcValueKeys: const [keyOpen, keyHigh, keyLow, keyClose],
           ),
-          GGraphLine(
-            id: "line",
-            valueViewPortId: "price",
-            valueKey: keySMA,
-          ),
+          GGraphLine(id: "line", valueViewPortId: "price", valueKey: keySMA),
         ],
         tooltip: GTooltip(
           position: GTooltipPosition.followPointer,
-          dataKeys: const [keyOpen, keyHigh, keyLow, keyClose, keyVolume, keySMA],
+          dataKeys: const [
+            keyOpen,
+            keyHigh,
+            keyLow,
+            keyClose,
+            keyVolume,
+            keySMA,
+          ],
           followValueKey: keyClose,
           followValueViewPortId: "price",
         ),
@@ -65,13 +74,18 @@ class DemoPanelsPageState extends DemoBasePageState {
           GValueAxis(viewPortId: 'macd', position: GAxisPosition.end),
         ],
         pointAxes: [
-          GPointAxis(position: GAxisPosition.end, scaleMode: GAxisScaleMode.move),
+          GPointAxis(
+            position: GAxisPosition.end,
+            scaleMode: GAxisScaleMode.move,
+          ),
         ],
         valueViewPorts: [
           GValueViewPort(
             id: "macd",
             valuePrecision: 2,
-            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(dataKeys: [keyMACD]),
+            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
+              dataKeys: [keyMACD],
+            ),
           ),
         ],
         graphs: [
@@ -150,15 +164,18 @@ class DemoPanelsPageState extends DemoBasePageState {
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {
-              for (var marker in chart!.panels[1].findGraphById("macd")!.graphMarkers) {
+              for (var marker
+                  in chart!.panels[1].findGraphById("macd")!.graphMarkers) {
                 marker.visible = selected;
               }
-              for (var marker in chart!.panels[1].findGraphById("macd")!.axisMarkers) {
+              for (var marker
+                  in chart!.panels[1].findGraphById("macd")!.axisMarkers) {
                 marker.visible = selected;
               }
               repaintChart();
             },
-            selected: chart!.panels[1].findGraphById("macd")!.graphMarkers[0].visible,
+            selected:
+                chart!.panels[1].findGraphById("macd")!.graphMarkers[0].visible,
           ),
         ),
       ],

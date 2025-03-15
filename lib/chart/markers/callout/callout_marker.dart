@@ -33,15 +33,14 @@ class GCalloutMarker extends GGraphMarker {
     double pointerMargin = 10,
     GGraphMarkerTheme? theme,
     GGraphMarkerRender render = const GCalloutMarkerRender(),
-  }) :
-    _text = GValue<String>(text),
-    _alignment = GValue<Alignment>(alignment),
-    _pointerSize = GValue<double>(pointerSize),
-    _pointerMargin = GValue<double>(pointerMargin),
-        super(
-          id: id,
-          keyCoordinates: [anchorCoord],
-          theme: theme,
-          render: render,
-        );
+  }) : _text = GValue<String>(text),
+       _alignment = GValue<Alignment>(alignment),
+       _pointerSize = GValue<double>(pointerSize),
+       _pointerMargin = GValue<double>(pointerMargin),
+       super(
+         id: id,
+         keyCoordinates: [anchorCoord],
+         theme: theme,
+         render: render,
+       );
 }

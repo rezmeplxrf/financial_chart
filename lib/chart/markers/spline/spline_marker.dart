@@ -15,10 +15,6 @@ class GSplineMarker extends GGraphMarker {
     bool close = false,
     GGraphMarkerTheme? theme,
     super.render = const GSplineMarkerRender(),
-  })  : _close = GValue<bool>(close),
-        super(
-          id: id,
-          keyCoordinates: [...coordinates],
-          theme: theme,
-        );
+  }) : _close = GValue<bool>(close),
+       super(id: id, keyCoordinates: [...coordinates], theme: theme);
 }

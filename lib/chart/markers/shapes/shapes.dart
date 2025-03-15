@@ -29,8 +29,22 @@ class GShapes {
   static Path heart(double radius) {
     final Path path = Path();
     path.moveTo(0, radius);
-    path.cubicTo(-radius * 2, -radius * 0.5, -radius * 0.5, -radius * 1.5, 0, -radius * 0.5);
-    path.cubicTo(radius * 0.5, -radius * 1.5, radius * 2, -radius * 0.5, 0, radius);
+    path.cubicTo(
+      -radius * 2,
+      -radius * 0.5,
+      -radius * 0.5,
+      -radius * 1.5,
+      0,
+      -radius * 0.5,
+    );
+    path.cubicTo(
+      radius * 0.5,
+      -radius * 1.5,
+      radius * 2,
+      -radius * 0.5,
+      0,
+      radius,
+    );
     path.close();
     return path;
   }

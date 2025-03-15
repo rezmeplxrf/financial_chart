@@ -67,9 +67,10 @@ class GPointViewPort extends ChangeNotifier {
     this.defaultPointWidth = 10,
   }) {
     assert(
-        (initialStartPoint == null && initialEndPoint == null) ||
-            (initialStartPoint != null && initialEndPoint != null),
-        'initialStartPoint and initialEndPoint should be both null or not null.');
+      (initialStartPoint == null && initialEndPoint == null) ||
+          (initialStartPoint != null && initialEndPoint != null),
+      'initialStartPoint and initialEndPoint should be both null or not null.',
+    );
     if (initialStartPoint != null && initialEndPoint != null) {
       _pointRange.update(initialStartPoint, initialEndPoint);
     }
@@ -78,24 +79,49 @@ class GPointViewPort extends ChangeNotifier {
 
   void initializeAnimation(TickerProvider vsync) {
     if (_rangeAnimationController == null && animationMilliseconds > 0) {
-      _rangeAnimationController =
-          AnimationController(vsync: vsync, duration: Duration(milliseconds: animationMilliseconds));
-      _rangeAnimation = Tween<double>(begin: 0, end: 1)
-          .animate(CurvedAnimation(parent: _rangeAnimationController!, curve: Curves.easeOutCubic));
+      _rangeAnimationController = AnimationController(
+        vsync: vsync,
+        duration: Duration(milliseconds: animationMilliseconds),
+      );
+      _rangeAnimation = Tween<double>(begin: 0, end: 1).animate(
+        CurvedAnimation(
+          parent: _rangeAnimationController!,
+          curve: Curves.easeOutCubic,
+        ),
+      );
     }
   }
 
-  void animateToRange(GChart chart, GRange targetRange, bool finished, bool animation) {
-    if (!animation || _rangeAnimationController == null || (targetRange == _pointRange)) {
-      setRange(startPoint: targetRange.begin!, endPoint: targetRange.end!, finished: finished);
+  void animateToRange(
+    GChart chart,
+    GRange targetRange,
+    bool finished,
+    bool animation,
+  ) {
+    if (!animation ||
+        _rangeAnimationController == null ||
+        (targetRange == _pointRange)) {
+      setRange(
+        startPoint: targetRange.begin!,
+        endPoint: targetRange.end!,
+        finished: finished,
+      );
       return;
     }
     _rangeAnimationController!.stop();
     _isAnimating.value = true;
     var currentRange = GRange.range(startPoint, endPoint);
     void animationListener() {
-      final updatedRange = GRange.lerp(currentRange, targetRange, _rangeAnimationController!.value);
-      setRange(startPoint: updatedRange.first!, endPoint: updatedRange.last!, finished: finished);
+      final updatedRange = GRange.lerp(
+        currentRange,
+        targetRange,
+        _rangeAnimationController!.value,
+      );
+      setRange(
+        startPoint: updatedRange.first!,
+        endPoint: updatedRange.last!,
+        finished: finished,
+      );
     }
 
     Future.delayed(const Duration(milliseconds: 10), () {
@@ -116,7 +142,9 @@ class GPointViewPort extends ChangeNotifier {
     bool notify = true,
   }) {
     assert(startPoint < endPoint);
-    if (_pointRange.isNotEmpty && startPoint == this.startPoint && endPoint == this.endPoint) {
+    if (_pointRange.isNotEmpty &&
+        startPoint == this.startPoint &&
+        endPoint == this.endPoint) {
       return;
     }
     _pointRange.update(startPoint, endPoint);
@@ -152,7 +180,8 @@ class GPointViewPort extends ChangeNotifier {
 
   /// Get the nearest point from position in view area.
   int nearestPoint(Rect area, Offset position) {
-    return ((position.dx - area.left) / pointSize(area.width) + startPoint).round();
+    return ((position.dx - area.left) / pointSize(area.width) + startPoint)
+        .round();
   }
 
   void resize(double fromSize, double toSize, bool notify) {
@@ -161,7 +190,12 @@ class GPointViewPort extends ChangeNotifier {
     }
     final pointSizeCurrent = _pointSize(fromSize, startPoint, endPoint);
     final newStartPoint = endPoint - toSize / pointSizeCurrent;
-    setRange(startPoint: newStartPoint, endPoint: endPoint, finished: true, notify: notify);
+    setRange(
+      startPoint: newStartPoint,
+      endPoint: endPoint,
+      finished: true,
+      notify: notify,
+    );
   }
 
   void interactionStart() {
@@ -178,10 +212,18 @@ class GPointViewPort extends ChangeNotifier {
     if (_pointRangeScaling.isEmpty) {
       return;
     }
-    double pointWidthStart = _pointSize(area.width, _pointRangeScaling.first!, _pointRangeScaling.last!);
-    double pointWidthNew = min(max(pointWidthStart * zoomRatio, minPointWidth), maxPointWidth);
+    double pointWidthStart = _pointSize(
+      area.width,
+      _pointRangeScaling.first!,
+      _pointRangeScaling.last!,
+    );
+    double pointWidthNew = min(
+      max(pointWidthStart * zoomRatio, minPointWidth),
+      maxPointWidth,
+    );
     double endPointNew = _pointRangeScaling.last!;
-    double startPointNew = _pointRangeScaling.last! - area.width / pointWidthNew;
+    double startPointNew =
+        _pointRangeScaling.last! - area.width / pointWidthNew;
     setRange(startPoint: startPointNew, endPoint: endPointNew, finished: false);
   }
 
@@ -189,7 +231,11 @@ class GPointViewPort extends ChangeNotifier {
     if (_pointRangeScaling.isEmpty) {
       return;
     }
-    double pointWidthStart = _pointSize(area.width, _pointRangeScaling.first!, _pointRangeScaling.last!);
+    double pointWidthStart = _pointSize(
+      area.width,
+      _pointRangeScaling.first!,
+      _pointRangeScaling.last!,
+    );
     double pointsMoved = movedDistance / pointWidthStart;
     double startPointNew = _pointRangeScaling.begin! - pointsMoved;
     double endPointNew = _pointRangeScaling.end! - pointsMoved;
@@ -243,14 +289,13 @@ class GPointViewPort extends ChangeNotifier {
     if (autoScaleStrategy == null) {
       return;
     }
-    final newRange = autoScaleStrategy!.getScale(chart: chart, panel: panel, pointViewPort: this);
+    final newRange = autoScaleStrategy!.getScale(
+      chart: chart,
+      panel: panel,
+      pointViewPort: this,
+    );
     if (newRange.isNotEmpty) {
-      animateToRange(
-        chart,
-        newRange,
-        finished,
-        animation,
-      );
+      animateToRange(chart, newRange, finished, animation);
     }
   }
 

@@ -4,7 +4,6 @@ import 'pair.dart';
 ///
 /// [begin] must be less than or equal to [end].
 class GRange extends GDoublePair {
-
   /// Construct a range with [begin] and [end] values.
   GRange.range(double begin, double end) : super.pair(begin, end) {
     assert(begin <= end);
@@ -22,7 +21,7 @@ class GRange extends GDoublePair {
 
   /// linear interpolation between two ranges.
   static GRange lerp(GRange a, GRange b, double t) {
-    if(a.isEmpty || b.isEmpty) {
+    if (a.isEmpty || b.isEmpty) {
       return b;
     }
     // lerp the begin and end values

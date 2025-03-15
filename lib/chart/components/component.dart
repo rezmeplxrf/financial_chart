@@ -30,9 +30,8 @@ abstract class GComponent {
     bool visible = true,
     this.render,
     GComponentTheme? theme,
-  })  : _theme = GValue<GComponentTheme?>(theme),
-        _visible = GValue<bool>(visible);
-
+  }) : _theme = GValue<GComponentTheme?>(theme),
+       _visible = GValue<bool>(visible);
 
   GRender getRender() {
     return render!;
@@ -48,5 +47,5 @@ enum HitTestMode {
   border,
 
   /// Hit test the area of the component.
-  area;
+  area,
 }

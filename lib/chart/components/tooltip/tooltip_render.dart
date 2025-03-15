@@ -33,7 +33,8 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
     if (area.left > crossPosition.dx || area.right < crossPosition.dx) {
       return;
     }
-    if (component.pointLineHighlightVisible || component.valueLineHighlightVisible) {
+    if (component.pointLineHighlightVisible ||
+        component.valueLineHighlightVisible) {
       doRenderHighlight(
         canvas: canvas,
         chart: chart,
@@ -61,35 +62,58 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
     required Offset crossPosition,
     required GTooltipTheme theme,
   }) {
-    if (!tooltip.pointLineHighlightVisible && !tooltip.valueLineHighlightVisible) {
+    if (!tooltip.pointLineHighlightVisible &&
+        !tooltip.valueLineHighlightVisible) {
       return;
     }
-    if (theme.pointHighlightStyle == null && theme.valueHighlightStyle == null) {
+    if (theme.pointHighlightStyle == null &&
+        theme.valueHighlightStyle == null) {
       return;
     }
     final area = panel.graphArea();
     final pointViewPort = chart.pointViewPort;
-    if(!pointViewPort.isValid) {
+    if (!pointViewPort.isValid) {
       return;
     }
     final point = pointViewPort.nearestPoint(area, crossPosition);
 
-    if (tooltip.pointLineHighlightVisible && theme.pointHighlightStyle != null) {
-      final pointPosition = pointViewPort.pointToPosition(area, point.toDouble());
+    if (tooltip.pointLineHighlightVisible &&
+        theme.pointHighlightStyle != null) {
+      final pointPosition = pointViewPort.pointToPosition(
+        area,
+        point.toDouble(),
+      );
       if (pointPosition.isNaN) {
         return;
       }
       final pointWidth = pointViewPort.pointSize(area.width);
       if (theme.pointHighlightStyle!.getFillPaint() == null) {
         // when fill paint not set, we draw highlight as line
-        final highlightPath = addLinePath(x1: pointPosition, y1: area.top, x2: pointPosition, y2: area.bottom);
-        drawPath(canvas: canvas, path: highlightPath, style: theme.pointHighlightStyle!);
+        final highlightPath = addLinePath(
+          x1: pointPosition,
+          y1: area.top,
+          x2: pointPosition,
+          y2: area.bottom,
+        );
+        drawPath(
+          canvas: canvas,
+          path: highlightPath,
+          style: theme.pointHighlightStyle!,
+        );
       } else {
         // when fill paint was set, we draw highlight as area
         final highlightPath = addRectPath(
-            rect:
-                Rect.fromCenter(center: Offset(pointPosition, area.center.dy), width: pointWidth, height: area.height));
-        drawPath(canvas: canvas, path: highlightPath, style: theme.pointHighlightStyle!);
+          rect: Rect.fromCenter(
+            center: Offset(pointPosition, area.center.dy),
+            width: pointWidth,
+            height: area.height,
+          ),
+        );
+        drawPath(
+          canvas: canvas,
+          path: highlightPath,
+          style: theme.pointHighlightStyle!,
+        );
       }
     }
 
@@ -97,14 +121,31 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
         theme.valueHighlightStyle != null &&
         tooltip.followValueKey != null &&
         tooltip.followValueViewPortId != null) {
-      final value = chart.dataSource.getSeriesValue(point: point, key: tooltip.followValueKey!);
+      final value = chart.dataSource.getSeriesValue(
+        point: point,
+        key: tooltip.followValueKey!,
+      );
       if (value != null) {
-        final valueViewPort = panel.findValueViewPortById(tooltip.followValueViewPortId!);
+        final valueViewPort = panel.findValueViewPortById(
+          tooltip.followValueViewPortId!,
+        );
         assert(valueViewPort != null);
-        if(valueViewPort!.isValid) {
-          final valuePosition = valueViewPort.valueToPosition(area, value.toDouble());
-          final valueHighlightPath = addLinePath(x1: area.left, y1: valuePosition, x2: area.right, y2: valuePosition);
-          drawPath(canvas: canvas, path: valueHighlightPath, style: theme.valueHighlightStyle!);
+        if (valueViewPort!.isValid) {
+          final valuePosition = valueViewPort.valueToPosition(
+            area,
+            value.toDouble(),
+          );
+          final valueHighlightPath = addLinePath(
+            x1: area.left,
+            y1: valuePosition,
+            x2: area.right,
+            y2: valuePosition,
+          );
+          drawPath(
+            canvas: canvas,
+            path: valueHighlightPath,
+            style: theme.valueHighlightStyle!,
+          );
         }
       }
     }
@@ -128,7 +169,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
     final area = panel.graphArea();
     final dataSource = chart.dataSource;
     final pointViewPort = chart.pointViewPort;
-    if(!pointViewPort.isValid) {
+    if (!pointViewPort.isValid) {
       return;
     }
     final point = pointViewPort.nearestPoint(area, crossPosition);
@@ -147,21 +188,36 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
       anchorPosition = area.bottomRight;
     } else {
       // follow
-      if (tooltip.followValueKey != null && tooltip.followValueViewPortId != null) {
-        double pointPosition = pointViewPort.pointToPosition(area, point.toDouble());
+      if (tooltip.followValueKey != null &&
+          tooltip.followValueViewPortId != null) {
+        double pointPosition = pointViewPort.pointToPosition(
+          area,
+          point.toDouble(),
+        );
         anchorPosition = Offset(pointPosition, crossPosition.dy);
-        final value = dataSource.getSeriesValue(point: point, key: tooltip.followValueKey!);
+        final value = dataSource.getSeriesValue(
+          point: point,
+          key: tooltip.followValueKey!,
+        );
         if (value != null) {
-          final valueViewPort = panel.findValueViewPortById(tooltip.followValueViewPortId!);
+          final valueViewPort = panel.findValueViewPortById(
+            tooltip.followValueViewPortId!,
+          );
           assert(valueViewPort != null);
-          final valuePosition = valueViewPort!.valueToPosition(area, value.toDouble());
+          final valuePosition = valueViewPort!.valueToPosition(
+            area,
+            value.toDouble(),
+          );
           anchorPosition = Offset(pointPosition, valuePosition);
         }
       } else {
         anchorPosition = crossPosition;
       }
     }
-    final dataKeyValues = dataSource.getSeriesValueAsMap(point: point, keys: tooltip.dataKeys);
+    final dataKeyValues = dataSource.getSeriesValueAsMap(
+      point: point,
+      keys: tooltip.dataKeys,
+    );
     if (dataKeyValues.isEmpty) {
       return;
     }
@@ -174,9 +230,18 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
       final prop = dataSource.getSeriesProperty(key);
       final label = prop.label;
       final value = dataKeyValues[key];
-      final valueText = (value != null) ? dataSource.seriesValueFormater(value, prop.precision) : '';
-      final (labelPainter, _, _) = GRenderUtil.createTextPainter(text: label, style: theme.labelStyle);
-      final (valuePainter, _, _) = GRenderUtil.createTextPainter(text: valueText, style: theme.valueStyle);
+      final valueText =
+          (value != null)
+              ? dataSource.seriesValueFormater(value, prop.precision)
+              : '';
+      final (labelPainter, _, _) = GRenderUtil.createTextPainter(
+        text: label,
+        style: theme.labelStyle,
+      );
+      final (valuePainter, _, _) = GRenderUtil.createTextPainter(
+        text: valueText,
+        style: theme.valueStyle,
+      );
       labelsWidth = max(labelsWidth, labelPainter.size.width);
       valuesWidth = max(valuesWidth, valuePainter.size.width);
       labelsHeight = labelsHeight + labelPainter.size.height + theme.rowSpacing;
@@ -187,8 +252,15 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
     valuesHeight = valuesHeight - theme.rowSpacing;
 
     double frameWidth =
-        labelsWidth + valuesWidth + theme.labelValueSpacing + theme.framePadding * 2 + theme.frameMargin * 2;
-    double frameHeight = max(labelsHeight, valuesHeight) + theme.framePadding * 2 + theme.frameMargin * 2;
+        labelsWidth +
+        valuesWidth +
+        theme.labelValueSpacing +
+        theme.framePadding * 2 +
+        theme.frameMargin * 2;
+    double frameHeight =
+        max(labelsHeight, valuesHeight) +
+        theme.framePadding * 2 +
+        theme.frameMargin * 2;
 
     Rect tooltipArea = Rect.fromPoints(
       anchorPosition,
@@ -208,16 +280,32 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
         anchorPosition.translate(frameWidth, frameHeight),
       );
     }
-    final framePath = addRectPath(rect: tooltipArea.deflate(theme.frameMargin), cornerRadius: theme.frameCornerRadius);
+    final framePath = addRectPath(
+      rect: tooltipArea.deflate(theme.frameMargin),
+      cornerRadius: theme.frameCornerRadius,
+    );
     drawPath(canvas: canvas, path: framePath, style: theme.frameStyle);
 
-    Offset anchor =
-        anchorPosition.translate(theme.framePadding + theme.frameMargin, theme.framePadding + theme.frameMargin);
+    Offset anchor = anchorPosition.translate(
+      theme.framePadding + theme.frameMargin,
+      theme.framePadding + theme.frameMargin,
+    );
     for (var labelValuePair in textPainters) {
       labelValuePair.first!.paint(canvas, anchor);
-      labelValuePair.last!.paint(canvas,
-          anchor.translate(labelsWidth + theme.labelValueSpacing + valuesWidth - labelValuePair.last!.size.width, 0));
-      anchor = anchor.translate(0, labelValuePair.first!.size.height + theme.rowSpacing);
+      labelValuePair.last!.paint(
+        canvas,
+        anchor.translate(
+          labelsWidth +
+              theme.labelValueSpacing +
+              valuesWidth -
+              labelValuePair.last!.size.width,
+          0,
+        ),
+      );
+      anchor = anchor.translate(
+        0,
+        labelValuePair.first!.size.height + theme.rowSpacing,
+      );
     }
   }
 }

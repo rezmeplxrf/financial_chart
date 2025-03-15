@@ -6,15 +6,9 @@ import 'background.dart';
 class GBackgroundTheme extends GComponentTheme {
   final PaintStyle style;
 
-  const GBackgroundTheme({
-    required this.style,
-  });
+  const GBackgroundTheme({required this.style});
 
-  GBackgroundTheme copyWith({
-    PaintStyle? style,
-  }) {
-    return GBackgroundTheme(
-      style: style ?? this.style,
-    );
+  GBackgroundTheme copyWith({PaintStyle? style}) {
+    return GBackgroundTheme(style: style ?? this.style);
   }
 }

@@ -12,7 +12,8 @@ import '../../components/viewport_h.dart';
 import '../../components/viewport_v.dart';
 import 'arc_marker.dart';
 
-class GArcMarkerRender extends GGraphMarkerRender<GArcMarker, GGraphMarkerTheme> {
+class GArcMarkerRender
+    extends GGraphMarkerRender<GArcMarker, GGraphMarkerTheme> {
   const GArcMarkerRender();
 
   @override
@@ -29,35 +30,63 @@ class GArcMarkerRender extends GGraphMarkerRender<GArcMarker, GGraphMarkerTheme>
   }) {
     if (marker.keyCoordinates.length == 2) {
       // center and border points
-      final center =
-      marker.keyCoordinates[0].toPosition(area: area, valueViewPort: valueViewPort, pointViewPort: pointViewPort);
-      final border =
-      marker.keyCoordinates[1].toPosition(area: area, valueViewPort: valueViewPort, pointViewPort: pointViewPort);
+      final center = marker.keyCoordinates[0].toPosition(
+        area: area,
+        valueViewPort: valueViewPort,
+        pointViewPort: pointViewPort,
+      );
+      final border = marker.keyCoordinates[1].toPosition(
+        area: area,
+        valueViewPort: valueViewPort,
+        pointViewPort: pointViewPort,
+      );
       final radius = (border - center).distance;
       //ArcHitTest.
       Path path = GRenderUtil.addArcPath(
-          center: center,
-          radius: radius,
-          startAngle: marker.startTheta,
-          endAngle: marker.endTheta,
-          close: marker.close);
-      GRenderUtil.drawPath(canvas: canvas, path: path, style: theme.markerStyle);
+        center: center,
+        radius: radius,
+        startAngle: marker.startTheta,
+        endAngle: marker.endTheta,
+        close: marker.close,
+      );
+      GRenderUtil.drawPath(
+        canvas: canvas,
+        path: path,
+        style: theme.markerStyle,
+      );
     } else if (marker.keyCoordinates.length == 1 && marker.radiusSize != null) {
       // radius with anchor point and alignment
-      final anchor =
-      marker.keyCoordinates[0].toPosition(area: area, valueViewPort: valueViewPort, pointViewPort: pointViewPort);
-      final radius =
-      marker.radiusSize!.toViewSize(area: area, pointViewPort: pointViewPort, valueViewPort: valueViewPort);
-      final alignment = marker.alignment; // where anchor point located on the bound rect of the circle
+      final anchor = marker.keyCoordinates[0].toPosition(
+        area: area,
+        valueViewPort: valueViewPort,
+        pointViewPort: pointViewPort,
+      );
+      final radius = marker.radiusSize!.toViewSize(
+        area: area,
+        pointViewPort: pointViewPort,
+        valueViewPort: valueViewPort,
+      );
+      final alignment =
+          marker
+              .alignment; // where anchor point located on the bound rect of the circle
       Rect rect = GRenderUtil.rectFromAnchorAndAlignment(
-          anchor: anchor, width: radius * 2, height: radius * 2, alignment: alignment);
+        anchor: anchor,
+        width: radius * 2,
+        height: radius * 2,
+        alignment: alignment,
+      );
       Path path = GRenderUtil.addArcPath(
-          center: rect.center,
-          radius: radius,
-          startAngle: marker.startTheta,
-          endAngle: marker.endTheta,
-          close: marker.close);
-      GRenderUtil.drawPath(canvas: canvas, path: path, style: theme.markerStyle);
+        center: rect.center,
+        radius: radius,
+        startAngle: marker.startTheta,
+        endAngle: marker.endTheta,
+        close: marker.close,
+      );
+      GRenderUtil.drawPath(
+        canvas: canvas,
+        path: path,
+        style: theme.markerStyle,
+      );
     }
   }
 }

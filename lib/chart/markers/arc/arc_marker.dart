@@ -38,19 +38,19 @@ class GArcMarker extends GGraphMarker {
     bool close = false,
     GGraphMarkerTheme? theme,
     super.render = const GArcMarkerRender(),
-  })  : _radiusSize = GValue<GSize?>(null),
-        _alignment = GValue<Alignment>(Alignment.center),
-        _startTheta = GValue<double>(startTheta),
-        _endTheta = GValue<double>(endTheta),
-        _close = GValue<bool>(close),
-        super(
-          id: id,
-          keyCoordinates: [
-            centerCoord,
-            borderCoord
-          ], // the distance between "center" and "border" decides the render radius
-          theme: theme,
-        );
+  }) : _radiusSize = GValue<GSize?>(null),
+       _alignment = GValue<Alignment>(Alignment.center),
+       _startTheta = GValue<double>(startTheta),
+       _endTheta = GValue<double>(endTheta),
+       _close = GValue<bool>(close),
+       super(
+         id: id,
+         keyCoordinates: [
+           centerCoord,
+           borderCoord,
+         ], // the distance between "center" and "border" decides the render radius
+         theme: theme,
+       );
 
   GArcMarker.anchorAndRadius({
     String? id,
@@ -59,20 +59,22 @@ class GArcMarker extends GGraphMarker {
     required double startTheta,
     required double endTheta,
     bool close = false,
-    Alignment alignment = Alignment.center, // where anchor point located on the bound rect of the circle
+    Alignment alignment =
+        Alignment
+            .center, // where anchor point located on the bound rect of the circle
     GGraphMarkerTheme? theme,
     GGraphMarkerRender render = const GArcMarkerRender(),
-  })  : _radiusSize = GValue<GSize?>(radiusSize),
-        _alignment = GValue<Alignment>(alignment),
-        _startTheta = GValue<double>(startTheta),
-        _endTheta = GValue<double>(endTheta),
-        _close = GValue<bool>(close),
-        super(
-          id: id,
-          keyCoordinates: [anchorCoord],
-          theme: theme,
-          render: render,
-        ) {
+  }) : _radiusSize = GValue<GSize?>(radiusSize),
+       _alignment = GValue<Alignment>(alignment),
+       _startTheta = GValue<double>(startTheta),
+       _endTheta = GValue<double>(endTheta),
+       _close = GValue<bool>(close),
+       super(
+         id: id,
+         keyCoordinates: [anchorCoord],
+         theme: theme,
+         render: render,
+       ) {
     assert(radiusSize.sizeValue > 0, 'radius must be positive value.');
   }
 }

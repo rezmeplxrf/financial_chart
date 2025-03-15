@@ -45,19 +45,22 @@ class GTooltip extends GComponent {
   /// [followValueKey] must be set also.
   final GValue<String?> _followValueViewPortId;
   String? get followValueViewPortId => _followValueViewPortId.value;
-  set followValueViewPortId(String? value) => _followValueViewPortId.value = value;
+  set followValueViewPortId(String? value) =>
+      _followValueViewPortId.value = value;
 
   /// Whether to display the point line highlight.
   final GValue<bool> _pointLineHighlightVisible;
   bool get pointLineHighlightVisible => _pointLineHighlightVisible.value;
-  set pointLineHighlightVisible(bool value) => _pointLineHighlightVisible.value = value;
+  set pointLineHighlightVisible(bool value) =>
+      _pointLineHighlightVisible.value = value;
 
   /// Whether to display the value line highlight.
   ///
   /// The value line highlight will be displayed when [followValueKey] and [followValueViewPortId] are set.
   final GValue<bool> _valueLineHighlightVisible;
   bool get valueLineHighlightVisible => _valueLineHighlightVisible.value;
-  set valueLineHighlightVisible(bool value) => _valueLineHighlightVisible.value = value;
+  set valueLineHighlightVisible(bool value) =>
+      _valueLineHighlightVisible.value = value;
 
   GTooltip({
     GTooltipPosition position = GTooltipPosition.followPointer,
@@ -68,9 +71,9 @@ class GTooltip extends GComponent {
     bool valueLineHighlightVisible = true,
     super.render = const GTooltipRender(),
     super.theme,
-  })  : _position = GValue<GTooltipPosition>(position),
-        _followValueKey = GValue<String?>(followValueKey),
-        _followValueViewPortId = GValue<String?>(followValueViewPortId),
-        _pointLineHighlightVisible = GValue<bool>(pointLineHighlightVisible),
-        _valueLineHighlightVisible = GValue<bool>(valueLineHighlightVisible);
+  }) : _position = GValue<GTooltipPosition>(position),
+       _followValueKey = GValue<String?>(followValueKey),
+       _followValueViewPortId = GValue<String?>(followValueViewPortId),
+       _pointLineHighlightVisible = GValue<bool>(pointLineHighlightVisible),
+       _valueLineHighlightVisible = GValue<bool>(valueLineHighlightVisible);
 }

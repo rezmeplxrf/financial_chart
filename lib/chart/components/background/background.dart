@@ -1,4 +1,3 @@
-
 import '../component.dart';
 import 'background_render.dart';
 

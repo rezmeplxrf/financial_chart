@@ -11,7 +11,8 @@ import '../../components/viewport_h.dart';
 import '../../components/viewport_v.dart';
 import 'oval_marker.dart';
 
-class GOvalMarkerRender extends GGraphMarkerRender<GOvalMarker, GGraphMarkerTheme> {
+class GOvalMarkerRender
+    extends GGraphMarkerRender<GOvalMarker, GGraphMarkerTheme> {
   const GOvalMarkerRender();
   @override
   void doRenderMarker({
@@ -25,20 +26,43 @@ class GOvalMarkerRender extends GGraphMarkerRender<GOvalMarker, GGraphMarkerThem
     required GPointViewPort pointViewPort,
     required GValueViewPort valueViewPort,
   }) {
-    if(marker.keyCoordinates.length == 2) {
-      final start =
-          marker.keyCoordinates[0].toPosition(area: area, valueViewPort: valueViewPort, pointViewPort: pointViewPort);
-      final end =
-          marker.keyCoordinates[1].toPosition(area: area, valueViewPort: valueViewPort, pointViewPort: pointViewPort);
+    if (marker.keyCoordinates.length == 2) {
+      final start = marker.keyCoordinates[0].toPosition(
+        area: area,
+        valueViewPort: valueViewPort,
+        pointViewPort: pointViewPort,
+      );
+      final end = marker.keyCoordinates[1].toPosition(
+        area: area,
+        valueViewPort: valueViewPort,
+        pointViewPort: pointViewPort,
+      );
       Path path = addOvalPath(rect: Rect.fromPoints(start, end));
       drawPath(canvas: canvas, path: path, style: theme.markerStyle);
-    } else if(marker.keyCoordinates.length == 1 && marker.pointRadiusSize != null && marker.valueRadiusSize != null) {
-      final anchor =
-          marker.keyCoordinates[0].toPosition(area: area, valueViewPort: valueViewPort, pointViewPort: pointViewPort);
-      final pointRadius = marker.pointRadiusSize!.toViewSize(area: area, pointViewPort: pointViewPort, valueViewPort: valueViewPort);
-      final valueRadius = marker.valueRadiusSize!.toViewSize(area: area, pointViewPort: pointViewPort, valueViewPort: valueViewPort);
+    } else if (marker.keyCoordinates.length == 1 &&
+        marker.pointRadiusSize != null &&
+        marker.valueRadiusSize != null) {
+      final anchor = marker.keyCoordinates[0].toPosition(
+        area: area,
+        valueViewPort: valueViewPort,
+        pointViewPort: pointViewPort,
+      );
+      final pointRadius = marker.pointRadiusSize!.toViewSize(
+        area: area,
+        pointViewPort: pointViewPort,
+        valueViewPort: valueViewPort,
+      );
+      final valueRadius = marker.valueRadiusSize!.toViewSize(
+        area: area,
+        pointViewPort: pointViewPort,
+        valueViewPort: valueViewPort,
+      );
       Rect rect = GRenderUtil.rectFromAnchorAndAlignment(
-          anchor: anchor, width: pointRadius * 2, height: valueRadius * 2, alignment: marker.alignment);
+        anchor: anchor,
+        width: pointRadius * 2,
+        height: valueRadius * 2,
+        alignment: marker.alignment,
+      );
       Path path = addOvalPath(rect: rect);
       drawPath(canvas: canvas, path: path, style: theme.markerStyle);
     }

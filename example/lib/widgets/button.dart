@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class AppButton extends StatelessWidget {
@@ -11,12 +10,10 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(2),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
       ),
       onPressed: onPressed,
-      child: Text(text, overflow: TextOverflow.ellipsis,),
+      child: Text(text, overflow: TextOverflow.ellipsis),
     );
   }
 }

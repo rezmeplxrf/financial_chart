@@ -3,7 +3,12 @@ import 'line.dart';
 import 'extensions.dart';
 
 class RectUtil {
-  static (double left, double top, double right, double bottm) getLTRB(double x1, double y1, double x2, double y2) {
+  static (double left, double top, double right, double bottm) getLTRB(
+    double x1,
+    double y1,
+    double x2,
+    double y2,
+  ) {
     double left = x1 < x2 ? x1 : x2;
     double right = x1 > x2 ? x1 : x2;
     double top = y1 < y2 ? y1 : y2;
@@ -31,29 +36,101 @@ class RectUtil {
     if (point.x <= center.x) {
       if (point.y <= center.y) {
         if (point.x - left < point.y - top) {
-          result.setFrom(LineUtil.nearestPointOn(x1: left, y1: top, x2: left, y2: bottom, px: point.x, py: point.y));
+          result.setFrom(
+            LineUtil.nearestPointOn(
+              x1: left,
+              y1: top,
+              x2: left,
+              y2: bottom,
+              px: point.x,
+              py: point.y,
+            ),
+          );
         } else {
-          result.setFrom(LineUtil.nearestPointOn(x1: left, y1: top, x2: right, y2: top, px: point.x, py: point.y));
+          result.setFrom(
+            LineUtil.nearestPointOn(
+              x1: left,
+              y1: top,
+              x2: right,
+              y2: top,
+              px: point.x,
+              py: point.y,
+            ),
+          );
         }
       } else {
         if (point.x - left < bottom - point.y) {
-          result.setFrom(LineUtil.nearestPointOn(x1: left, y1: bottom, x2: left, y2: top, px: point.x, py: point.y));
+          result.setFrom(
+            LineUtil.nearestPointOn(
+              x1: left,
+              y1: bottom,
+              x2: left,
+              y2: top,
+              px: point.x,
+              py: point.y,
+            ),
+          );
         } else {
-          result.setFrom(LineUtil.nearestPointOn(x1: left, y1: bottom, x2: right, y2: bottom, px: point.x, py: point.y));
+          result.setFrom(
+            LineUtil.nearestPointOn(
+              x1: left,
+              y1: bottom,
+              x2: right,
+              y2: bottom,
+              px: point.x,
+              py: point.y,
+            ),
+          );
         }
       }
     } else {
       if (point.y <= center.y) {
         if (right - point.x < point.y - top) {
-          result.setFrom(LineUtil.nearestPointOn(x1: right, y1: top, x2: right, y2: bottom, px: point.x, py: point.y));
+          result.setFrom(
+            LineUtil.nearestPointOn(
+              x1: right,
+              y1: top,
+              x2: right,
+              y2: bottom,
+              px: point.x,
+              py: point.y,
+            ),
+          );
         } else {
-          result.setFrom(LineUtil.nearestPointOn(x1: left, y1: top, x2: right, y2: top, px: point.x, py: point.y));
+          result.setFrom(
+            LineUtil.nearestPointOn(
+              x1: left,
+              y1: top,
+              x2: right,
+              y2: top,
+              px: point.x,
+              py: point.y,
+            ),
+          );
         }
       } else {
         if (right - point.x < bottom - point.y) {
-          result.setFrom(LineUtil.nearestPointOn(x1: right, y1: bottom, x2: right, y2: top, px: point.x, py: point.y));
+          result.setFrom(
+            LineUtil.nearestPointOn(
+              x1: right,
+              y1: bottom,
+              x2: right,
+              y2: top,
+              px: point.x,
+              py: point.y,
+            ),
+          );
         } else {
-          result.setFrom(LineUtil.nearestPointOn(x1: left, y1: bottom, x2: right, y2: bottom, px: point.x, py: point.y));
+          result.setFrom(
+            LineUtil.nearestPointOn(
+              x1: left,
+              y1: bottom,
+              x2: right,
+              y2: bottom,
+              px: point.x,
+              py: point.y,
+            ),
+          );
         }
       }
     }
@@ -70,7 +147,15 @@ class RectUtil {
     double py, {
     double rotationTheta = 0,
   }) {
-    Vector2 nearestPoint = nearestPointOnRect(x1, y1, x2, y2, px, py, rotationTheta: rotationTheta);
+    Vector2 nearestPoint = nearestPointOnRect(
+      x1,
+      y1,
+      x2,
+      y2,
+      px,
+      py,
+      rotationTheta: rotationTheta,
+    );
     return (Vector2(px, py) - nearestPoint).length;
   }
 
@@ -89,7 +174,10 @@ class RectUtil {
     if (rotationTheta != 0) {
       point.rotate(-rotationTheta, center: center);
     }
-    return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom;
+    return point.x >= left &&
+        point.x <= right &&
+        point.y >= top &&
+        point.y <= bottom;
   }
 
   static bool hitTest({
@@ -106,7 +194,15 @@ class RectUtil {
     if (testArea) {
       return isInside(x1, y1, x2, y2, px, py, rotationTheta: rotationTheta);
     }
-    final distance = distanceTo(x1, y1, x2, y2, px, py, rotationTheta: rotationTheta);
+    final distance = distanceTo(
+      x1,
+      y1,
+      x2,
+      y2,
+      px,
+      py,
+      rotationTheta: rotationTheta,
+    );
     return (distance <= (epsilon ?? 5.0));
   }
 }

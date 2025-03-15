@@ -25,7 +25,7 @@ class GCrosshairRender extends GRender<GCrosshair, GCrosshairTheme> {
     }
     for (int i = 0; i < chart.panels.length; i++) {
       final panel = chart.panels[i];
-      if(crosshair.pointLinesVisible || crosshair.valueLinesVisible) {
+      if (crosshair.pointLinesVisible || crosshair.valueLinesVisible) {
         doRenderPanelCrossLines(
           canvas: canvas,
           chart: chart,
@@ -36,7 +36,7 @@ class GCrosshairRender extends GRender<GCrosshair, GCrosshairTheme> {
         );
       }
 
-      if(crosshair.pointAxisLabelsVisible) {
+      if (crosshair.pointAxisLabelsVisible) {
         doRenderPointAxisLabels(
           canvas: canvas,
           chart: chart,
@@ -47,7 +47,7 @@ class GCrosshairRender extends GRender<GCrosshair, GCrosshairTheme> {
         );
       }
 
-      if(crosshair.valueAxisLabelsVisible) {
+      if (crosshair.valueAxisLabelsVisible) {
         doRenderValueAxisLabels(
           canvas: canvas,
           chart: chart,
@@ -73,7 +73,9 @@ class GCrosshairRender extends GRender<GCrosshair, GCrosshairTheme> {
     }
     final linesPath = Path();
     final graphArea = panel.graphArea();
-    if (crosshair.pointLinesVisible && crossPosition.dx >= graphArea.left && crossPosition.dx <= graphArea.right) {
+    if (crosshair.pointLinesVisible &&
+        crossPosition.dx >= graphArea.left &&
+        crossPosition.dx <= graphArea.right) {
       // vertical line
       double dx = crossPosition.dx;
       if (crosshair.snapToPoint) {
@@ -82,13 +84,26 @@ class GCrosshairRender extends GRender<GCrosshair, GCrosshairTheme> {
         dx = viewPortH.pointToPosition(graphArea, point.toDouble());
       }
       if (dx > graphArea.left && dx < graphArea.right) {
-        addLinePath(toPath: linesPath, x1: dx, y1: graphArea.top, x2: dx, y2: graphArea.bottom);
+        addLinePath(
+          toPath: linesPath,
+          x1: dx,
+          y1: graphArea.top,
+          x2: dx,
+          y2: graphArea.bottom,
+        );
       }
     }
-    if (crosshair.valueLinesVisible && crossPosition.dy > graphArea.top && crossPosition.dy < graphArea.bottom) {
+    if (crosshair.valueLinesVisible &&
+        crossPosition.dy > graphArea.top &&
+        crossPosition.dy < graphArea.bottom) {
       // value line
       addLinePath(
-          toPath: linesPath, x1: graphArea.left, y1: crossPosition.dy, x2: graphArea.right, y2: crossPosition.dy);
+        toPath: linesPath,
+        x1: graphArea.left,
+        y1: crossPosition.dy,
+        x2: graphArea.right,
+        y2: crossPosition.dy,
+      );
     }
     drawPath(canvas: canvas, path: linesPath, style: theme.lineStyle);
   }
@@ -101,20 +116,23 @@ class GCrosshairRender extends GRender<GCrosshair, GCrosshairTheme> {
     required Offset crossPosition,
     required GCrosshairTheme theme,
   }) {
-    if(!crosshair.pointAxisLabelsVisible) {
+    if (!crosshair.pointAxisLabelsVisible) {
       return;
     }
     var pointViewPort = chart.pointViewPort;
     for (int a = 0; a < panel.pointAxes.length; a++) {
       var pointAxis = panel.pointAxes[a];
       var axisArea = panel.pointAxisArea(a);
-      if (axisArea.left > crossPosition.dx || axisArea.right < crossPosition.dx) {
+      if (axisArea.left > crossPosition.dx ||
+          axisArea.right < crossPosition.dx) {
         continue;
       }
       final point = pointViewPort.nearestPoint(axisArea, crossPosition);
       final pointValue = chart.dataSource.getPointValue(point);
       if (pointValue != null) {
-        final labelText = (pointAxis.pointFormatter ?? chart.dataSource.pointValueFormater).call(point, pointValue);
+        final labelText = (pointAxis.pointFormatter ??
+                chart.dataSource.pointValueFormater)
+            .call(point, pointValue);
         drawPointAxisLabel(
           canvas: canvas,
           text: labelText,
@@ -135,18 +153,21 @@ class GCrosshairRender extends GRender<GCrosshair, GCrosshairTheme> {
     required Offset crossPosition,
     required GCrosshairTheme theme,
   }) {
-    if(!crosshair.valueAxisLabelsVisible) {
+    if (!crosshair.valueAxisLabelsVisible) {
       return;
     }
     for (int a = 0; a < panel.valueAxes.length; a++) {
       var valueAxis = panel.valueAxes[a];
       var valueViewPort = panel.findValueViewPortById(valueAxis.viewPortId)!;
       var axisArea = panel.valueAxisArea(a);
-      if (axisArea.top > crossPosition.dy || axisArea.bottom < crossPosition.dy) {
+      if (axisArea.top > crossPosition.dy ||
+          axisArea.bottom < crossPosition.dy) {
         continue;
       }
       final value = valueViewPort.positionToValue(axisArea, crossPosition.dy);
-      final labelText = (valueAxis.valueFormatter ?? chart.dataSource.seriesValueFormater).call(value, valueViewPort.valuePrecision);
+      final labelText = (valueAxis.valueFormatter ??
+              chart.dataSource.seriesValueFormater)
+          .call(value, valueViewPort.valuePrecision);
       drawValueAxisLabel(
         canvas: canvas,
         text: labelText,

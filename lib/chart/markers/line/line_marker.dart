@@ -1,4 +1,3 @@
-
 import '../../components/marker/marker.dart';
 import '../../components/marker/marker_theme.dart';
 import '../../values/coord.dart';
@@ -10,9 +9,5 @@ class GLineMarker extends GGraphMarker {
     required List<GCoordinate> coordinates,
     GGraphMarkerTheme? theme,
     super.render = const GLineMarkerRender(),
-  }) : super(
-          id: id,
-          keyCoordinates: [...coordinates],
-          theme: theme,
-        );
+  }) : super(id: id, keyCoordinates: [...coordinates], theme: theme);
 }

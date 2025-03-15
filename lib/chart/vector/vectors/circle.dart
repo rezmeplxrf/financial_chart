@@ -32,7 +32,10 @@ class CircleUtil {
     double y1Intersection = m * x1Intersection + b;
     double y2Intersection = m * x2Intersection + b;
 
-    return [Vector2(x1Intersection, y1Intersection), Vector2(x2Intersection, y2Intersection)];
+    return [
+      Vector2(x1Intersection, y1Intersection),
+      Vector2(x2Intersection, y2Intersection),
+    ];
   }
 
   static Vector2 nearestPointOn(
@@ -42,13 +45,20 @@ class CircleUtil {
     double px,
     double py,
   ) {
-    Vector2 direction = Vector2(px - cx, py - cy)
-      ..normalize()
-      ..scale(r);
+    Vector2 direction =
+        Vector2(px - cx, py - cy)
+          ..normalize()
+          ..scale(r);
     return Vector2(cx + direction.x, cy + direction.y);
   }
 
-  static double distanceTo(double cx, double cy, double r, double px, double py) {
+  static double distanceTo(
+    double cx,
+    double cy,
+    double r,
+    double px,
+    double py,
+  ) {
     Vector2 nearestPoint = nearestPointOn(cx, cy, r, px, py);
     return Vector2(px, py).distanceTo(nearestPoint);
   }

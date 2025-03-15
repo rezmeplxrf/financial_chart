@@ -21,11 +21,14 @@ class GChartController extends ChangeNotifier {
   final GValue<bool> _isTouchEvent = GValue(false);
   final GValue<bool> _isTouchCrossMode = GValue(false);
 
-  GChartController({
-    this.autoSyncPointViewPorts = true,
-  });
+  GChartController({this.autoSyncPointViewPorts = true});
 
-  void Function({required Offset position, required double scale, required double verticalScale})? _hookScaleUpdate;
+  void Function({
+    required Offset position,
+    required double scale,
+    required double verticalScale,
+  })?
+  _hookScaleUpdate;
   void Function()? _hookScaleEnd;
 
   void attach(GChart chart) {
@@ -44,12 +47,12 @@ class GChartController extends ChangeNotifier {
 
   void mouseHover({required Offset position}) {
     _chart.crosshair.setCrossPosition(position.dx, position.dy);
-    if(_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
+    if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
     for (int p = 0; p < _chart.panels.length; p++) {
       GPanel panel = _chart.panels[p];
-      for(int g = 0; g < panel.graphs.length; g++) {
+      for (int g = 0; g < panel.graphs.length; g++) {
         panel.graphs[g].highlight(newValue: false);
       }
     }
@@ -67,14 +70,20 @@ class GChartController extends ChangeNotifier {
   }
 
   void scaleStart({required Offset start, required int pointerCount}) {
-    if(_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
+    if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
     for (int n = 0; n < _chart.panels.length; n++) {
       GPanel panel = _chart.panels[n];
       // hit test splitter
-      if (n < _chart.panels.length - 1 && panel.splitterArea().contains(start)) {
-        GPanel? splitterPanel = _tryScalingSplitter(n, _chart.panels[n], _chart.panels[n + 1], start);
+      if (n < _chart.panels.length - 1 &&
+          panel.splitterArea().contains(start)) {
+        GPanel? splitterPanel = _tryScalingSplitter(
+          n,
+          _chart.panels[n],
+          _chart.panels[n + 1],
+          start,
+        );
         if (splitterPanel != null) {
           break;
         }
@@ -100,9 +109,17 @@ class GChartController extends ChangeNotifier {
     _notify();
   }
 
-  void scaleUpdate({required Offset position, required double scale, required double verticalScale}) {
+  void scaleUpdate({
+    required Offset position,
+    required double scale,
+    required double verticalScale,
+  }) {
     if (_hookScaleUpdate != null) {
-      _hookScaleUpdate!(position: position, scale: scale, verticalScale: verticalScale);
+      _hookScaleUpdate!(
+        position: position,
+        scale: scale,
+        verticalScale: verticalScale,
+      );
     }
     _notify();
   }
@@ -118,7 +135,7 @@ class GChartController extends ChangeNotifier {
   }
 
   void longPressStart({required Offset position}) {
-    if(_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
+    if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
     if (_isTouchEvent()) {
@@ -136,14 +153,14 @@ class GChartController extends ChangeNotifier {
   void longPressEnd({required Offset position}) {}
 
   void tapDown({required Offset position, required bool isTouch}) {
-    if(_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
+    if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
     _isTouchEvent(newValue: isTouch);
   }
 
   void tapUp({required Offset position, required bool isTouch}) {
-    if(_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
+    if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
     if (_isTouchCrossMode()) {
@@ -164,7 +181,7 @@ class GChartController extends ChangeNotifier {
   }
 
   void doubleTap({required Offset position}) {
-    if(_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
+    if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
     for (int p = 0; p < _chart.panels.length; p++) {
@@ -174,15 +191,26 @@ class GChartController extends ChangeNotifier {
           GValueAxis axis = panel.valueAxes[a];
           Rect axisArea = panel.valueAxisArea(a);
           if (axisArea.contains(position)) {
-            GValueViewPort? valueViewPort = panel.findValueViewPortById(axis.viewPortId);
-            valueViewPort?.autoScaleReset(chart: _chart, panel: panel, autoScaleFlg: true);
+            GValueViewPort? valueViewPort = panel.findValueViewPortById(
+              axis.viewPortId,
+            );
+            valueViewPort?.autoScaleReset(
+              chart: _chart,
+              panel: panel,
+              autoScaleFlg: true,
+            );
             break;
           }
         }
         for (int a = 0; a < panel.pointAxes.length; a++) {
           Rect axisArea = panel.pointAxisArea(a);
           if (axisArea.contains(position)) {
-            _chart.pointViewPort.autoScaleReset(chart: _chart, panel: panel, finished: true, animation: true);
+            _chart.pointViewPort.autoScaleReset(
+              chart: _chart,
+              panel: panel,
+              finished: true,
+              animation: true,
+            );
             break;
           }
         }
@@ -193,7 +221,7 @@ class GChartController extends ChangeNotifier {
   }
 
   int? _hitTestPanelGraphs({required GPanel panel, required Offset position}) {
-    for (int g = panel.graphs.length - 1; g > 0 ; g--) {
+    for (int g = panel.graphs.length - 1; g > 0; g--) {
       GGraph graph = panel.graphs[g];
       if (graph.visible && graph.getRender().hitTest(position: position)) {
         return g;
@@ -202,8 +230,13 @@ class GChartController extends ChangeNotifier {
     return null;
   }
 
-  GPanel? _tryScalingSplitter(int panel1Index, GPanel panel1, GPanel panel2, Offset start) {
-    if(!panel1.resizable || !panel2.resizable) {
+  GPanel? _tryScalingSplitter(
+    int panel1Index,
+    GPanel panel1,
+    GPanel panel2,
+    Offset start,
+  ) {
+    if (!panel1.resizable || !panel2.resizable) {
       return null;
     }
     if (panel1.splitterArea().contains(start)) {
@@ -213,8 +246,15 @@ class GChartController extends ChangeNotifier {
       double moveToleranceMax = panel2.graphArea().height - 50;
       double weightUnit = panel1.heightWeight / (h1 / _chart.size.height);
       resizingPanelIndex = panel1Index;
-      _hookScaleUpdate = ({required Offset position, required double scale, required double verticalScale}) {
-        double moveDistance = min(max((position.dy - start.dy), moveToleranceMin), moveToleranceMax);
+      _hookScaleUpdate = ({
+        required Offset position,
+        required double scale,
+        required double verticalScale,
+      }) {
+        double moveDistance = min(
+          max((position.dy - start.dy), moveToleranceMin),
+          moveToleranceMax,
+        );
         double h1New = h1 + moveDistance;
         double h2New = h2 - moveDistance;
         panel1.heightWeight = h1New * weightUnit;
@@ -239,22 +279,39 @@ class GChartController extends ChangeNotifier {
           GPointViewPort pointViewPort = _chart.pointViewPort;
           pointViewPort.interactionStart();
           double lastX = start.dx;
-          _hookScaleUpdate = ({required Offset position, required double scale, required double verticalScale}) {
+          _hookScaleUpdate = ({
+            required Offset position,
+            required double scale,
+            required double verticalScale,
+          }) {
             _chart.crosshair.setCrossPosition(position.dx, position.dy);
             if (axis.scaleMode == GAxisScaleMode.zoom) {
-              double scaleRatio = (axisArea.right - position.dx) / (axisArea.right - start.dx);
+              double scaleRatio =
+                  (axisArea.right - position.dx) / (axisArea.right - start.dx);
               pointViewPort.interactionZoomUpdate(axisArea, scaleRatio);
             } else if (axis.scaleMode == GAxisScaleMode.move) {
               double moveDistance = (position.dx - start.dx);
               pointViewPort.interactionMoveUpdate(axisArea, moveDistance);
             } else if (axis.scaleMode == GAxisScaleMode.select) {
-              pointViewPort.interactionSelectUpdate(_chart, axisArea, start.dx, position.dx, finished: false);
+              pointViewPort.interactionSelectUpdate(
+                _chart,
+                axisArea,
+                start.dx,
+                position.dx,
+                finished: false,
+              );
             }
             lastX = position.dx;
           };
           _hookScaleEnd = () {
             if (axis.scaleMode == GAxisScaleMode.select) {
-              pointViewPort.interactionSelectUpdate(_chart, axisArea, start.dx, lastX, finished: true);
+              pointViewPort.interactionSelectUpdate(
+                _chart,
+                axisArea,
+                start.dx,
+                lastX,
+                finished: true,
+              );
             }
             pointViewPort.interactionEnd();
           };
@@ -273,28 +330,51 @@ class GChartController extends ChangeNotifier {
       if (axisArea.contains(start)) {
         if (axis.scaleMode != GAxisScaleMode.none) {
           //print("scaling: panel=$panel, vAxis=$a");
-          GValueViewPort? viewPort = panel.findValueViewPortById(axis.viewPortId);
+          GValueViewPort? viewPort = panel.findValueViewPortById(
+            axis.viewPortId,
+          );
           viewPort?.autoScaleFlg = false;
           viewPort?.interactionStart();
           double lastY = start.dy;
-          _hookScaleUpdate = ({required Offset position, required double scale, required double verticalScale}) {
+          _hookScaleUpdate = ({
+            required Offset position,
+            required double scale,
+            required double verticalScale,
+          }) {
             _chart.crosshair.setCrossPosition(position.dx, position.dy);
             if (axis.scaleMode == GAxisScaleMode.zoom) {
               double scaleRatio = min(
-                  max((axisArea.bottom - start.dy) / (axisArea.bottom - min(position.dy, axisArea.bottom - 1)), 0.01),
-                  100);
+                max(
+                  (axisArea.bottom - start.dy) /
+                      (axisArea.bottom - min(position.dy, axisArea.bottom - 1)),
+                  0.01,
+                ),
+                100,
+              );
               viewPort?.interactionZoomUpdate(axisArea, scaleRatio);
             } else if (axis.scaleMode == GAxisScaleMode.move) {
               double moveDistance = (position.dy - start.dy);
               viewPort?.interactionMoveUpdate(axisArea, moveDistance);
             } else if (axis.scaleMode == GAxisScaleMode.select) {
-              viewPort?.interactionSelectUpdate(_chart, axisArea, start.dy, position.dy, finished: false);
+              viewPort?.interactionSelectUpdate(
+                _chart,
+                axisArea,
+                start.dy,
+                position.dy,
+                finished: false,
+              );
             }
             lastY = position.dy;
           };
           _hookScaleEnd = () {
             if (axis.scaleMode == GAxisScaleMode.select) {
-              viewPort?.interactionSelectUpdate(_chart, axisArea, start.dy, lastY, finished: true);
+              viewPort?.interactionSelectUpdate(
+                _chart,
+                axisArea,
+                start.dy,
+                lastY,
+                finished: true,
+              );
             }
             viewPort?.interactionEnd();
           };
@@ -309,13 +389,20 @@ class GChartController extends ChangeNotifier {
     if (!panel.graphArea().contains(start)) {
       return null;
     }
-    int graphIndex = _hitTestPanelGraphs(panel: panel, position: start) ?? (panel.graphs.length - 1);
+    int graphIndex =
+        _hitTestPanelGraphs(panel: panel, position: start) ??
+        (panel.graphs.length - 1);
     GGraph graph = panel.graphs[graphIndex];
     GPointViewPort pointViewPort = _chart.pointViewPort;
-    GValueViewPort? valueViewPort = panel.findValueViewPortById(graph.valueViewPortId)!;
+    GValueViewPort? valueViewPort =
+        panel.findValueViewPortById(graph.valueViewPortId)!;
     Rect graphArea = panel.graphArea();
     if (_isTouchCrossMode.value) {
-      _hookScaleUpdate = ({required Offset position, required double scale, required double verticalScale}) {
+      _hookScaleUpdate = ({
+        required Offset position,
+        required double scale,
+        required double verticalScale,
+      }) {
         _chart.crosshair.setCrossPosition(position.dx, position.dy);
       };
       _hookScaleEnd = () {};
@@ -326,7 +413,11 @@ class GChartController extends ChangeNotifier {
     if (scaleValue) {
       valueViewPort.interactionStart();
     }
-    _hookScaleUpdate = ({required Offset position, required double scale, required double verticalScale}) {
+    _hookScaleUpdate = ({
+      required Offset position,
+      required double scale,
+      required double verticalScale,
+    }) {
       _chart.crosshair.clearCrossPosition();
       double moveDistanceX = (position.dx - start.dx);
       if (scale != 1.0) {

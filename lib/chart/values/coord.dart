@@ -48,10 +48,8 @@ class GPositionCoord extends GCoordinate {
   }) : super(x, y);
 
   /// create a coordinate with absolute position in the view area
-  GPositionCoord.absolute({
-    required double x,
-    required double y,
-  }) : this(x: x, y: y, xIsRatio: false, yIsRatio: false);
+  GPositionCoord.absolute({required double x, required double y})
+    : this(x: x, y: y, xIsRatio: false, yIsRatio: false);
 
   /// create a coordinate with ratio of the width and height of the view area
   GPositionCoord.rational({
@@ -59,7 +57,14 @@ class GPositionCoord extends GCoordinate {
     required double y,
     double xOffset = 0,
     double yOffset = 0,
-  }) : this(x: x, y: y, xOffset: xOffset, yOffset: yOffset, xIsRatio: true, yIsRatio: true);
+  }) : this(
+         x: x,
+         y: y,
+         xOffset: xOffset,
+         yOffset: yOffset,
+         xIsRatio: true,
+         yIsRatio: true,
+       );
 
   /// convert the coordinate to position in the view area
   @override
@@ -82,10 +87,8 @@ class GViewPortCoord extends GCoordinate {
   double get point => super.begin!;
   double get value => super.end!;
 
-  GViewPortCoord({
-    required double point,
-    required double value,
-  }) : super(point, value);
+  GViewPortCoord({required double point, required double value})
+    : super(point, value);
 
   /// create a coordinate from position in the view area
   GViewPortCoord.fromPosition({
@@ -94,9 +97,9 @@ class GViewPortCoord extends GCoordinate {
     required GValueViewPort valueViewPort,
     required GPointViewPort pointViewPort,
   }) : this(
-          point: pointViewPort.positionToPoint(area, position.dx),
-          value: valueViewPort.positionToValue(area, position.dy),
-        );
+         point: pointViewPort.positionToPoint(area, position.dx),
+         value: valueViewPort.positionToValue(area, position.dy),
+       );
 
   /// convert the coordinate to position in the view area
   @override
@@ -113,13 +116,14 @@ class GViewPortCoord extends GCoordinate {
 }
 
 /// User defined function to convert a value pair ([x], [y]) to position in the view area
-typedef GCoordinateConvertor = Offset Function({
-  required double x,
-  required double y,
-  required Rect area,
-  required GPointViewPort pointViewPort,
-  required GValueViewPort valueViewPort,
-});
+typedef GCoordinateConvertor =
+    Offset Function({
+      required double x,
+      required double y,
+      required Rect area,
+      required GPointViewPort pointViewPort,
+      required GValueViewPort valueViewPort,
+    });
 
 /// predefined [GCoordinateConvertor] to convert [x] in position and [y] in viewport to position in the view area.
 Offset kCoordinateConvertorXPositionYValue({

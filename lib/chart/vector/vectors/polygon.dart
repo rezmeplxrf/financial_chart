@@ -8,10 +8,14 @@ class PolygonUtil {
   /// will intersect with the line between [vertA] and [vertB]
   /// Refer to `https://en.wikipedia.org/wiki/Point_in_polygon` for more explanation
   /// or the example comment bloc at the end of this file
-  static Map<String, bool> _rayCastIntersect(Vector2 point, Vector2 vertA, Vector2 vertB) {
+  static Map<String, bool> _rayCastIntersect(
+    Vector2 point,
+    Vector2 vertA,
+    Vector2 vertB,
+  ) {
     final Map<String, bool> result = <String, bool>{
       'rayIntersects': false,
-      'isOnEdge': false
+      'isOnEdge': false,
     }; // results of running the ray cast function
 
     final double aY = vertA.y;
@@ -132,7 +136,11 @@ class PolygonUtil {
   /// https://github.com/aa-cee/point_in_polygon/blob/feature-fixes/lib/point_in_polygon.dart
   /// function to check if a given Point [point] is inside or on the boundary of the polygon object represented by  List of Point [vertices]
   /// by using a Ray-Casting algorithm
-  static bool isInside({required List<Vector2> vertices, required double px, required double py}) {
+  static bool isInside({
+    required List<Vector2> vertices,
+    required double px,
+    required double py,
+  }) {
     Vector2 point = Vector2(px, py);
     int intersectCount = 0;
     for (int i = 0; i < vertices.length; i += 1) {
@@ -140,8 +148,13 @@ class PolygonUtil {
       if (point.isSame(vertices[i])) {
         return true;
       }
-      final Vector2 vertB = i == vertices.length - 1 ? vertices[0] : vertices[i + 1];
-      final Map<String, bool> rayCastIntersection = _rayCastIntersect(point, vertices[i], vertB);
+      final Vector2 vertB =
+          i == vertices.length - 1 ? vertices[0] : vertices[i + 1];
+      final Map<String, bool> rayCastIntersection = _rayCastIntersect(
+        point,
+        vertices[i],
+        vertB,
+      );
       if (rayCastIntersection['isOnEdge']!) {
         return true;
       }

@@ -1,4 +1,3 @@
-
 import '../../components/graph/graph_theme.dart';
 import '../../components/marker/marker_theme.dart';
 import '../../style/paint_style.dart';

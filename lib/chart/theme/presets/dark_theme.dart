@@ -26,47 +26,61 @@ import '../../components/tooltip/tooltip_theme.dart';
 import '../../components/background/background_theme.dart';
 import '../../components/marker/marker_theme.dart';
 
-
 /// Preset dark theme.
 class GThemeDark extends GTheme {
   static const String themeName = 'dark';
   GThemeDark()
-      : super(
-          name: themeName,
-          backgroundTheme: backgroundThemeDefault,
-          panelTheme: panelThemeDefault,
-          pointAxisTheme: pointAxisThemeDefault,
-          valueAxisTheme: valueAxisThemeDefault,
-          crosshairTheme: crosshairThemeDefault,
-          tooltipTheme: tooltipThemeDefault,
-          splitterTheme: splitterThemeDefault,
-          graphThemes: {
-            GGraph.typeName: GGraphTheme(
-              axisMarkerTheme: axisMarkerThemeDefault,
-              graphMarkerTheme: graphMarkerThemeDefault,
-            ),
-            GGraphGrids.typeName: gridsGraphTheme,
-            GGraphOhlc.typeName: ohlcGraphTheme,
-            GGraphLine.typeName: lineGraphTheme,
-            GGraphBar.typeName: barGraphTheme,
-            GGraphArea.typeName: areaGraphTheme,
-          },
-          axisMarkerTheme: axisMarkerThemeDefault,
-          graphMarkerTheme: graphMarkerThemeDefault,
-        );
+    : super(
+        name: themeName,
+        backgroundTheme: backgroundThemeDefault,
+        panelTheme: panelThemeDefault,
+        pointAxisTheme: pointAxisThemeDefault,
+        valueAxisTheme: valueAxisThemeDefault,
+        crosshairTheme: crosshairThemeDefault,
+        tooltipTheme: tooltipThemeDefault,
+        splitterTheme: splitterThemeDefault,
+        graphThemes: {
+          GGraph.typeName: GGraphTheme(
+            axisMarkerTheme: axisMarkerThemeDefault,
+            graphMarkerTheme: graphMarkerThemeDefault,
+          ),
+          GGraphGrids.typeName: gridsGraphTheme,
+          GGraphOhlc.typeName: ohlcGraphTheme,
+          GGraphLine.typeName: lineGraphTheme,
+          GGraphBar.typeName: barGraphTheme,
+          GGraphArea.typeName: areaGraphTheme,
+        },
+        axisMarkerTheme: axisMarkerThemeDefault,
+        graphMarkerTheme: graphMarkerThemeDefault,
+      );
 
-  static final GBackgroundTheme backgroundThemeDefault = GBackgroundTheme(style: PaintStyle());
+  static final GBackgroundTheme backgroundThemeDefault = GBackgroundTheme(
+    style: PaintStyle(),
+  );
 
   static final GPanelTheme panelThemeDefault = GPanelTheme(
-    style: PaintStyle(fillColor: const Color(0xFF0F0F0F), strokeColor: const Color(0xFFDDDDDD), strokeWidth: 0.5),
+    style: PaintStyle(
+      fillColor: const Color(0xFF0F0F0F),
+      strokeColor: const Color(0xFFDDDDDD),
+      strokeWidth: 0.5,
+    ),
   );
 
   static final GAxisTheme pointAxisThemeDefault = GAxisTheme(
-    lineStyle: PaintStyle(strokeColor: const Color(0xFFCCCCCC), strokeWidth: 1.0),
+    lineStyle: PaintStyle(
+      strokeColor: const Color(0xFFCCCCCC),
+      strokeWidth: 1.0,
+    ),
     tickerLength: 5.0,
-    tickerStyle: PaintStyle(strokeColor: const Color(0xFFDDDDDD), strokeWidth: 1.0),
-    selectionStyle:
-        PaintStyle(fillColor: const Color(0x88BBBBFF), strokeColor: const Color(0xAABBBBFF), strokeWidth: 1.0),
+    tickerStyle: PaintStyle(
+      strokeColor: const Color(0xFFDDDDDD),
+      strokeWidth: 1.0,
+    ),
+    selectionStyle: PaintStyle(
+      fillColor: const Color(0x88BBBBFF),
+      strokeColor: const Color(0xAABBBBFF),
+      strokeWidth: 1.0,
+    ),
     labelTheme: GAxisLabelTheme(
       labelStyle: LabelStyle(
         textStyle: const TextStyle(color: Color(0xFFCCCCCC), fontSize: 10.0),
@@ -78,10 +92,19 @@ class GThemeDark extends GTheme {
   );
 
   static final GAxisTheme valueAxisThemeDefault = GAxisTheme(
-    lineStyle: PaintStyle(strokeColor: const Color(0xFFCCCCCC), strokeWidth: 1.0),
+    lineStyle: PaintStyle(
+      strokeColor: const Color(0xFFCCCCCC),
+      strokeWidth: 1.0,
+    ),
     tickerLength: 5.0,
-    tickerStyle: PaintStyle(strokeColor: const Color(0xFFDDDDDD), strokeWidth: 1.0),
-    selectionStyle: PaintStyle(fillColor: const Color(0x88BBBBFF), strokeColor: const Color(0xAABBBBFF)),
+    tickerStyle: PaintStyle(
+      strokeColor: const Color(0xFFDDDDDD),
+      strokeWidth: 1.0,
+    ),
+    selectionStyle: PaintStyle(
+      fillColor: const Color(0x88BBBBFF),
+      strokeColor: const Color(0xAABBBBFF),
+    ),
     labelTheme: GAxisLabelTheme(
       labelStyle: LabelStyle(
         textStyle: const TextStyle(color: Color(0xFFCCCCCC), fontSize: 10.0),
@@ -117,9 +140,17 @@ class GThemeDark extends GTheme {
   );
 
   static final GTooltipTheme tooltipThemeDefault = GTooltipTheme(
-    frameStyle: PaintStyle(fillColor: Colors.white.withAlpha(180), strokeColor: Colors.grey, strokeWidth: 1),
+    frameStyle: PaintStyle(
+      fillColor: Colors.white.withAlpha(180),
+      strokeColor: Colors.grey,
+      strokeWidth: 1,
+    ),
     labelStyle: LabelStyle(
-      textStyle: const TextStyle(color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.bold),
+      textStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 12.0,
+        fontWeight: FontWeight.bold,
+      ),
     ),
     valueStyle: LabelStyle(
       textStyle: const TextStyle(color: Colors.black, fontSize: 12.0),
@@ -129,7 +160,10 @@ class GThemeDark extends GTheme {
   );
 
   static final GSplitterTheme splitterThemeDefault = GSplitterTheme(
-    lineStyle: PaintStyle(strokeColor: Colors.grey.withAlpha(100), strokeWidth: 4),
+    lineStyle: PaintStyle(
+      strokeColor: Colors.grey.withAlpha(100),
+      strokeWidth: 4,
+    ),
     handleStyle: PaintStyle(fillColor: Colors.white, strokeColor: Colors.grey),
     handleLineStyle: PaintStyle(strokeColor: Colors.black, strokeWidth: 0.5),
     handleWidth: 80,
@@ -153,7 +187,10 @@ class GThemeDark extends GTheme {
   );
 
   static final GGraphGridsTheme gridsGraphTheme = GGraphGridsTheme(
-    lineStyle: PaintStyle(strokeColor: const Color(0xFF333333), strokeWidth: 0.5),
+    lineStyle: PaintStyle(
+      strokeColor: const Color(0xFF333333),
+      strokeWidth: 0.5,
+    ),
     axisMarkerTheme: axisMarkerThemeDefault,
     graphMarkerTheme: graphMarkerThemeDefault,
     highlightMarkerTheme: graphHighlightMarkThemeDefault,
@@ -214,24 +251,37 @@ class GThemeDark extends GTheme {
   );
 
   static final GGraphMarkerTheme graphMarkerThemeDefault = GGraphMarkerTheme(
-    markerStyle: PaintStyle(fillColor: Colors.blueAccent.withAlpha(120), strokeColor: Colors.blue, strokeWidth: 2),
-    controlPointsStyle: PaintStyle(fillColor: Colors.white, strokeColor: Colors.blueAccent, strokeWidth: 2),
+    markerStyle: PaintStyle(
+      fillColor: Colors.blueAccent.withAlpha(120),
+      strokeColor: Colors.blue,
+      strokeWidth: 2,
+    ),
+    controlPointsStyle: PaintStyle(
+      fillColor: Colors.white,
+      strokeColor: Colors.blueAccent,
+      strokeWidth: 2,
+    ),
     labelStyle: LabelStyle(
       textStyle: const TextStyle(color: Colors.black, fontSize: 10.0),
-      backgroundStyle: PaintStyle(fillColor: Colors.white, strokeColor: Colors.black, strokeWidth: 1),
+      backgroundStyle: PaintStyle(
+        fillColor: Colors.white,
+        strokeColor: Colors.black,
+        strokeWidth: 1,
+      ),
       backgroundPadding: const EdgeInsets.all(5),
       backgroundCornerRadius: 5,
     ),
   );
 
-  static final GGraphHighlightMarkerTheme graphHighlightMarkThemeDefault = GGraphHighlightMarkerTheme(
-    style: PaintStyle(
-      strokeColor: Colors.black54,
-      strokeWidth: 1,
-      fillColor: Colors.white,
-    ),
-    size: 4.0,
-    interval: 100.0,
-    crosshairHighlightSize: 4.0,
-  );
+  static final GGraphHighlightMarkerTheme graphHighlightMarkThemeDefault =
+      GGraphHighlightMarkerTheme(
+        style: PaintStyle(
+          strokeColor: Colors.black54,
+          strokeWidth: 1,
+          fillColor: Colors.white,
+        ),
+        size: 4.0,
+        interval: 100.0,
+        crosshairHighlightSize: 4.0,
+      );
 }

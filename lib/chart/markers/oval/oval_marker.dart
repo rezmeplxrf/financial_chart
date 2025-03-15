@@ -26,14 +26,10 @@ class GOvalMarker extends GGraphMarker {
     required GCoordinate endCoord,
     GGraphMarkerTheme? theme,
     super.render = const GOvalMarkerRender(),
-  })  : _pointRadiusSize = GValue<GSize?>(null),
-        _valueRadiusSize = GValue<GSize?>(null),
-        _alignment = GValue<Alignment>(Alignment.center),
-        super(
-          id: id,
-          keyCoordinates: [startCoord, endCoord],
-          theme: theme,
-        );
+  }) : _pointRadiusSize = GValue<GSize?>(null),
+       _valueRadiusSize = GValue<GSize?>(null),
+       _alignment = GValue<Alignment>(Alignment.center),
+       super(id: id, keyCoordinates: [startCoord, endCoord], theme: theme);
 
   GOvalMarker.anchorAndRadius({
     String? id,
@@ -43,12 +39,8 @@ class GOvalMarker extends GGraphMarker {
     required Alignment alignment,
     GGraphMarkerTheme? theme,
     super.render = const GOvalMarkerRender(),
-  })  : _pointRadiusSize = GValue<GSize?>(pointRadiusSize),
-        _valueRadiusSize = GValue<GSize?>(valueRadiusSize),
-        _alignment = GValue<Alignment>(alignment),
-        super(
-          id: id,
-          keyCoordinates: [anchorCoord],
-          theme: theme,
-        );
+  }) : _pointRadiusSize = GValue<GSize?>(pointRadiusSize),
+       _valueRadiusSize = GValue<GSize?>(valueRadiusSize),
+       _alignment = GValue<Alignment>(alignment),
+       super(id: id, keyCoordinates: [anchorCoord], theme: theme);
 }

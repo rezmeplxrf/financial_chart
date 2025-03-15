@@ -25,7 +25,7 @@ class LabelStyle extends Equatable {
     this.offset,
     this.rotation,
     this.align,
-  })  : assert(isSingle([textStyle, span]));
+  }) : assert(isSingle([textStyle, span]));
 
   LabelStyle copyWith({
     TextStyle? textStyle,
@@ -47,29 +47,28 @@ class LabelStyle extends Equatable {
     Offset? offset,
     double? rotation,
     Alignment? align,
-  }) =>
-      LabelStyle(
-        textStyle: textStyle ?? this.textStyle,
-        span: span ?? this.span,
-        textAlign: textAlign ?? this.textAlign,
-        textDirection: textDirection ?? this.textDirection,
-        textScaler: textScaler ?? this.textScaler,
-        maxLines: maxLines ?? this.maxLines,
-        ellipsis: ellipsis ?? this.ellipsis,
-        locale: locale ?? this.locale,
-        strutStyle: strutStyle ?? this.strutStyle,
-        textWidthBasis: textWidthBasis ?? this.textWidthBasis,
-        textHeightBehavior: textHeightBehavior ?? this.textHeightBehavior,
-        minWidth: minWidth ?? this.minWidth,
-        maxWidth: maxWidth ?? this.maxWidth,
-        backgroundStyle: backgroundStyle ?? this.backgroundStyle,
-        backgroundPadding: backgroundPadding ?? this.backgroundPadding,
-        backgroundCornerRadius: backgroundCornerRadius ?? this.backgroundCornerRadius,
-        offset: offset ?? this.offset,
-        rotation: rotation ?? this.rotation,
-        align: align ?? this.align,
-      );
-
+  }) => LabelStyle(
+    textStyle: textStyle ?? this.textStyle,
+    span: span ?? this.span,
+    textAlign: textAlign ?? this.textAlign,
+    textDirection: textDirection ?? this.textDirection,
+    textScaler: textScaler ?? this.textScaler,
+    maxLines: maxLines ?? this.maxLines,
+    ellipsis: ellipsis ?? this.ellipsis,
+    locale: locale ?? this.locale,
+    strutStyle: strutStyle ?? this.strutStyle,
+    textWidthBasis: textWidthBasis ?? this.textWidthBasis,
+    textHeightBehavior: textHeightBehavior ?? this.textHeightBehavior,
+    minWidth: minWidth ?? this.minWidth,
+    maxWidth: maxWidth ?? this.maxWidth,
+    backgroundStyle: backgroundStyle ?? this.backgroundStyle,
+    backgroundPadding: backgroundPadding ?? this.backgroundPadding,
+    backgroundCornerRadius:
+        backgroundCornerRadius ?? this.backgroundCornerRadius,
+    offset: offset ?? this.offset,
+    rotation: rotation ?? this.rotation,
+    align: align ?? this.align,
+  );
 
   /// The offset of the block element from the anchor.
   final Offset? offset;
@@ -184,24 +183,24 @@ class LabelStyle extends Equatable {
 
   @override
   List<Object?> get props => [
-        offset,
-        rotation,
-        align,
-        textStyle,
-        span,
-        textAlign,
-        textDirection,
-        textScaler,
-        maxLines,
-        ellipsis,
-        locale,
-        strutStyle,
-        textWidthBasis,
-        textHeightBehavior,
-        minWidth,
-        maxWidth,
-        backgroundStyle,
-        backgroundPadding,
-        backgroundCornerRadius,
-      ];
+    offset,
+    rotation,
+    align,
+    textStyle,
+    span,
+    textAlign,
+    textDirection,
+    textScaler,
+    maxLines,
+    ellipsis,
+    locale,
+    strutStyle,
+    textWidthBasis,
+    textHeightBehavior,
+    minWidth,
+    maxWidth,
+    backgroundStyle,
+    backgroundPadding,
+    backgroundCornerRadius,
+  ];
 }

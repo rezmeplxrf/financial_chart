@@ -1,5 +1,3 @@
-
-
 import 'package:financial_chart/chart.dart';
 
 /// Theme for step line graph

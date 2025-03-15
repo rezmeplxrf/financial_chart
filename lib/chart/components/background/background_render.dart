@@ -18,10 +18,6 @@ class GBackgroundRender extends GRender<GBackground, GBackgroundTheme> {
     required Rect area,
     required GBackgroundTheme theme,
   }) {
-    drawPath(
-      canvas: canvas,
-      path: Path()..addRect(area),
-      style: theme.style,
-    );
+    drawPath(canvas: canvas, path: Path()..addRect(area), style: theme.style);
   }
 }

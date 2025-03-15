@@ -1,5 +1,3 @@
-
-
 import '../../style/paint_style.dart';
 import '../component_theme.dart';
 import 'panel.dart';
@@ -8,15 +6,9 @@ import 'panel.dart';
 class GPanelTheme extends GComponentTheme {
   final PaintStyle style;
 
-  const GPanelTheme({
-    required this.style,
-  });
+  const GPanelTheme({required this.style});
 
-  GPanelTheme copyWith({
-    PaintStyle? style,
-  }) {
-    return GPanelTheme(
-      style: style ?? this.style,
-    );
+  GPanelTheme copyWith({PaintStyle? style}) {
+    return GPanelTheme(style: style ?? this.style);
   }
 }

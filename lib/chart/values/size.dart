@@ -8,12 +8,13 @@ import 'value.dart';
 /// User defined function to convert a value to size in view [area] with [pointViewPort] and [valueViewPort].
 ///
 /// see [GPointViewPort] and [GValueViewPort] for more details about viewports.
-typedef ViewSizeConvertor = double Function({
-  required double sizeValue,
-  required Rect area,
-  required GPointViewPort pointViewPort,
-  required GValueViewPort valueViewPort,
-});
+typedef ViewSizeConvertor =
+    double Function({
+      required double sizeValue,
+      required Rect area,
+      required GPointViewPort pointViewPort,
+      required GValueViewPort valueViewPort,
+    });
 
 /// Type of size value
 enum GSizeValueType {
@@ -44,7 +45,6 @@ enum GSizeValueType {
   custom,
 }
 
-
 /// A value defines size in view area.
 ///
 /// see different [sizeType] defined in [GSizeValueType].
@@ -55,43 +55,51 @@ class GSize extends GValue<double> {
 
   /// Create a size value with [size] as value in view area.
   GSize.valueSize(double size)
-      : sizeType = GSizeValueType.valueSize, viewSizeConvertor = null,
-        super(size);
+    : sizeType = GSizeValueType.valueSize,
+      viewSizeConvertor = null,
+      super(size);
 
   /// Create a size value with [size] as points in point viewport.
   GSize.pointSize(double size)
-      : sizeType = GSizeValueType.pointSize,viewSizeConvertor = null,
-        super(size);
+    : sizeType = GSizeValueType.pointSize,
+      viewSizeConvertor = null,
+      super(size);
 
   /// Create a size value with [size] as view size.
   GSize.viewSize(double size)
-      : sizeType = GSizeValueType.viewSize,viewSizeConvertor = null,
-        super(size);
+    : sizeType = GSizeValueType.viewSize,
+      viewSizeConvertor = null,
+      super(size);
 
   /// Create a size value with [ratio] as ratio of view height which is view height * ratio.
   GSize.viewHeightRatio(double ratio)
-      : sizeType = GSizeValueType.viewHeightRatio,viewSizeConvertor = null,
-        super(ratio);
+    : sizeType = GSizeValueType.viewHeightRatio,
+      viewSizeConvertor = null,
+      super(ratio);
 
   /// Create a size value with [ratio] as ratio of view width which is view width * ratio.
   GSize.viewWidthRatio(double ratio)
-      : sizeType = GSizeValueType.viewWidthRatio,viewSizeConvertor = null,
-        super(ratio);
+    : sizeType = GSizeValueType.viewWidthRatio,
+      viewSizeConvertor = null,
+      super(ratio);
 
   /// Create a size value with [ratio] as ratio of min of view width and height which is min(view width, view height) * ratio.
   GSize.viewMinRatio(double ratio)
-      : sizeType = GSizeValueType.viewMinRatio,viewSizeConvertor = null,
-        super(ratio);
+    : sizeType = GSizeValueType.viewMinRatio,
+      viewSizeConvertor = null,
+      super(ratio);
 
   /// Create a size value with [ratio] as ratio of max of view width and height which is max(view width, view height) * ratio.
   GSize.viewMaxRatio(double ratio)
-      : sizeType = GSizeValueType.viewMaxRatio,viewSizeConvertor = null,
-        super(ratio);
+    : sizeType = GSizeValueType.viewMaxRatio,
+      viewSizeConvertor = null,
+      super(ratio);
 
   /// Create a size value with [sizeValue] calculated by a user defined custom function.
   GSize.custom(double sizeValue, this.viewSizeConvertor)
-      : sizeType = GSizeValueType.custom, assert(viewSizeConvertor != null),
-        super(sizeValue);
+    : sizeType = GSizeValueType.custom,
+      assert(viewSizeConvertor != null),
+      super(sizeValue);
 
   /// Convert the size value to view size.
   double toViewSize({
@@ -115,7 +123,12 @@ class GSize extends GValue<double> {
       case GSizeValueType.viewMaxRatio:
         return max(area.width, area.height) * sizeValue;
       case GSizeValueType.custom:
-        return viewSizeConvertor!(sizeValue: sizeValue, area: area, pointViewPort: pointViewPort, valueViewPort: valueViewPort);
+        return viewSizeConvertor!(
+          sizeValue: sizeValue,
+          area: area,
+          pointViewPort: pointViewPort,
+          valueViewPort: valueViewPort,
+        );
     }
   }
 }

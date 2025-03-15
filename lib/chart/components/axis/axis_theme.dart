@@ -9,7 +9,7 @@ class GAxisTheme extends GComponentTheme {
   final PaintStyle lineStyle;
 
   /// Length of the tickers
-  final double tickerLength ;
+  final double tickerLength;
 
   /// Style of the tickers
   final PaintStyle tickerStyle;
@@ -51,18 +51,13 @@ class GAxisTheme extends GComponentTheme {
 class GAxisLabelTheme {
   /// Style of the labels
   final LabelStyle labelStyle;
+
   /// Spacing between the label and the axis line
   final double spacing;
 
-  const GAxisLabelTheme({
-    required this.labelStyle,
-    this.spacing = 5,
-  });
+  const GAxisLabelTheme({required this.labelStyle, this.spacing = 5});
 
-  GAxisLabelTheme copyWith({
-    LabelStyle? labelStyle,
-    double? spacing,
-  }) {
+  GAxisLabelTheme copyWith({LabelStyle? labelStyle, double? spacing}) {
     return GAxisLabelTheme(
       labelStyle: labelStyle ?? this.labelStyle,
       spacing: spacing ?? this.spacing,

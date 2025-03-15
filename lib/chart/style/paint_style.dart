@@ -35,15 +35,25 @@ class PaintStyle extends Equatable {
     Color? shadowColor,
     this.dash,
     this.dashOffset,
-  })  : assert(isSingle([fillColor, fillGradient, fillShader], allowNone: true)),
-        assert(isSingle([strokeColor, strokeGradient, strokeShader], allowNone: true)),
-        assert(strokeColor != null ||
-            strokeGradient != null ||
-            strokeShader != null ||
-            (strokeWidth == null || strokeCap == null || strokeJoin == null || strokeMiterLimit == null)),
-        assert(elevation != null || shadowColor == null),
-        assert(dash != null || dashOffset == null),
-        shadowColor = elevation == null ? null : fillColor ?? (strokeColor ?? const Color(0xFF000000)) {
+  }) : assert(isSingle([fillColor, fillGradient, fillShader], allowNone: true)),
+       assert(
+         isSingle([strokeColor, strokeGradient, strokeShader], allowNone: true),
+       ),
+       assert(
+         strokeColor != null ||
+             strokeGradient != null ||
+             strokeShader != null ||
+             (strokeWidth == null ||
+                 strokeCap == null ||
+                 strokeJoin == null ||
+                 strokeMiterLimit == null),
+       ),
+       assert(elevation != null || shadowColor == null),
+       assert(dash != null || dashOffset == null),
+       shadowColor =
+           elevation == null
+               ? null
+               : fillColor ?? (strokeColor ?? const Color(0xFF000000)) {
     _fillPaint = _createFillPaint();
     _strokePaint = _createStrokePaint();
   }
@@ -103,7 +113,9 @@ class PaintStyle extends Equatable {
       if (fillShader != null) {
         fillPaint.shader = fillShader;
       } else if (fillGradient != null) {
-        fillPaint.shader = fillGradient!.createShader(gradientBounds ?? (this.gradientBounds!));
+        fillPaint.shader = fillGradient!.createShader(
+          gradientBounds ?? (this.gradientBounds!),
+        );
       } else {
         fillPaint.color = fillColor!;
       }
@@ -130,7 +142,9 @@ class PaintStyle extends Equatable {
       if (strokeShader != null) {
         strokePaint.shader = strokeShader;
       } else if (strokeGradient != null) {
-        strokePaint.shader = strokeGradient!.createShader(gradientBounds ?? (this.gradientBounds!));
+        strokePaint.shader = strokeGradient!.createShader(
+          gradientBounds ?? (this.gradientBounds!),
+        );
       } else {
         strokePaint.color = strokeColor!;
       }
@@ -238,19 +252,19 @@ class PaintStyle extends Equatable {
 
   @override
   List<Object?> get props => [
-        fillColor,
-        fillGradient,
-        strokeColor,
-        strokeGradient,
-        gradientBounds,
-        blendMode,
-        strokeWidth,
-        strokeCap,
-        strokeJoin,
-        strokeMiterLimit,
-        elevation,
-        shadowColor,
-        dash,
-        dashOffset,
-      ];
+    fillColor,
+    fillGradient,
+    strokeColor,
+    strokeGradient,
+    gradientBounds,
+    blendMode,
+    strokeWidth,
+    strokeCap,
+    strokeJoin,
+    strokeMiterLimit,
+    elevation,
+    shadowColor,
+    dash,
+    dashOffset,
+  ];
 }

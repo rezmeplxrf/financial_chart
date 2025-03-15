@@ -27,18 +27,16 @@ class GShapeMarker extends GGraphMarker {
     required GCoordinate anchorCoord,
     required GSize radiusSize,
     double rotation = 0,
-    Alignment alignment = Alignment.center, // where anchor point located on the bound rect of the circle
+    Alignment alignment =
+        Alignment
+            .center, // where anchor point located on the bound rect of the circle
     required this.pathGenerator,
     GGraphMarkerTheme? theme,
     super.render = const GShapeMarkerRender(),
-  })  : _radiusSize = GValue<GSize>(radiusSize),
-        _alignment = GValue<Alignment>(alignment),
-        _rotation = GValue<double>(rotation),
-        super(
-          id: id,
-          keyCoordinates: [anchorCoord],
-          theme: theme,
-        ) {
+  }) : _radiusSize = GValue<GSize>(radiusSize),
+       _alignment = GValue<Alignment>(alignment),
+       _rotation = GValue<double>(rotation),
+       super(id: id, keyCoordinates: [anchorCoord], theme: theme) {
     assert(radiusSize.sizeValue > 0, 'radius must be positive value.');
   }
 }

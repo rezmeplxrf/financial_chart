@@ -19,10 +19,12 @@ class GGraphGroup extends GGraph<GGraphTheme> {
     super.graphMarkers,
     super.render,
   }) : super(
-    hitTestMode: HitTestMode.none, // unused
-    theme: const GGraphTheme(), // unused
-  ) {
-    assert(graphs.any((graph) => graph.valueViewPortId != valueViewPortId) == false);
+         hitTestMode: HitTestMode.none, // unused
+         theme: const GGraphTheme(), // unused
+       ) {
+    assert(
+      graphs.any((graph) => graph.valueViewPortId != valueViewPortId) == false,
+    );
     super.render = render ?? GGraphGroupRender();
     graphs.sort((a, b) => a.layer.compareTo(b.layer));
     highlight.addListener(() {

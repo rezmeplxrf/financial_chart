@@ -1,12 +1,11 @@
-
 import 'package:equatable/equatable.dart';
 
 /// A wrapper of a pair of values with general type <[T]>.
 class GPair<T> extends Equatable {
   final List<T?> _range = List<T?>.filled(2, null);
 
-  bool get isEmpty => _range[0]==null || _range[1]==null;
-  bool get isNotEmpty => _range[0]!=null && _range[1]!=null;
+  bool get isEmpty => _range[0] == null || _range[1] == null;
+  bool get isNotEmpty => _range[0] != null && _range[1] != null;
 
   T? get begin => _range[0];
   T? get end => _range[1];

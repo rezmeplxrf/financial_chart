@@ -55,7 +55,8 @@ class GValueViewPort extends ChangeNotifier {
   final double? maxValueRange;
 
   /// Callback when range updated.
-  final GRange Function({required GRange updatedRange, required bool finished})? onRangeUpdate;
+  final GRange Function({required GRange updatedRange, required bool finished})?
+  onRangeUpdate;
 
   /// The animation milliseconds when auto scaling.
   ///
@@ -84,9 +85,11 @@ class GValueViewPort extends ChangeNotifier {
     this.minValueRange,
     double? baseValue,
   }) {
-    assert((initialStartValue == null && initialEndValue == null) ||
-        (initialStartValue != null && initialEndValue != null));
-    if(initialStartValue != null && initialEndValue != null) {
+    assert(
+      (initialStartValue == null && initialEndValue == null) ||
+          (initialStartValue != null && initialEndValue != null),
+    );
+    if (initialStartValue != null && initialEndValue != null) {
       assert(initialEndValue > initialStartValue);
       _autoScale.value = false;
     }
@@ -105,22 +108,42 @@ class GValueViewPort extends ChangeNotifier {
 
   void initializeAnimation(TickerProvider vsync) {
     if (_rangeAnimationController == null && animationMilliseconds > 0) {
-      _rangeAnimationController =
-          AnimationController(vsync: vsync, duration: Duration(milliseconds: animationMilliseconds));
-      _rangeAnimation = Tween<double>(begin: 0, end: 1)
-          .animate(CurvedAnimation(parent: _rangeAnimationController!, curve: Curves.easeOutCubic));
+      _rangeAnimationController = AnimationController(
+        vsync: vsync,
+        duration: Duration(milliseconds: animationMilliseconds),
+      );
+      _rangeAnimation = Tween<double>(begin: 0, end: 1).animate(
+        CurvedAnimation(
+          parent: _rangeAnimationController!,
+          curve: Curves.easeOutCubic,
+        ),
+      );
     }
   }
 
   void _notifyRangeUpdated({required bool finished}) {
     if (onRangeUpdate != null) {
-      _range.copy(onRangeUpdate!.call(updatedRange: _range, finished: finished));
+      _range.copy(
+        onRangeUpdate!.call(updatedRange: _range, finished: finished),
+      );
     }
   }
 
-  void animateToRange(GChart chart, GRange targetRange, bool finished, bool animation, {VoidCallback? onFinished}) {
-    if (!animation || _rangeAnimationController == null || (targetRange == _range)) {
-      setRange(startValue: targetRange.begin!, endValue: targetRange.end!, finished: finished);
+  void animateToRange(
+    GChart chart,
+    GRange targetRange,
+    bool finished,
+    bool animation, {
+    VoidCallback? onFinished,
+  }) {
+    if (!animation ||
+        _rangeAnimationController == null ||
+        (targetRange == _range)) {
+      setRange(
+        startValue: targetRange.begin!,
+        endValue: targetRange.end!,
+        finished: finished,
+      );
       onFinished?.call();
       return;
     }
@@ -128,8 +151,16 @@ class GValueViewPort extends ChangeNotifier {
     _isAnimating.value = true;
     var currentRange = GRange.range(startValue, endValue);
     void listener() {
-      final updatedRange = GRange.lerp(currentRange, targetRange, _rangeAnimationController!.value);
-      setRange(startValue: updatedRange.first!, endValue: updatedRange.last!, finished: finished);
+      final updatedRange = GRange.lerp(
+        currentRange,
+        targetRange,
+        _rangeAnimationController!.value,
+      );
+      setRange(
+        startValue: updatedRange.first!,
+        endValue: updatedRange.last!,
+        finished: finished,
+      );
       chart.repaint(layout: false);
     }
 
@@ -144,26 +175,35 @@ class GValueViewPort extends ChangeNotifier {
     });
   }
 
-  void setRange({required double startValue, required double endValue, bool finished = true}) {
+  void setRange({
+    required double startValue,
+    required double endValue,
+    bool finished = true,
+  }) {
     assert(endValue > startValue);
     if (onRangeUpdate == null) {
       if (endValue == this.endValue && startValue == this.startValue) {
         return;
       }
     }
-    final (startValueClamped, endValueClamped) = clampScaleRange(startValue, endValue);
+    final (startValueClamped, endValueClamped) = clampScaleRange(
+      startValue,
+      endValue,
+    );
     _range.update(startValueClamped, endValueClamped);
     _notifyRangeUpdated(finished: finished);
   }
 
   /// convert value to position
   double valueToPosition(Rect area, double value) {
-    return area.bottom - (value - startValue) / (endValue - startValue) * area.height;
+    return area.bottom -
+        (value - startValue) / (endValue - startValue) * area.height;
   }
 
   /// convert position to value
   double positionToValue(Rect area, double position) {
-    return startValue + (area.bottom - position) / area.height * (endValue - startValue);
+    return startValue +
+        (area.bottom - position) / area.height * (endValue - startValue);
   }
 
   /// convert value to size
@@ -186,7 +226,10 @@ class GValueViewPort extends ChangeNotifier {
     _notifyRangeUpdated(finished: true);
   }
 
-  (double startValueClamped, double endValueClamped) clampScaleRange(double startValue, double endValue) {
+  (double startValueClamped, double endValueClamped) clampScaleRange(
+    double startValue,
+    double endValue,
+  ) {
     double endValueClamped = endValue;
     double startValueClamped = startValue;
     if (minValueRange != null) {
@@ -213,8 +256,10 @@ class GValueViewPort extends ChangeNotifier {
       return;
     }
     double centerValue = (_rangeScaling.first! + _rangeScaling.last!) / 2;
-    double endValueNew = centerValue + (_rangeScaling.last! - centerValue) / zoomRatio;
-    double startValueNew = centerValue + (_rangeScaling.first! - centerValue) / zoomRatio;
+    double endValueNew =
+        centerValue + (_rangeScaling.last! - centerValue) / zoomRatio;
+    double startValueNew =
+        centerValue + (_rangeScaling.first! - centerValue) / zoomRatio;
     (startValueNew, endValueNew) = clampScaleRange(startValueNew, endValueNew);
     setRange(startValue: startValueNew, endValue: endValueNew);
   }
@@ -223,25 +268,46 @@ class GValueViewPort extends ChangeNotifier {
     if (_rangeScaling.isEmpty) {
       return;
     }
-    double valueMoved = (movedDistance / area.height) * (_rangeScaling.last! - _rangeScaling.first!);
+    double valueMoved =
+        (movedDistance / area.height) *
+        (_rangeScaling.last! - _rangeScaling.first!);
     double endValueNew = _rangeScaling.last! + valueMoved;
     double startValueNew = _rangeScaling.first! + valueMoved;
     setRange(startValue: startValueNew, endValue: endValueNew);
   }
 
-  void interactionSelectUpdate(GChart chart, Rect area, double startPosition, double position,
-      {bool finished = false}) {
+  void interactionSelectUpdate(
+    GChart chart,
+    Rect area,
+    double startPosition,
+    double position, {
+    bool finished = false,
+  }) {
     if (_rangeScaling.isEmpty) {
       return;
     }
-    final value1 = positionToValue(area, max(area.top, min(area.bottom, startPosition)));
-    final value2 = positionToValue(area, max(area.top, min(area.bottom, position)));
+    final value1 = positionToValue(
+      area,
+      max(area.top, min(area.bottom, startPosition)),
+    );
+    final value2 = positionToValue(
+      area,
+      max(area.top, min(area.bottom, position)),
+    );
     _selectedRange.update(min(value1, value2), max(value1, value2));
     if (finished) {
       double endValueNew = min(_selectedRange.last!, _rangeScaling.last!);
       double startValueNew = max(_selectedRange.first!, _rangeScaling.first!);
-      (startValueNew, endValueNew) = clampScaleRange(startValueNew, endValueNew);
-      animateToRange(chart, GRange.range(startValueNew, endValueNew), finished, true);
+      (startValueNew, endValueNew) = clampScaleRange(
+        startValueNew,
+        endValueNew,
+      );
+      animateToRange(
+        chart,
+        GRange.range(startValueNew, endValueNew),
+        finished,
+        true,
+      );
     }
   }
 
@@ -257,13 +323,25 @@ class GValueViewPort extends ChangeNotifier {
     if (autoScaleStrategy == null) {
       return;
     }
-    final newRange = autoScaleStrategy!.getScale(chart: chart, panel: panel, valueViewPort: this);
+    final newRange = autoScaleStrategy!.getScale(
+      chart: chart,
+      panel: panel,
+      valueViewPort: this,
+    );
     if (newRange.isEmpty || newRange.begin! >= newRange.end!) {
       return;
     }
-    final (startValueClamped, endValueClamped) = clampScaleRange(newRange.begin!, newRange.end!);
-    animateToRange(chart, GRange.range(startValueClamped, endValueClamped), finished, animation,
-        onFinished: onFinished);
+    final (startValueClamped, endValueClamped) = clampScaleRange(
+      newRange.begin!,
+      newRange.end!,
+    );
+    animateToRange(
+      chart,
+      GRange.range(startValueClamped, endValueClamped),
+      finished,
+      animation,
+      onFinished: onFinished,
+    );
   }
 
   @override

@@ -1,5 +1,3 @@
-
-
 import '../../style/label_style.dart';
 import '../../style/paint_style.dart';
 import '../component_theme.dart';

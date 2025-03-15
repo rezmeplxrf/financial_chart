@@ -1,4 +1,3 @@
-
 import '../../style/paint_style.dart';
 import '../component_theme.dart';
 import 'splitter.dart';

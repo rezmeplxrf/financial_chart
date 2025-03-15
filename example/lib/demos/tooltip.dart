@@ -25,34 +25,38 @@ class DemoTooltipPageState extends DemoBasePageState {
           GValueViewPort(
             id: "price",
             valuePrecision: 2,
-            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(dataKeys: [keyHigh, keyLow]),
+            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
+              dataKeys: [keyHigh, keyLow],
+            ),
           ),
         ],
         valueAxes: [
-          GValueAxis(viewPortId: 'price', position: GAxisPosition.end, scaleMode: GAxisScaleMode.zoom),
-        ],
-        pointAxes: [
-          GPointAxis(position: GAxisPosition.end),
-        ],
-        graphs: [
-          GGraphGrids(
-            id: "grids",
-            valueViewPortId: 'price',
+          GValueAxis(
+            viewPortId: 'price',
+            position: GAxisPosition.end,
+            scaleMode: GAxisScaleMode.zoom,
           ),
+        ],
+        pointAxes: [GPointAxis(position: GAxisPosition.end)],
+        graphs: [
+          GGraphGrids(id: "grids", valueViewPortId: 'price'),
           GGraphOhlc(
             id: "ohlc",
             valueViewPortId: "price",
             ohlcValueKeys: const [keyOpen, keyHigh, keyLow, keyClose],
           ),
-          GGraphLine(
-            id: "line",
-            valueViewPortId: "price",
-            valueKey: keySMA,
-          ),
+          GGraphLine(id: "line", valueViewPortId: "price", valueKey: keySMA),
         ],
         tooltip: GTooltip(
           position: GTooltipPosition.followPointer,
-          dataKeys: const [keyOpen, keyHigh, keyLow, keyClose, keyVolume, keySMA],
+          dataKeys: const [
+            keyOpen,
+            keyHigh,
+            keyLow,
+            keyClose,
+            keyVolume,
+            keySMA,
+          ],
           followValueKey: keyClose,
           followValueViewPortId: "price",
         ),
@@ -85,7 +89,8 @@ class DemoTooltipPageState extends DemoBasePageState {
             labelResolver: (item) => item.name,
           ),
         ),
-        if (chart!.panels[0].tooltip!.position == GTooltipPosition.followPointer)
+        if (chart!.panels[0].tooltip!.position ==
+            GTooltipPosition.followPointer)
           AppLabelWidget(
             label: "Follow key",
             child: AppPopupMenu<String?>(
