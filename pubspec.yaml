@@ -10,7 +10,7 @@ topics:
   - stock
 # publish_to: "none"
 
-version: 0.1.1
+version: 0.1.1+1
 
 environment:
   sdk: ^3.7.2
@@ -27,6 +27,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.1
+  lints: ^2.1.1
 
 flutter:
   uses-material-design: true

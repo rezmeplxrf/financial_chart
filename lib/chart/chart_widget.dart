@@ -105,8 +105,9 @@ class GChartWidgetState extends State<GChartWidget>
                 },
               ),
               onScaleStart: (details) {
-                if (kDebugMode && printEvents)
+                if (kDebugMode && printEvents) {
                   print("onScaleStart offset: ${details.localFocalPoint}");
+                }
                 //print(details.kind);
                 controller.scaleStart(
                   start: details.localFocalPoint,
@@ -114,8 +115,9 @@ class GChartWidgetState extends State<GChartWidget>
                 );
               },
               onScaleUpdate: (details) {
-                if (kDebugMode && printEvents)
+                if (kDebugMode && printEvents) {
                   print("onScaleUpdate offset: ${details.localFocalPoint}");
+                }
                 controller.scaleUpdate(
                   position: details.localFocalPoint,
                   scale: details.scale,
@@ -123,29 +125,33 @@ class GChartWidgetState extends State<GChartWidget>
                 );
               },
               onScaleEnd: (details) {
-                if (kDebugMode && printEvents)
+                if (kDebugMode && printEvents) {
                   print("onScaleEnd offset: ${details.velocity}");
+                }
                 controller.scaleEnd();
               },
               onTapDown: (TapDownDetails details) {
-                if (kDebugMode && printEvents)
+                if (kDebugMode && printEvents) {
                   print("onTapDown kind: ${details.kind}");
+                }
                 controller.tapDown(
                   position: details.localPosition,
                   isTouch: details.kind == PointerDeviceKind.touch,
                 );
               },
               onTapUp: (TapUpDetails details) {
-                if (kDebugMode && printEvents)
+                if (kDebugMode && printEvents) {
                   print("onTapUp kind: ${details.kind}");
+                }
                 controller.tapUp(
                   position: details.localPosition,
                   isTouch: details.kind == PointerDeviceKind.touch,
                 );
               },
               onDoubleTapDown: (TapDownDetails details) {
-                if (kDebugMode && printEvents)
+                if (kDebugMode && printEvents) {
                   print("onDoubleTapDown kind: ${details.kind}");
+                }
                 controller.doubleTap(position: details.localPosition);
               },
               onVerticalDragStart: (DragStartDetails details) {
@@ -155,23 +161,27 @@ class GChartWidgetState extends State<GChartWidget>
                 );
               },
               onLongPressStart: (LongPressStartDetails details) {
-                if (kDebugMode && printEvents)
+                if (kDebugMode && printEvents) {
                   print("onLongPressStart: ${details.localPosition}");
+                }
                 controller.longPressStart(position: details.localPosition);
               },
               onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) {
-                if (kDebugMode && printEvents)
+                if (kDebugMode && printEvents) {
                   print("onLongPressMoveUpdate: ${details.localPosition}");
+                }
                 controller.longPressMove(position: details.localPosition);
               },
               onLongPressEnd: (LongPressEndDetails details) {
-                if (kDebugMode && printEvents)
+                if (kDebugMode && printEvents) {
                   print("onLongPressEnd kind: ${details.localPosition}");
+                }
                 controller.longPressEnd(position: details.localPosition);
               },
               onVerticalDragUpdate: (DragUpdateDetails details) {
-                if (kDebugMode && printEvents)
+                if (kDebugMode && printEvents) {
                   print("onVerticalDragUpdate kind: ${details.localPosition}");
+                }
                 controller.scaleUpdate(
                   position: details.localPosition,
                   scale: 1,
