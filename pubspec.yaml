@@ -2,7 +2,13 @@ name: financial_chart
 description: Chart library for financial data.
 repository: https://github.com/cjjapan/financial_chart
 homepage: https://github.com/cjjapan/financial_chart
-
+topics:
+  - chart
+  - charts
+  - graph
+  - ohlc
+  - candlestick
+  - stock
 publish_to: "none"
 
 version: 0.1.0
