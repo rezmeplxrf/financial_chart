@@ -6,7 +6,6 @@ topics:
   - chart
   - charts
   - graph
-  - ohlc
   - candlestick
   - stock
 # publish_to: "none"
