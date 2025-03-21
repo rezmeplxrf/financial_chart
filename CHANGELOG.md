@@ -8,8 +8,9 @@
 - [0.1.2+1] Update for issue #3: fix zoom center point
 - [0.1.2+2] Change src files layout 
 
-2025-03-21 
+2025-03-21
 - [0.1.2+3] Fix for issue #3: fix zoom center point
+- [0.1.2+4] Fix for issue #2: Add GPanel.momentumScrollSpeed option
 
 ## 0.1.1
 2025-03-15

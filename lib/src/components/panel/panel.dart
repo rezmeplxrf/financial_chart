@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import '../../chart.dart';
@@ -47,6 +48,14 @@ class GPanel extends GComponent {
   double get heightWeight => _heightWeight();
   set heightWeight(double value) => _heightWeight(newValue: value);
 
+  /// The speed of the momentum scrolling.
+  ///
+  /// A value between 0 and 1.0, larger value means faster scrolling, 0 to disable.
+  final GValue<double> _momentumScrollSpeed = GValue(0.5);
+  double get momentumScrollSpeed => _momentumScrollSpeed();
+  set momentumScrollSpeed(double value) =>
+      _momentumScrollSpeed(newValue: value);
+
   @override
   bool get visible => super.visible && heightWeight > 0;
 
@@ -88,12 +97,14 @@ class GPanel extends GComponent {
     double heightWeight = 1.0,
     bool resizable = true,
     this.splitterHeight = 12,
+    double momentumScrollSpeed = 0.5,
     GPanelTheme? theme,
     GPanelRender? render,
   }) : super(render: render ?? const GPanelRender(), theme: theme) {
     assert(heightWeight >= 0);
     _heightWeight.value = heightWeight;
     _resizable.value = resizable;
+    _momentumScrollSpeed.value = min(max(momentumScrollSpeed, 0), 1.0);
   }
 
   void layout(GChart chart, Rect panelArea) {
