@@ -6,7 +6,7 @@ easy to customize and extend.
 ![chart](doc/assets/screen.gif)
 
 ### Features
-- Supports OHLC, line, area, bar graphs.
+- Supports OHLC, candlestick, line, area, bar graphs.
 - Supports markers over graphs, including labels, lines, arrows, callouts, shapes, etc.
 - Easy to extend to add custom graph types and markers.
 - Resizable multiple panels and multiple graphs in one panel.
@@ -15,6 +15,7 @@ easy to customize and extend.
 - Zoom and pan of axes and graph. double tap to reset zoom.
 - Show animation when zooming.
 - Dynamic data loading with loading indicator.
+- Live update of data and graphs.
 - Customizable theme support with dark and light presets.
 
 ### Demo

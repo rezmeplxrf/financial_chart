@@ -1,7 +1,8 @@
-import 'package:example/demos/dynamic_data.dart';
 import 'package:flutter/material.dart';
 
 import 'demos/basic.dart';
+import 'demos/dynamic_data.dart';
+import 'demos/live.dart';
 import 'demos/panels.dart';
 import 'demos/axes.dart';
 import 'demos/crosshair.dart';
@@ -20,6 +21,7 @@ final routes = {
   '/demo/panels': (context) => const DemoPanelsPage(),
   '/demo/graphs': (context) => const DemoGraphsPage(),
   '/demo/loading_data': (context) => const DemoDynamicDataPage(),
+  '/demo/live_update': (context) => const DemoLiveUpdatePage(),
   '/demo/group': (context) => const DemoGraphGroupPage(),
   '/demo/markers': (context) => const DemoMarkersPage(),
 };

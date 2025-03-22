@@ -158,7 +158,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
     final fromIndex = pointToIndex(fromPoint);
     final toIndex = pointToIndex(toPoint);
     return dataList
-        .sublist(fromIndex, toIndex)
+        .sublist(fromIndex, toIndex + 1)
         .map((data) => data.seriesValues[_seriesKeyIndexMap[key]!])
         .toList();
   }

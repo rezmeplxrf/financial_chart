@@ -47,6 +47,23 @@ class GPositionCoord extends GCoordinate {
     this.yOffset = 0,
   }) : super(x, y);
 
+  /// create a copy of this coordinate with some changes
+  GPositionCoord copyWith({
+    double? x,
+    double? y,
+    double? xOffset,
+    double? yOffset,
+  }) {
+    return GPositionCoord(
+      x: x ?? this.x,
+      y: y ?? this.y,
+      xIsRatio: xIsRatio,
+      yIsRatio: yIsRatio,
+      xOffset: xOffset ?? this.xOffset,
+      yOffset: yOffset ?? this.yOffset,
+    );
+  }
+
   /// create a coordinate with absolute position in the view area
   GPositionCoord.absolute({required double x, required double y})
     : this(x: x, y: y, xIsRatio: false, yIsRatio: false);
@@ -89,6 +106,14 @@ class GViewPortCoord extends GCoordinate {
 
   GViewPortCoord({required double point, required double value})
     : super(point, value);
+
+  /// create a copy of this coordinate with some changes
+  GViewPortCoord copyWith({double? point, double? value}) {
+    return GViewPortCoord(
+      point: point ?? this.point,
+      value: value ?? this.value,
+    );
+  }
 
   /// create a coordinate from position in the view area
   GViewPortCoord.fromPosition({
@@ -163,6 +188,19 @@ class GCustomCoord extends GCoordinate {
     required double y,
     required this.coordinateConvertor,
   }) : super(x, y);
+
+  /// create a copy of this coordinate with some changes
+  GCustomCoord copyWith({
+    double? x,
+    double? y,
+    GCoordinateConvertor? coordinateConvertor,
+  }) {
+    return GCustomCoord(
+      x: x ?? this.x,
+      y: y ?? this.y,
+      coordinateConvertor: coordinateConvertor ?? this.coordinateConvertor,
+    );
+  }
 
   /// convert the coordinate to position in the view area
   @override
