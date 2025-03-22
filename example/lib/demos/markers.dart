@@ -47,7 +47,7 @@ class DemoMarkersPageState extends DemoBasePageState {
           GGraphGrids(id: "grids", valueViewPortId: 'price'),
           GGraphOhlc(
             id: "ohlc",
-            visible: false,
+            visible: true,
             valueViewPortId: "price",
             drawAsCandle: true,
             ohlcValueKeys: const [keyOpen, keyHigh, keyLow, keyClose],
