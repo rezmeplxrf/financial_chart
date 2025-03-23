@@ -1,7 +1,12 @@
+## 0.1.4
+2025-03-23
+- bug fix
+- update examples
+
 ## 0.1.3
 2025-03-22
-- Add live update demo 
 - bug fix
+- Add live update demo 
 
 ## 0.1.2
 2025-03-20

@@ -24,6 +24,7 @@ class GShapeMarker extends GGraphMarker {
 
   GShapeMarker({
     String? id,
+    bool visible = true,
     required GCoordinate anchorCoord,
     required GSize radiusSize,
     double rotation = 0,
@@ -36,7 +37,12 @@ class GShapeMarker extends GGraphMarker {
   }) : _radiusSize = GValue<GSize>(radiusSize),
        _alignment = GValue<Alignment>(alignment),
        _rotation = GValue<double>(rotation),
-       super(id: id, keyCoordinates: [anchorCoord], theme: theme) {
+       super(
+         id: id,
+         visible: visible,
+         keyCoordinates: [anchorCoord],
+         theme: theme,
+       ) {
     assert(radiusSize.sizeValue > 0, 'radius must be positive value.');
   }
 }

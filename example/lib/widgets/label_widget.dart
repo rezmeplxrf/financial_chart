@@ -8,14 +8,17 @@ class AppLabelWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      spacing: 4,
-      children: [
-        Text(label, style: Theme.of(context).textTheme.bodySmall),
-        child,
-      ],
+    return SizedBox(
+      width: 150,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        spacing: 4,
+        children: [
+          Text(label, style: Theme.of(context).textTheme.bodySmall),
+          child,
+        ],
+      ),
     );
   }
 }

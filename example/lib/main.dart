@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import 'demos/basic.dart';
@@ -26,6 +28,14 @@ final routes = {
   '/demo/markers': (context) => const DemoMarkersPage(),
 };
 
+class CustomScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+  };
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -34,6 +44,7 @@ class MyApp extends StatelessWidget {
     return SafeArea(
       child: MaterialApp(
         //showPerformanceOverlay: true,
+        scrollBehavior: CustomScrollBehavior(),
         routes: routes,
         initialRoute: '/demo',
       ),

@@ -31,6 +31,7 @@ class GArcMarker extends GGraphMarker {
 
   GArcMarker({
     String? id,
+    bool visible = true,
     required GCoordinate centerCoord,
     required GCoordinate borderCoord,
     required double startTheta,
@@ -45,6 +46,7 @@ class GArcMarker extends GGraphMarker {
        _close = GValue<bool>(close),
        super(
          id: id,
+         visible: visible,
          keyCoordinates: [
            centerCoord,
            borderCoord,
@@ -54,6 +56,7 @@ class GArcMarker extends GGraphMarker {
 
   GArcMarker.anchorAndRadius({
     String? id,
+    bool visible = true,
     required GCoordinate anchorCoord,
     required GSize radiusSize,
     required double startTheta,
@@ -71,6 +74,7 @@ class GArcMarker extends GGraphMarker {
        _close = GValue<bool>(close),
        super(
          id: id,
+         visible: visible,
          keyCoordinates: [anchorCoord],
          theme: theme,
          render: render,

@@ -6,8 +6,14 @@ import 'line_marker_render.dart';
 class GLineMarker extends GGraphMarker {
   GLineMarker({
     String? id,
+    bool visible = true,
     required List<GCoordinate> coordinates,
     GGraphMarkerTheme? theme,
     super.render = const GLineMarkerRender(),
-  }) : super(id: id, keyCoordinates: [...coordinates], theme: theme);
+  }) : super(
+         id: id,
+         visible: visible,
+         keyCoordinates: [...coordinates],
+         theme: theme,
+       );
 }

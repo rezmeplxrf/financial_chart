@@ -10,7 +10,8 @@ class BasicDemoPage extends StatefulWidget {
   BasicDemoPageState createState() => BasicDemoPageState();
 }
 
-class BasicDemoPageState extends State<BasicDemoPage> {
+class BasicDemoPageState extends State<BasicDemoPage>
+    with TickerProviderStateMixin {
   GChart? chart;
 
   @override
@@ -26,7 +27,7 @@ class BasicDemoPageState extends State<BasicDemoPage> {
   }
 
   Future<void> initializeChart() async {
-    const String ticker = 'GOOGL';
+    const String ticker = 'AAPL';
     loadYahooFinanceData(ticker).then((response) {
       final dataSource = GDataSource<int, GData<int>>(
         dataList:
@@ -96,7 +97,7 @@ class BasicDemoPageState extends State<BasicDemoPage> {
                 ? const Center(child: CircularProgressIndicator())
                 : Padding(
                   padding: const EdgeInsets.all(10),
-                  child: GChartWidget(chart: chart!),
+                  child: GChartWidget(chart: chart!, tickerProvider: this),
                 ),
       ),
     );

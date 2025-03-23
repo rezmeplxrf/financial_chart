@@ -383,6 +383,10 @@ class GChart extends ChangeNotifier {
   /// dispose the chart.
   @override
   void dispose() {
+    pointViewPort.dispose();
+    for (var panel in panels) {
+      panel.dispose();
+    }
     dataSource.removeListener(_notify);
     controller.removeListener(_notify);
     controller.dispose();

@@ -17,6 +17,7 @@ class GLabelMarker extends GGraphMarker {
 
   GLabelMarker({
     String? id,
+    bool visible = true,
     required String text,
     required GCoordinate anchorCoord,
     Alignment alignment = Alignment.center,
@@ -24,5 +25,10 @@ class GLabelMarker extends GGraphMarker {
     super.render = const GLabelMarkerRender(),
   }) : _text = GValue<String>(text),
        _alignment = GValue<Alignment>(alignment),
-       super(id: id, keyCoordinates: [anchorCoord], theme: theme);
+       super(
+         id: id,
+         visible: visible,
+         keyCoordinates: [anchorCoord],
+         theme: theme,
+       );
 }

@@ -67,8 +67,9 @@ class GValueViewPort extends ChangeNotifier {
 
   AnimationController? _rangeAnimationController;
   Animation<double>? _rangeAnimation;
-  final GValue<bool> _isAnimating = GValue<bool>(false);
-  bool get isAnimating => _isAnimating.value;
+  final GRange _animationStartRange = GRange.empty();
+  final GRange _animationTargetRange = GRange.empty();
+  bool get isAnimating => _animationStartRange.isNotEmpty;
 
   /// Create a value viewport.
   ///
@@ -118,15 +119,39 @@ class GValueViewPort extends ChangeNotifier {
           curve: Curves.easeOutCubic,
         ),
       );
+      _rangeAnimation!.addListener(_rangeAnimationListener);
     }
   }
 
   void _notifyRangeUpdated({required bool finished}) {
+    notifyListeners();
     if (onRangeUpdate != null) {
       _range.copy(
         onRangeUpdate!.call(updatedRange: _range, finished: finished),
       );
     }
+  }
+
+  void stopAnimation() {
+    _rangeAnimationController?.stop();
+    _animationStartRange.clear();
+    _animationTargetRange.clear();
+  }
+
+  void _rangeAnimationListener() {
+    if (_animationStartRange.isEmpty || _animationTargetRange.isEmpty) {
+      return;
+    }
+    final updatedRange = GRange.lerp(
+      _animationStartRange,
+      _animationTargetRange,
+      _rangeAnimation!.value,
+    );
+    setRange(
+      startValue: updatedRange.first!,
+      endValue: updatedRange.last!,
+      finished: false,
+    );
   }
 
   void animateToRange(
@@ -147,31 +172,16 @@ class GValueViewPort extends ChangeNotifier {
       onFinished?.call();
       return;
     }
-    _rangeAnimationController!.stop();
-    _isAnimating.value = true;
-    var currentRange = GRange.range(startValue, endValue);
-    void listener() {
-      final updatedRange = GRange.lerp(
-        currentRange,
-        targetRange,
-        _rangeAnimationController!.value,
-      );
-      setRange(
-        startValue: updatedRange.first!,
-        endValue: updatedRange.last!,
-        finished: finished,
-      );
-      chart.repaint(layout: false);
-    }
+    stopAnimation();
+    _animationStartRange.update(startValue, endValue);
+    _animationTargetRange.copy(targetRange);
 
     Future.delayed(const Duration(milliseconds: 10), () {
       _rangeAnimationController!.reset();
-      _rangeAnimation!.addListener(listener);
       _rangeAnimationController!.forward().then((_) {
-        _rangeAnimation!.removeListener(listener);
-        _isAnimating.value = false;
+        stopAnimation();
         onFinished?.call();
-      });
+      }, onError: (_, _) => stopAnimation());
     });
   }
 
@@ -346,7 +356,10 @@ class GValueViewPort extends ChangeNotifier {
 
   @override
   void dispose() {
-    _rangeAnimationController?.dispose();
+    _rangeAnimation?.removeListener(_rangeAnimationListener);
+    _rangeAnimationController
+      ?..stop()
+      ..dispose();
     super.dispose();
   }
 }

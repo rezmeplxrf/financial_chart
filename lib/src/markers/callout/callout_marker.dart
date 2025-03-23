@@ -26,6 +26,7 @@ class GCalloutMarker extends GGraphMarker {
 
   GCalloutMarker({
     String? id,
+    bool visible = true,
     required String text,
     required GCoordinate anchorCoord,
     Alignment alignment = Alignment.center,
@@ -39,6 +40,7 @@ class GCalloutMarker extends GGraphMarker {
        _pointerMargin = GValue<double>(pointerMargin),
        super(
          id: id,
+         visible: visible,
          keyCoordinates: [anchorCoord],
          theme: theme,
          render: render,
