@@ -11,10 +11,16 @@ class GSplineMarker extends GGraphMarker {
 
   GSplineMarker({
     String? id,
+    bool visible = true,
     required List<GCoordinate> coordinates,
     bool close = false,
     GGraphMarkerTheme? theme,
     super.render = const GSplineMarkerRender(),
   }) : _close = GValue<bool>(close),
-       super(id: id, keyCoordinates: [...coordinates], theme: theme);
+       super(
+         id: id,
+         visible: visible,
+         keyCoordinates: [...coordinates],
+         theme: theme,
+       );
 }

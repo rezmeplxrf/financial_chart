@@ -31,12 +31,14 @@ Widget _defaultNoDataWidgetBuilder(BuildContext context, GChart chart) {
 // ignore_for_file: avoid_print
 class GChartWidget extends StatefulWidget {
   final GChart chart;
+  final TickerProvider tickerProvider;
   final Widget Function(BuildContext context, GChart chart)
   loadingWidgetBuilder;
   final Widget Function(BuildContext context, GChart chart) noDataWidgetBuilder;
   const GChartWidget({
     super.key,
     required this.chart,
+    required this.tickerProvider,
     this.noDataWidgetBuilder = _defaultNoDataWidgetBuilder,
     this.loadingWidgetBuilder = _defaultLoadingWidgetBuilder,
   });
@@ -45,8 +47,7 @@ class GChartWidget extends StatefulWidget {
   GChartWidgetState createState() => GChartWidgetState();
 }
 
-class GChartWidgetState extends State<GChartWidget>
-    with TickerProviderStateMixin {
+class GChartWidgetState extends State<GChartWidget> {
   GChartWidgetState();
   bool printEvents = false;
 
@@ -55,7 +56,7 @@ class GChartWidgetState extends State<GChartWidget>
   @override
   void initState() {
     super.initState();
-    widget.chart.initialize(vsync: this);
+    widget.chart.initialize(vsync: widget.tickerProvider);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.chart.ensureInitialData();
     });

@@ -142,4 +142,10 @@ class GPanel extends GComponent {
     }
     return null;
   }
+
+  dispose() {
+    for (var valueViewPort in valueViewPorts) {
+      valueViewPort.dispose();
+    }
+  }
 }

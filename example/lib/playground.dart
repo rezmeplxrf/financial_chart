@@ -267,7 +267,7 @@ class ChartPlaygroundDemoPageState extends State<ChartPlaygroundDemoPage>
                     ? const CircularProgressIndicator()
                     : Padding(
                       padding: const EdgeInsets.all(10),
-                      child: GChartWidget(chart: chart!),
+                      child: GChartWidget(chart: chart!, tickerProvider: this),
                     ),
           ),
         ],

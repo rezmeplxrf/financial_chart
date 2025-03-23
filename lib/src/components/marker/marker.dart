@@ -65,6 +65,7 @@ abstract class GGraphMarker extends GMarker {
 
   GGraphMarker({
     super.id,
+    super.visible,
     super.theme,
     super.render,
     this.keyCoordinates = const [],

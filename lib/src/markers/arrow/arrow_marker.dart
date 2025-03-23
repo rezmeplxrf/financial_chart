@@ -15,6 +15,7 @@ class GArrowMarker extends GGraphMarker {
 
   GArrowMarker({
     String? id,
+    bool visible = true,
     required GCoordinate startCoord,
     required GCoordinate endCoord,
     double headWidth = 4,
@@ -23,5 +24,10 @@ class GArrowMarker extends GGraphMarker {
     super.render = const GArrowMarkerRender(),
   }) : _headWidth = GValue<double>(headWidth),
        _headLength = GValue<double>(headLength),
-       super(id: id, keyCoordinates: [startCoord, endCoord], theme: theme);
+       super(
+         id: id,
+         visible: visible,
+         keyCoordinates: [startCoord, endCoord],
+         theme: theme,
+       );
 }

@@ -121,6 +121,16 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
     return index + basePoint;
   }
 
+  /// Convert series key to value index in [GData].seriesValues
+  int seriesKeyToIndex(String key) {
+    return _seriesKeyIndexMap[key]!;
+  }
+
+  /// Convert series value index to series key.
+  String seriesIndexToKey(int index) {
+    return seriesProperties[index].key;
+  }
+
   /// Get the data at the given point.
   P? getPointValue(int point) {
     final index = pointToIndex(point);

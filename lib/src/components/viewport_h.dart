@@ -93,7 +93,7 @@ class GPointViewPort extends ChangeNotifier {
           curve: Curves.easeOutCubic,
         ),
       );
-      _rangeAnimation!.addListener(rangeAnimationListener);
+      _rangeAnimation!.addListener(_rangeAnimationListener);
     }
   }
 
@@ -103,7 +103,7 @@ class GPointViewPort extends ChangeNotifier {
     _animationTargetRange.clear();
   }
 
-  void rangeAnimationListener() {
+  void _rangeAnimationListener() {
     if (_animationStartRange.isEmpty || _animationTargetRange.isEmpty) {
       return;
     }
@@ -350,5 +350,14 @@ class GPointViewPort extends ChangeNotifier {
 
   void _notify({required bool finished}) {
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _rangeAnimation?.removeListener(_rangeAnimationListener);
+    _rangeAnimationController
+      ?..stop()
+      ..dispose();
+    super.dispose();
   }
 }

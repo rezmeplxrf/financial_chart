@@ -11,10 +11,16 @@ class GPolygonMarker extends GGraphMarker {
 
   GPolygonMarker({
     String? id,
+    bool visible = true,
     required List<GCoordinate> coordinates,
     bool close = true,
     GGraphMarkerTheme? theme,
     super.render = const GPolygonMarkerRender(),
   }) : _close = GValue<bool>(close),
-       super(id: id, keyCoordinates: coordinates, theme: theme);
+       super(
+         id: id,
+         visible: visible,
+         keyCoordinates: coordinates,
+         theme: theme,
+       );
 }

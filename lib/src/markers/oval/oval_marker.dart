@@ -22,6 +22,7 @@ class GOvalMarker extends GGraphMarker {
 
   GOvalMarker.corner({
     String? id,
+    bool visible = true,
     required GCoordinate startCoord,
     required GCoordinate endCoord,
     GGraphMarkerTheme? theme,
@@ -29,10 +30,16 @@ class GOvalMarker extends GGraphMarker {
   }) : _pointRadiusSize = GValue<GSize?>(null),
        _valueRadiusSize = GValue<GSize?>(null),
        _alignment = GValue<Alignment>(Alignment.center),
-       super(id: id, keyCoordinates: [startCoord, endCoord], theme: theme);
+       super(
+         id: id,
+         visible: visible,
+         keyCoordinates: [startCoord, endCoord],
+         theme: theme,
+       );
 
   GOvalMarker.anchorAndRadius({
     String? id,
+    bool visible = true,
     required GCoordinate anchorCoord,
     required GSize pointRadiusSize,
     required GSize valueRadiusSize,
@@ -42,5 +49,10 @@ class GOvalMarker extends GGraphMarker {
   }) : _pointRadiusSize = GValue<GSize?>(pointRadiusSize),
        _valueRadiusSize = GValue<GSize?>(valueRadiusSize),
        _alignment = GValue<Alignment>(alignment),
-       super(id: id, keyCoordinates: [anchorCoord], theme: theme);
+       super(
+         id: id,
+         visible: visible,
+         keyCoordinates: [anchorCoord],
+         theme: theme,
+       );
 }

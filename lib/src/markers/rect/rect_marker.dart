@@ -26,6 +26,7 @@ class GRectMarker extends GGraphMarker {
 
   GRectMarker({
     String? id,
+    bool visible = true,
     required GCoordinate startCoord,
     required GCoordinate endCoord,
     GSize? cornerRadiusSize,
@@ -35,10 +36,16 @@ class GRectMarker extends GGraphMarker {
        _valueRadiusSize = GValue<GSize?>(null),
        _alignment = GValue<Alignment>(Alignment.center),
        _cornerRadiusSize = GValue<GSize?>(cornerRadiusSize),
-       super(id: id, keyCoordinates: [startCoord, endCoord], theme: theme);
+       super(
+         id: id,
+         visible: visible,
+         keyCoordinates: [startCoord, endCoord],
+         theme: theme,
+       );
 
   GRectMarker.anchorAndRadius({
     String? id,
+    bool visible = true,
     required GCoordinate anchorCoord,
     required GSize pointRadiusSize,
     required GSize valueRadiusSize,
@@ -50,5 +57,10 @@ class GRectMarker extends GGraphMarker {
        _pointRadiusSize = GValue<GSize?>(pointRadiusSize),
        _valueRadiusSize = GValue<GSize?>(valueRadiusSize),
        _alignment = GValue<Alignment>(alignment),
-       super(id: id, keyCoordinates: [anchorCoord], theme: theme);
+       super(
+         id: id,
+         visible: visible,
+         keyCoordinates: [anchorCoord],
+         theme: theme,
+       );
 }

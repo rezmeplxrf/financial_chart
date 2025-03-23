@@ -48,8 +48,7 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
     if (dataSource.length == 0) {
       return;
     }
-    final lastPoint = dataSource.lastPoint;
-    final lastData = dataSource.dataList[dataSource.pointToIndex(lastPoint)];
+    var lastData = dataSource.dataList.last;
     final latestPrice =
         lastData.seriesValues[3] +
         (Random().nextInt(100) - 50) * 0.02; // random price change
@@ -62,15 +61,25 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
             ...[latestPrice, latestPrice, latestPrice, latestPrice], // ohlc
             ...lastData.seriesValues.sublist(
               4,
-            ), // just copy the rest from the last
+            ), // here we just copy the rest, in real case we need to set correct volume and indicator values
           ],
         ),
       );
     }
     // update last data high, low, close
-    lastData.seriesValues[3] = latestPrice; // close
-    lastData.seriesValues[1] = lastData.seriesValues.sublist(0, 4).reduce(max);
-    lastData.seriesValues[2] = lastData.seriesValues.sublist(0, 4).reduce(min);
+    lastData = dataSource.dataList.last;
+    lastData.seriesValues[dataSource.seriesKeyToIndex(keyClose)] =
+        latestPrice; // close
+    final ohlcValues = [
+      lastData.seriesValues[dataSource.seriesKeyToIndex(keyOpen)],
+      lastData.seriesValues[dataSource.seriesKeyToIndex(keyHigh)],
+      lastData.seriesValues[dataSource.seriesKeyToIndex(keyLow)],
+      lastData.seriesValues[dataSource.seriesKeyToIndex(keyClose)],
+    ];
+    lastData.seriesValues[dataSource.seriesKeyToIndex(keyHigh)] = ohlcValues
+        .reduce(max); // high
+    lastData.seriesValues[dataSource.seriesKeyToIndex(keyLow)] = ohlcValues
+        .reduce(min); // low
     // update axis marker and line marker
     lineMarker!.keyCoordinates[0] = (lineMarker!.keyCoordinates[0]
             as GCustomCoord)
@@ -79,10 +88,13 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
             as GCustomCoord)
         .copyWith(y: latestPrice);
     axisMarker!.values[0] = latestPrice;
-    axisMarker!.points[0] = lastPoint;
+    axisMarker!.points[0] = dataSource.lastPoint;
     // redraw chart
     final autoScalePointViewPort =
-        (chart!.pointViewPort.endPoint - lastPoint - 10).round().abs() < 2;
+        (chart!.pointViewPort.endPoint - dataSource.lastPoint - 10)
+            .round()
+            .abs() <
+        2;
     chart?.autoScaleViewports(
       resetPointViewPort: autoScalePointViewPort,
       resetValueViewPort: true,

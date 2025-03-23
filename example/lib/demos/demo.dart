@@ -33,6 +33,12 @@ abstract class DemoBasePageState extends State<DemoBasePage>
     loadData();
   }
 
+  @override
+  void dispose() {
+    chart?.dispose();
+    super.dispose();
+  }
+
   void loadData() async {
     loadSampleData(
       simulateLatencyMillis: simulateDataLatencyMillis,
@@ -70,8 +76,9 @@ abstract class DemoBasePageState extends State<DemoBasePage>
         children: <Widget>[
           Container(
             height: 70,
+            width: double.infinity,
             alignment: Alignment.center,
-            child: chart == null ? Container() : buildControlPanel(context),
+            child: chart == null ? Container() : _buildControlPanel(context),
           ),
           Expanded(
             child:
@@ -79,11 +86,18 @@ abstract class DemoBasePageState extends State<DemoBasePage>
                     ? const Center(child: CircularProgressIndicator())
                     : Padding(
                       padding: const EdgeInsets.all(10),
-                      child: GChartWidget(chart: chart!),
+                      child: GChartWidget(chart: chart!, tickerProvider: this),
                     ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildControlPanel(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: buildControlPanel(context),
     );
   }
 
