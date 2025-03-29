@@ -160,7 +160,7 @@ class GCrosshairRender extends GRender<GCrosshair, GCrosshairTheme> {
     }
     for (int a = 0; a < panel.valueAxes.length; a++) {
       var valueAxis = panel.valueAxes[a];
-      var valueViewPort = panel.findValueViewPortById(valueAxis.viewPortId)!;
+      var valueViewPort = panel.findValueViewPortById(valueAxis.viewPortId);
       var axisArea = panel.valueAxisArea(a);
       if (axisArea.top > crossPosition.dy ||
           axisArea.bottom < crossPosition.dy) {

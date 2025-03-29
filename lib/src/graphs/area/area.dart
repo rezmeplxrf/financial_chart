@@ -25,7 +25,7 @@ class GGraphArea extends GGraph<GGraphAreaTheme> {
     this.baseValueKey,
     super.layer,
     super.visible,
-    required super.valueViewPortId,
+    super.valueViewPortId,
     super.hitTestMode,
     super.crosshairHighlightValueKeys,
     super.axisMarkers,

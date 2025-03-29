@@ -60,7 +60,6 @@ class BasicDemoPageState extends State<BasicDemoPage> {
   }
 
   GChart buildChart(GDataSource dataSource) {
-    const valueViewPortId = "price";
     return GChart(
       dataSource: dataSource,
       theme: GThemeDark(),
@@ -68,16 +67,15 @@ class BasicDemoPageState extends State<BasicDemoPage> {
         GPanel(
           valueViewPorts: [
             GValueViewPort(
-              id: valueViewPortId,
               valuePrecision: 2,
               autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(dataKeys: ["high", "low"]),
             )
           ],
-          valueAxes: [GValueAxis(viewPortId: valueViewPortId)],
+          valueAxes: [GValueAxis()],
           pointAxes: [GPointAxis()],
           graphs: [
-            GGraphGrids(valueViewPortId: valueViewPortId),
-            GGraphOhlc(valueViewPortId: valueViewPortId, ohlcValueKeys: const ["open", "high", "low", "close"]),
+            GGraphGrids(),
+            GGraphOhlc(ohlcValueKeys: const ["open", "high", "low", "close"]),
           ],
         ),
       ],

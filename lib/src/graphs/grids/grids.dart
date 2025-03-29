@@ -17,7 +17,7 @@ class GGraphGrids extends GGraph<GGraphGridsTheme> {
     super.id,
     super.layer = 1,
     super.visible,
-    required super.valueViewPortId,
+    super.valueViewPortId,
     this.valueTickerStrategy = const GValueTickerStrategyDefault(),
     this.pointTickerStrategy = const GPointTickerStrategyDefault(),
     super.hitTestMode,

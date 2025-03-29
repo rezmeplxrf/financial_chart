@@ -1,3 +1,11 @@
+## 0.1.5
+2025-03-28
+- expose GChartWidget.onTapXX callbacks
+- add GChart.hitTestGraph(), GChart.saveAsImage()
+- change GChart.preRender(), GChart.postRender() callbacks
+- allow default valueViewPortId
+- update examples
+
 ## 0.1.4
 2025-03-23
 - bug fix

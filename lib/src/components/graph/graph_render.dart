@@ -82,7 +82,7 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
     }
     final graph = component;
     final pointViewPort = chart.pointViewPort;
-    final valueViewPort = panel!.findValueViewPortById(graph.valueViewPortId)!;
+    final valueViewPort = panel!.findValueViewPortById(graph.valueViewPortId);
     if (!pointViewPort.isValid || !valueViewPort.isValid) {
       return;
     }
@@ -163,7 +163,7 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
       return;
     }
     final valueViewPort = panel.findValueViewPortById(graph.valueViewPortId);
-    if (valueViewPort == null || !valueViewPort.isValid) {
+    if (!valueViewPort.isValid) {
       return;
     }
     List<Vector2> crosshairHighlightMarks = [];

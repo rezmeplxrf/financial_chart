@@ -35,12 +35,18 @@ class GChartWidget extends StatefulWidget {
   final Widget Function(BuildContext context, GChart chart)
   loadingWidgetBuilder;
   final Widget Function(BuildContext context, GChart chart) noDataWidgetBuilder;
+  final GestureTapDownCallback? onTapDown;
+  final GestureTapUpCallback? onTapUp;
+  final GestureTapDownCallback? onDoubleTapDown;
   const GChartWidget({
     super.key,
     required this.chart,
     required this.tickerProvider,
     this.noDataWidgetBuilder = _defaultNoDataWidgetBuilder,
     this.loadingWidgetBuilder = _defaultLoadingWidgetBuilder,
+    this.onTapDown,
+    this.onTapUp,
+    this.onDoubleTapDown,
   });
 
   @override
@@ -153,6 +159,7 @@ class GChartWidgetState extends State<GChartWidget> {
                   position: details.localPosition,
                   isTouch: details.kind == PointerDeviceKind.touch,
                 );
+                widget.onTapDown?.call(details);
               },
               onTapUp: (TapUpDetails details) {
                 if (kDebugMode && printEvents) {
@@ -162,12 +169,14 @@ class GChartWidgetState extends State<GChartWidget> {
                   position: details.localPosition,
                   isTouch: details.kind == PointerDeviceKind.touch,
                 );
+                widget.onTapUp?.call(details);
               },
               onDoubleTapDown: (TapDownDetails details) {
                 if (kDebugMode && printEvents) {
                   print("onDoubleTapDown kind: ${details.kind}");
                 }
                 controller.doubleTap(position: details.localPosition);
+                widget.onDoubleTapDown?.call(details);
               },
               onVerticalDragStart: (DragStartDetails details) {
                 controller.scaleStart(

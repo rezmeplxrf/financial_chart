@@ -23,7 +23,7 @@ class GValueAxisRender extends GAxisRender<GValueAxis> {
     required GAxisTheme theme,
   }) {
     final axis = component;
-    final valueViewPort = panel!.findValueViewPortById(axis.viewPortId)!;
+    final valueViewPort = panel!.findValueViewPortById(axis.viewPortId);
     if (!valueViewPort.isValid) {
       return;
     }

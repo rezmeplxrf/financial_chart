@@ -75,7 +75,7 @@ class GValueViewPort extends ChangeNotifier {
   ///
   /// Set proper [initialEndValue] and [initialStartValue] when [autoScaleStrategy] not provided.
   GValueViewPort({
-    required this.id,
+    this.id = "",
     double? initialEndValue,
     double? initialStartValue,
     required this.valuePrecision,

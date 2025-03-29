@@ -105,6 +105,14 @@ class GPanel extends GComponent {
     _heightWeight.value = heightWeight;
     _resizable.value = resizable;
     _momentumScrollSpeed.value = min(max(momentumScrollSpeed, 0), 1.0);
+    // at least one value viewport is required
+    assert(valueViewPorts.isNotEmpty);
+    // no duplicate id for value viewport
+    assert(
+      valueViewPorts.map((e) => e.id).toSet().length == valueViewPorts.length,
+      "Duplicate id for value viewport is not allowed.",
+    );
+    // only one value viewport with empty id is allowed
   }
 
   void layout(GChart chart, Rect panelArea) {
@@ -125,8 +133,15 @@ class GPanel extends GComponent {
       ..add(splitterArea);
   }
 
-  GValueViewPort? findValueViewPortById(String id) {
-    return valueViewPorts.where((element) => element.id == id).firstOrNull;
+  GValueViewPort findValueViewPortById(String id) {
+    final found =
+        valueViewPorts.where((element) => element.id == id).firstOrNull;
+    if (found == null) {
+      throw Exception(
+        "Value viewport with id $id not found. Available ids: ${valueViewPorts.map((e) => e.id).toList()}",
+      );
+    }
+    return found;
   }
 
   GGraph? findGraphById(String id) {
