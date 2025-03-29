@@ -5,6 +5,7 @@
 - change GChart.preRender(), GChart.postRender() callbacks
 - allow default valueViewPortId
 - update examples
+- [0.1.5+1] expose GChartWidget.onPointerDown, onPointerUp
 
 ## 0.1.4
 2025-03-23
