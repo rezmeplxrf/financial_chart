@@ -13,6 +13,7 @@ class BasicDemoPage extends StatefulWidget {
 class BasicDemoPageState extends State<BasicDemoPage>
     with TickerProviderStateMixin {
   GChart? chart;
+  Offset? pointerDownPosition;
 
   @override
   void initState() {
@@ -95,8 +96,15 @@ class BasicDemoPageState extends State<BasicDemoPage>
                   child: GChartWidget(
                     chart: chart!,
                     tickerProvider: this,
-                    onTapUp: (TapUpDetails details) {
+                    onPointerDown: (PointerDownEvent details) {
+                      pointerDownPosition = details.localPosition;
+                    },
+                    onPointerUp: (PointerUpEvent details) {
                       final position = details.localPosition;
+                      if (pointerDownPosition == null ||
+                          (position - pointerDownPosition!).distance > 10) {
+                        return;
+                      }
                       final hit = chart!.hitTestGraph(position: position);
                       final panel = hit?.$1 ?? chart!.panels[0];
                       final graph = hit?.$2;
@@ -119,6 +127,7 @@ class BasicDemoPageState extends State<BasicDemoPage>
                       );
                       showDialog(
                         context: context,
+                        barrierDismissible: false,
                         builder: (context) {
                           return AlertDialog(
                             content: Text(

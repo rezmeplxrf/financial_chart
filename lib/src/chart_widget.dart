@@ -38,6 +38,8 @@ class GChartWidget extends StatefulWidget {
   final GestureTapDownCallback? onTapDown;
   final GestureTapUpCallback? onTapUp;
   final GestureTapDownCallback? onDoubleTapDown;
+  final PointerDownEventListener? onPointerDown;
+  final PointerUpEventListener? onPointerUp;
   const GChartWidget({
     super.key,
     required this.chart,
@@ -47,6 +49,8 @@ class GChartWidget extends StatefulWidget {
     this.onTapDown,
     this.onTapUp,
     this.onDoubleTapDown,
+    this.onPointerDown,
+    this.onPointerUp,
   });
 
   @override
@@ -106,14 +110,28 @@ class GChartWidgetState extends State<GChartWidget> {
                   }
                 },
                 child: MouseRegion(
-                  child: RepaintBoundary(
-                    child: CustomPaint(
-                      size: chart.size,
-                      painter: GChartPainter(
-                        chart: chart,
-                        repaintListener: chart,
+                  child: Listener(
+                    child: RepaintBoundary(
+                      child: CustomPaint(
+                        size: chart.size,
+                        painter: GChartPainter(
+                          chart: chart,
+                          repaintListener: chart,
+                        ),
                       ),
                     ),
+                    onPointerDown: (PointerDownEvent details) {
+                      if (kDebugMode && printEvents) {
+                        print("onPointerDown: ${details.localPosition}");
+                      }
+                      widget.onPointerDown?.call(details);
+                    },
+                    onPointerUp: (PointerUpEvent details) {
+                      if (kDebugMode && printEvents) {
+                        print("onPointerUp: ${details.localPosition}");
+                      }
+                      widget.onPointerUp?.call(details);
+                    },
                   ),
                   onEnter: (PointerEvent details) {
                     controller.mouseEnter(position: details.localPosition);
