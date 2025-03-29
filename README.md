@@ -14,7 +14,7 @@ easy to customize and extend.
 - Resizable multiple panels and multiple graphs in one panel.
 - Show tooltips and crosshair lines for data points.
 - Supports multiple axes.
-- Zoom and pan of axes and graph. double tap axes to reset zoom.
+- Zoom and pan of axes and graph. double tap axes to reset zoom. supports momentum scrolling.
 - Show animation when zooming.
 - Dynamic data loading with loading indicator.
 - Live update of data and graphs.
