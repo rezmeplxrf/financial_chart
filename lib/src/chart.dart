@@ -111,10 +111,12 @@ class GChart extends ChangeNotifier {
   /// The pre-render callback which is called right before rendering.
   ///
   /// This gives a chance to modify the chart before rendering.
-  final void Function(GChart chart, Size size)? preRender;
+  final void Function(GChart chart, Canvas canvas, Rect area)? preRender;
 
   /// The post-render callback which is called right after rendering finished.
-  final void Function(GChart chart, Size size)? postRender;
+  ///
+  /// still it is able to draw something additional on the canvas.
+  final void Function(GChart chart, Canvas canvas, Rect area)? postRender;
 
   final _debounceHelper = DebounceHelper(milliseconds: 500);
 
@@ -211,14 +213,25 @@ class GChart extends ChangeNotifier {
 
   /// Paint the chart on the canvas.
   void paint(Canvas canvas, Size size) {
-    if (kDebugMode && _paintCount.value % 100 == 0) {
-      // ignore: avoid_print
-      print("paintCount = ${_paintCount.value}");
+    if (kDebugMode) {
+      _paintCount.value += 1;
+      if (_paintCount.value % 100 == 0) {
+        // ignore: avoid_print
+        print("paintCount = ${_paintCount.value}");
+      }
     }
-    _paintCount.value += 1;
-    preRender?.call(this, area.size);
+    preRender?.call(this, canvas, area);
     render.render(canvas: canvas, chart: this);
-    postRender?.call(this, size);
+    postRender?.call(this, canvas, area);
+  }
+
+  /// Save current chart as an image.
+  Future<Image> saveAsImage() async {
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder, area);
+    render.render(canvas: canvas, chart: this);
+    final picture = recorder.endRecording();
+    return picture.toImage(size.width.floor(), size.height.floor());
   }
 
   /// Resize the chart view area.
