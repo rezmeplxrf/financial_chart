@@ -21,7 +21,7 @@ class GGraphBar extends GGraph<GGraphBarTheme> {
     this.baseValue,
     super.layer,
     super.visible,
-    required super.valueViewPortId,
+    super.valueViewPortId,
     super.hitTestMode,
     super.crosshairHighlightValueKeys,
     super.axisMarkers,

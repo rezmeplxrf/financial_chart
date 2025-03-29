@@ -12,7 +12,7 @@ class GGraphGroup extends GGraph<GGraphTheme> {
   GGraphGroup({
     super.id,
     required this.graphs,
-    required super.valueViewPortId,
+    super.valueViewPortId,
     super.layer,
     super.visible,
     super.axisMarkers,

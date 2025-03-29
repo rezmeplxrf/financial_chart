@@ -139,7 +139,7 @@ class GValueAxis extends GAxis {
   final String Function(double value, int precision)? valueFormatter;
   GValueAxis({
     super.id,
-    required this.viewPortId,
+    this.viewPortId = "", // empty means the default view port id
     super.position = GAxisPosition.end,
     super.scaleMode = GAxisScaleMode.zoom,
     super.size = defaultVAxisSize,

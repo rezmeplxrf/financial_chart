@@ -49,7 +49,7 @@ class GGraph<T extends GGraphTheme> extends GComponent {
 
   GGraph({
     String? id,
-    required this.valueViewPortId,
+    this.valueViewPortId = "", // empty means the default view port id
     int layer = kDefaultLayer,
     super.visible,
     HitTestMode hitTestMode = HitTestMode.border,

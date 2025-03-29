@@ -20,7 +20,7 @@ class GGraphOhlc extends GGraph<GGraphOhlcTheme> {
 
   GGraphOhlc({
     super.id,
-    required super.valueViewPortId,
+    super.valueViewPortId,
     required this.ohlcValueKeys,
     bool drawAsCandle = true,
     super.layer,

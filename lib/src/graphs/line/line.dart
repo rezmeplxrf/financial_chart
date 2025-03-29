@@ -12,7 +12,7 @@ class GGraphLine extends GGraph<GGraphLineTheme> {
     super.id,
     super.layer,
     super.visible,
-    required super.valueViewPortId,
+    super.valueViewPortId,
     required this.valueKey,
     super.hitTestMode,
     super.crosshairHighlightValueKeys,
