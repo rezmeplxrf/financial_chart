@@ -129,8 +129,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
         final valueViewPort = panel.findValueViewPortById(
           tooltip.followValueViewPortId!,
         );
-        assert(valueViewPort != null);
-        if (valueViewPort!.isValid) {
+        if (valueViewPort.isValid) {
           final valuePosition = valueViewPort.valueToPosition(
             area,
             value.toDouble(),
@@ -203,8 +202,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
           final valueViewPort = panel.findValueViewPortById(
             tooltip.followValueViewPortId!,
           );
-          assert(valueViewPort != null);
-          final valuePosition = valueViewPort!.valueToPosition(
+          final valuePosition = valueViewPort.valueToPosition(
             area,
             value.toDouble(),
           );

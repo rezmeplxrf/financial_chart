@@ -58,7 +58,6 @@ class BasicDemoPageState extends State<BasicDemoPage>
   }
 
   GChart buildChart(GDataSource dataSource) {
-    const valueViewPortId = "price";
     return GChart(
       dataSource: dataSource,
       theme: GThemeDark(),
@@ -66,21 +65,17 @@ class BasicDemoPageState extends State<BasicDemoPage>
         GPanel(
           valueViewPorts: [
             GValueViewPort(
-              id: valueViewPortId,
               valuePrecision: 2,
               autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
                 dataKeys: ["high", "low"],
               ),
             ),
           ],
-          valueAxes: [GValueAxis(viewPortId: valueViewPortId)],
+          valueAxes: [GValueAxis()],
           pointAxes: [GPointAxis()],
           graphs: [
-            GGraphGrids(valueViewPortId: valueViewPortId),
-            GGraphOhlc(
-              valueViewPortId: valueViewPortId,
-              ohlcValueKeys: const ["open", "high", "low", "close"],
-            ),
+            GGraphGrids(),
+            GGraphOhlc(ohlcValueKeys: const ["open", "high", "low", "close"]),
           ],
         ),
       ],
@@ -97,7 +92,52 @@ class BasicDemoPageState extends State<BasicDemoPage>
                 ? const Center(child: CircularProgressIndicator())
                 : Padding(
                   padding: const EdgeInsets.all(10),
-                  child: GChartWidget(chart: chart!, tickerProvider: this),
+                  child: GChartWidget(
+                    chart: chart!,
+                    tickerProvider: this,
+                    onTapUp: (TapUpDetails details) {
+                      final position = details.localPosition;
+                      final hit = chart!.hitTestGraph(position: position);
+                      final panel = hit?.$1 ?? chart!.panels[0];
+                      final graph = hit?.$2;
+                      final valueViewPort = hit?.$2.valueViewPortId ?? "";
+                      final point =
+                          chart!.pointViewPort
+                              .positionToPoint(panel.graphArea(), position.dx)
+                              .round();
+                      final pointValue = chart!.dataSource.getPointValue(point);
+                      var pointValueFormated = "[$point]";
+                      if (pointValue != null) {
+                        pointValueFormated =
+                            "$pointValueFormated ${chart!.dataSource.pointValueFormater.call(point, pointValue)}";
+                      }
+                      final value = panel
+                          .findValueViewPortById(valueViewPort)
+                          .positionToValue(panel.graphArea(), position.dy);
+                      final props = chart!.dataSource.getSeriesProperty(
+                        "close",
+                      );
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            content: Text(
+                              "You tapped: \n"
+                              "  point: $pointValueFormated\n"
+                              "  value: ${value.toStringAsFixed(props.precision)}\n"
+                              "${(graph == null) ? "" : "  on graph ${graph.id ?? graph.runtimeType}"}",
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text("ok"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
       ),
     );

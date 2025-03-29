@@ -38,8 +38,9 @@ abstract class GMarkerRender<M extends GMarker, T extends GMarkerTheme>
       clipRect: area,
       render: () {
         final pointViewPort = chart.pointViewPort;
-        final valueViewPort =
-            panel!.findValueViewPortById(graph.valueViewPortId)!;
+        final valueViewPort = panel!.findValueViewPortById(
+          graph.valueViewPortId,
+        );
         if (!pointViewPort.isValid || !valueViewPort.isValid) {
           return;
         }
@@ -100,7 +101,7 @@ class GAxisMarkerRender extends GMarkerRender<GAxisMarker, GAxisMarkerTheme> {
     required GValueViewPort valueViewPort,
   }) {
     final pointViewPort = chart.pointViewPort;
-    final valueViewPort = panel.findValueViewPortById(graph.valueViewPortId)!;
+    final valueViewPort = panel.findValueViewPortById(graph.valueViewPortId);
     if (marker.values.isNotEmpty || marker.valueRanges.isNotEmpty) {
       for (int a = 0; a < panel.valueAxes.length; a++) {
         final axis = panel.valueAxes[a];

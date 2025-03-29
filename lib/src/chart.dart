@@ -6,14 +6,8 @@ import 'package:flutter/foundation.dart';
 
 import 'chart_controller.dart';
 import 'chart_render.dart';
-import 'components/background/background.dart';
-import 'components/crosshair/crosshair.dart';
-import 'components/splitter/splitter.dart';
-import 'components/viewport_h.dart';
-import 'components/viewport_h_scaler.dart';
-import 'components/viewport_v.dart';
+import 'components/components.dart';
 import 'data/data_source.dart';
-import 'components/panel/panel.dart';
 import 'theme/theme.dart';
 import 'values/value.dart';
 
@@ -349,6 +343,10 @@ class GChart extends ChangeNotifier {
         }
       }
     }
+  }
+
+  (GPanel, GGraph)? hitTestGraph({required Offset position}) {
+    return controller.hitTestGraph(position: position);
   }
 
   void _pointViewPortChanged() {

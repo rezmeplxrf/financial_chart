@@ -48,6 +48,22 @@ class GChartController extends ChangeNotifier {
     _notify();
   }
 
+  (GPanel, GGraph)? hitTestGraph({required Offset position}) {
+    if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
+      return null;
+    }
+    for (int p = 0; p < _chart.panels.length; p++) {
+      GPanel panel = _chart.panels[p];
+      if (panel.panelArea().contains(position)) {
+        int? graphIndex = _hitTestPanelGraphs(panel: panel, position: position);
+        if (graphIndex != null) {
+          return (panel, panel.graphs[graphIndex]);
+        }
+      }
+    }
+    return null;
+  }
+
   void mouseHover({required Offset position}) {
     _chart.crosshair.setCrossPosition(position.dx, position.dy);
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
@@ -59,15 +75,9 @@ class GChartController extends ChangeNotifier {
         panel.graphs[g].highlight(newValue: false);
       }
     }
-    for (int p = 0; p < _chart.panels.length; p++) {
-      GPanel panel = _chart.panels[p];
-      if (panel.panelArea().contains(position)) {
-        int? graphIndex = _hitTestPanelGraphs(panel: panel, position: position);
-        if (graphIndex != null) {
-          panel.graphs[graphIndex].highlight(newValue: true);
-          break;
-        }
-      }
+    final hit = hitTestGraph(position: position);
+    if (hit != null) {
+      hit.$2.highlight(newValue: true);
     }
     _notify();
   }
@@ -234,7 +244,7 @@ class GChartController extends ChangeNotifier {
             GValueViewPort? valueViewPort = panel.findValueViewPortById(
               axis.viewPortId,
             );
-            valueViewPort?.autoScaleReset(
+            valueViewPort.autoScaleReset(
               chart: _chart,
               panel: panel,
               autoScaleFlg: true,
@@ -373,8 +383,8 @@ class GChartController extends ChangeNotifier {
           GValueViewPort? viewPort = panel.findValueViewPortById(
             axis.viewPortId,
           );
-          viewPort?.autoScaleFlg = false;
-          viewPort?.interactionStart();
+          viewPort.autoScaleFlg = false;
+          viewPort.interactionStart();
           double lastY = start.dy;
           _hookScaleUpdate = ({
             required Offset position,
@@ -391,12 +401,12 @@ class GChartController extends ChangeNotifier {
                 ),
                 100,
               );
-              viewPort?.interactionZoomUpdate(axisArea, scaleRatio);
+              viewPort.interactionZoomUpdate(axisArea, scaleRatio);
             } else if (axis.scaleMode == GAxisScaleMode.move) {
               double moveDistance = (position.dy - start.dy);
-              viewPort?.interactionMoveUpdate(axisArea, moveDistance);
+              viewPort.interactionMoveUpdate(axisArea, moveDistance);
             } else if (axis.scaleMode == GAxisScaleMode.select) {
-              viewPort?.interactionSelectUpdate(
+              viewPort.interactionSelectUpdate(
                 _chart,
                 axisArea,
                 start.dy,
@@ -408,7 +418,7 @@ class GChartController extends ChangeNotifier {
           };
           _hookScaleEnd = (Velocity? velocity) {
             if (axis.scaleMode == GAxisScaleMode.select) {
-              viewPort?.interactionSelectUpdate(
+              viewPort.interactionSelectUpdate(
                 _chart,
                 axisArea,
                 start.dy,
@@ -416,7 +426,7 @@ class GChartController extends ChangeNotifier {
                 finished: true,
               );
             }
-            viewPort?.interactionEnd();
+            viewPort.interactionEnd();
           };
           return axis;
         }
@@ -434,8 +444,9 @@ class GChartController extends ChangeNotifier {
         (panel.graphs.length - 1);
     GGraph graph = panel.graphs[graphIndex];
     GPointViewPort pointViewPort = _chart.pointViewPort;
-    GValueViewPort? valueViewPort =
-        panel.findValueViewPortById(graph.valueViewPortId)!;
+    GValueViewPort? valueViewPort = panel.findValueViewPortById(
+      graph.valueViewPortId,
+    );
     Rect graphArea = panel.graphArea();
     if (_isTouchCrossMode.value) {
       _hookScaleUpdate = ({
