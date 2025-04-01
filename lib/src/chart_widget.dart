@@ -60,6 +60,7 @@ class GChartWidget extends StatefulWidget {
 class GChartWidgetState extends State<GChartWidget> {
   GChartWidgetState();
   bool printEvents = false;
+  MouseCursor cursor = SystemMouseCursors.basic;
 
   void repaint() {}
 
@@ -67,9 +68,26 @@ class GChartWidgetState extends State<GChartWidget> {
   void initState() {
     super.initState();
     widget.chart.initialize(vsync: widget.tickerProvider);
+    widget.chart.mouseCursor.addListener(cursorChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.chart.ensureInitialData();
     });
+  }
+
+  @override
+  void dispose() {
+    widget.chart.mouseCursor.removeListener(cursorChanged);
+    super.dispose();
+  }
+
+  void cursorChanged() {
+    final newCursor = widget.chart.mouseCursor.value;
+    if (newCursor != cursor) {
+      cursor = newCursor;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {});
+      });
+    }
   }
 
   @override
@@ -110,6 +128,7 @@ class GChartWidgetState extends State<GChartWidget> {
                   }
                 },
                 child: MouseRegion(
+                  cursor: chart.mouseCursor.value,
                   child: Listener(
                     child: RepaintBoundary(
                       child: CustomPaint(

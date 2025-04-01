@@ -64,7 +64,7 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
       double x = pointViewPort.pointToPosition(area, point.toDouble());
       valuePoints.add(Offset(x, valuePosition));
       basePoints.add(Offset(x, basePosition));
-      if (graph.highlight() && (point % highlightIntervalPoints == 0)) {
+      if (graph.highlight && (point % highlightIntervalPoints == 0)) {
         highlightMarks.add(Vector2(x, valuePosition));
         if (graph.baseValueKey != null || graph.baseValue != null) {
           highlightMarks.add(Vector2(x, basePosition));
@@ -72,7 +72,7 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
       }
     }
 
-    if (graph.hitTestMode() != HitTestMode.none) {
+    if (graph.hitTestMode != HitTestMode.none) {
       _hitTestLinePoints1.addAll(valuePoints.map((e) => Vector2(e.dx, e.dy)));
       if (graph.baseValueKey != null || graph.baseValue != null) {
         _hitTestLinePoints2.addAll(basePoints.map((e) => Vector2(e.dx, e.dy)));

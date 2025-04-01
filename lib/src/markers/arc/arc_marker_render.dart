@@ -1,20 +1,16 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 import '../../chart.dart';
-import '../../components/graph/graph.dart';
-import '../../components/graph/graph_theme.dart';
-import '../../components/marker/marker_render.dart';
-import '../../components/marker/marker_theme.dart';
-import '../../components/panel/panel.dart';
-import '../../components/render_util.dart';
-import '../../components/viewport_h.dart';
-import '../../components/viewport_v.dart';
-import 'arc_marker.dart';
+import '../../components/components.dart';
+import '../../values/coord.dart';
+import '../../vector/vectors.dart';
+import '../markers.dart';
 
 class GArcMarkerRender
     extends GGraphMarkerRender<GArcMarker, GGraphMarkerTheme> {
-  const GArcMarkerRender();
+  GArcMarkerRender();
 
   @override
   void doRenderMarker({
@@ -41,7 +37,25 @@ class GArcMarkerRender
         pointViewPort: pointViewPort,
       );
       final radius = (border - center).distance;
-      //ArcHitTest.
+      if (marker.hitTestMode != HitTestMode.none) {
+        this.center = center;
+        this.radius = radius;
+        startTheta = marker.startTheta;
+        endTheta = marker.endTheta;
+        marker.controlCoordinates = [
+          GPositionCoord(x: center.dx, y: center.dy),
+          // point at the border with angle startTheta
+          GPositionCoord(
+            x: center.dx + radius * cos(marker.startTheta),
+            y: center.dy + radius * sin(marker.startTheta),
+          ),
+          // point at the border with angle endTheta
+          GPositionCoord(
+            x: center.dx + radius * cos(marker.endTheta),
+            y: center.dy + radius * sin(marker.endTheta),
+          ),
+        ];
+      }
       Path path = GRenderUtil.addArcPath(
         center: center,
         radius: radius,
@@ -75,6 +89,25 @@ class GArcMarkerRender
         height: radius * 2,
         alignment: alignment,
       );
+      if (marker.hitTestMode != HitTestMode.none) {
+        center = rect.center;
+        this.radius = radius;
+        startTheta = marker.startTheta;
+        endTheta = marker.endTheta;
+        marker.controlCoordinates = [
+          GPositionCoord(x: rect.center.dx, y: rect.center.dy),
+          // point at the border with angle startTheta
+          GPositionCoord(
+            x: rect.center.dx + radius * cos(marker.startTheta),
+            y: rect.center.dy + radius * sin(marker.startTheta),
+          ),
+          // point at the border with angle endTheta
+          GPositionCoord(
+            x: rect.center.dx + radius * cos(marker.endTheta),
+            y: rect.center.dy + radius * sin(marker.endTheta),
+          ),
+        ];
+      }
       Path path = GRenderUtil.addArcPath(
         center: rect.center,
         radius: radius,
@@ -88,5 +121,44 @@ class GArcMarkerRender
         style: theme.markerStyle,
       );
     }
+
+    if (marker.highlight && marker.controlCoordinates.isNotEmpty) {
+      // draw control points
+      for (var control in marker.controlCoordinates) {
+        final controlPoint = control.toPosition(
+          area: area,
+          valueViewPort: valueViewPort,
+          pointViewPort: pointViewPort,
+        );
+        final p = addOvalPath(
+          rect: Rect.fromCircle(
+            center: Offset(controlPoint.dx, controlPoint.dy),
+            radius: 5,
+          ),
+        );
+        drawPath(canvas: canvas, path: p, style: theme.controlPointsStyle!);
+      }
+    }
+  }
+
+  Offset? center;
+  double? radius;
+  double? startTheta;
+  double? endTheta;
+
+  @override
+  bool hitTest({required Offset position, double? epsilon}) {
+    if (center == null) {
+      return false;
+    }
+    return ArcUtil.hitTest(
+      cx: center!.dx,
+      cy: center!.dy,
+      r: radius!,
+      startTheta: startTheta!,
+      endTheta: endTheta!,
+      px: position.dx,
+      py: position.dy,
+    );
   }
 }

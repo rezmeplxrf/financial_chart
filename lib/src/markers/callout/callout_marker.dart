@@ -2,7 +2,6 @@ import 'package:flutter/painting.dart';
 
 import '../../components/marker/marker.dart';
 import '../../components/marker/marker_render.dart';
-import '../../components/marker/marker_theme.dart';
 import '../../values/coord.dart';
 import '../../values/value.dart';
 import 'callout_marker_render.dart';
@@ -25,24 +24,20 @@ class GCalloutMarker extends GGraphMarker {
   set pointerMargin(double value) => _pointerMargin.value = value;
 
   GCalloutMarker({
-    String? id,
-    bool visible = true,
+    super.id,
+    super.visible,
+    super.layer,
+    super.hitTestMode,
+    super.theme,
     required String text,
     required GCoordinate anchorCoord,
     Alignment alignment = Alignment.center,
     double pointerSize = 10,
     double pointerMargin = 10,
-    GGraphMarkerTheme? theme,
     GGraphMarkerRender render = const GCalloutMarkerRender(),
   }) : _text = GValue<String>(text),
        _alignment = GValue<Alignment>(alignment),
        _pointerSize = GValue<double>(pointerSize),
        _pointerMargin = GValue<double>(pointerMargin),
-       super(
-         id: id,
-         visible: visible,
-         keyCoordinates: [anchorCoord],
-         theme: theme,
-         render: render,
-       );
+       super(keyCoordinates: [anchorCoord], render: render);
 }

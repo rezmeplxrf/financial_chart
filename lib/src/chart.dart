@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart';
 
 import 'chart_controller.dart';
 import 'chart_render.dart';
@@ -111,6 +112,11 @@ class GChart extends ChangeNotifier {
   ///
   /// still it is able to draw something additional on the canvas.
   final void Function(GChart chart, Canvas canvas, Rect area)? postRender;
+
+  /// current mouse cursor
+  final GValue<MouseCursor> mouseCursor = GValue<MouseCursor>(
+    SystemMouseCursors.basic,
+  );
 
   final _debounceHelper = DebounceHelper(milliseconds: 500);
 

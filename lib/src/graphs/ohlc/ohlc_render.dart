@@ -176,7 +176,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
         }
       }
 
-      if (graph.hitTestMode() != HitTestMode.none) {
+      if (graph.hitTestMode != HitTestMode.none) {
         if (graph.drawAsCandle) {
           _hitTestLines.addAll([
             [Vector2(barPosition, hp), Vector2(barPosition, lp)],
@@ -202,7 +202,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
           ]);
         }
       }
-      if (graph.highlight() && (point % highlightIntervalPoints == 0)) {
+      if (graph.highlight && (point % highlightIntervalPoints == 0)) {
         highlightMarks.add(Vector2(barPosition, (hp + lp) / 2));
       }
     }

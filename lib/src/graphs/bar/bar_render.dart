@@ -69,11 +69,11 @@ class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
           style: theme.barStyleBelowBase,
         );
       }
-      if (graph.hitTestMode() != HitTestMode.none) {
+      if (graph.hitTestMode != HitTestMode.none) {
         _hitTestRectangles.add(rect);
-        _hitTestArea = graph.hitTestMode() == HitTestMode.area;
+        _hitTestArea = graph.hitTestMode == HitTestMode.area;
       }
-      if (graph.highlight() && (point % highlightIntervalPoints == 0)) {
+      if (graph.highlight && (point % highlightIntervalPoints == 0)) {
         highlightMarks.add(Vector2(x, barTop));
       }
     }

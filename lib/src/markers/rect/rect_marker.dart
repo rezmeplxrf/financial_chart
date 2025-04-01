@@ -1,7 +1,6 @@
 import 'package:flutter/painting.dart';
 
 import '../../components/marker/marker.dart';
-import '../../components/marker/marker_theme.dart';
 import '../../values/coord.dart';
 import '../../values/size.dart';
 import '../../values/value.dart';
@@ -25,42 +24,36 @@ class GRectMarker extends GGraphMarker {
   set alignment(Alignment value) => _alignment.value = value;
 
   GRectMarker({
-    String? id,
-    bool visible = true,
+    super.id,
+    super.visible,
+    super.layer,
+    super.hitTestMode,
+    super.theme,
     required GCoordinate startCoord,
     required GCoordinate endCoord,
     GSize? cornerRadiusSize,
-    GGraphMarkerTheme? theme,
     super.render = const GRectMarkerRender(),
   }) : _pointRadiusSize = GValue<GSize?>(null),
        _valueRadiusSize = GValue<GSize?>(null),
        _alignment = GValue<Alignment>(Alignment.center),
        _cornerRadiusSize = GValue<GSize?>(cornerRadiusSize),
-       super(
-         id: id,
-         visible: visible,
-         keyCoordinates: [startCoord, endCoord],
-         theme: theme,
-       );
+       super(keyCoordinates: [startCoord, endCoord]);
 
   GRectMarker.anchorAndRadius({
-    String? id,
-    bool visible = true,
+    super.id,
+    super.visible,
+    super.layer,
+    super.hitTestMode,
+    super.theme,
     required GCoordinate anchorCoord,
     required GSize pointRadiusSize,
     required GSize valueRadiusSize,
     GSize? cornerRadiusSize,
     Alignment alignment = Alignment.center,
-    GGraphMarkerTheme? theme,
     super.render = const GRectMarkerRender(),
   }) : _cornerRadiusSize = GValue<GSize?>(cornerRadiusSize),
        _pointRadiusSize = GValue<GSize?>(pointRadiusSize),
        _valueRadiusSize = GValue<GSize?>(valueRadiusSize),
        _alignment = GValue<Alignment>(alignment),
-       super(
-         id: id,
-         visible: visible,
-         keyCoordinates: [anchorCoord],
-         theme: theme,
-       );
+       super(keyCoordinates: [anchorCoord]);
 }

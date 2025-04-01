@@ -1,5 +1,11 @@
+## 0.1.6
+2025-04-01  
+- add mouse cursor support
+- fix basic example
+- refactoring
+
 ## 0.1.5
-2025-03-28
+2025-03-28  
 - expose GChartWidget.onTapXX callbacks
 - add GChart.hitTestGraph(), GChart.saveAsImage()
 - change GChart.preRender(), GChart.postRender() callbacks

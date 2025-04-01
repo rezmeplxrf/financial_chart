@@ -1,7 +1,6 @@
 import 'package:flutter/painting.dart';
 
 import '../../components/marker/marker.dart';
-import '../../components/marker/marker_theme.dart';
 import '../../values/coord.dart';
 import '../../values/value.dart';
 import 'label_marker_render.dart';
@@ -16,19 +15,16 @@ class GLabelMarker extends GGraphMarker {
   set alignment(Alignment value) => _alignment.value = value;
 
   GLabelMarker({
-    String? id,
-    bool visible = true,
+    super.id,
+    super.visible,
+    super.layer,
+    super.hitTestMode,
+    super.theme,
     required String text,
     required GCoordinate anchorCoord,
     Alignment alignment = Alignment.center,
-    GGraphMarkerTheme? theme,
     super.render = const GLabelMarkerRender(),
   }) : _text = GValue<String>(text),
        _alignment = GValue<Alignment>(alignment),
-       super(
-         id: id,
-         visible: visible,
-         keyCoordinates: [anchorCoord],
-         theme: theme,
-       );
+       super(keyCoordinates: [anchorCoord]);
 }
