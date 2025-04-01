@@ -1,9 +1,9 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/physics.dart';
+import 'package:flutter/rendering.dart';
 
 import 'chart.dart';
 import 'components/graph/graph.dart';
@@ -18,13 +18,12 @@ import 'values/value.dart';
 // ignore_for_file: avoid_print
 // ignore: must_be_immutable
 class GChartController extends ChangeNotifier {
-  final bool autoSyncPointViewPorts;
   late final GChart _chart;
   int? resizingPanelIndex;
   final GValue<bool> _isTouchEvent = GValue(false);
   final GValue<bool> _isTouchCrossMode = GValue(false);
 
-  GChartController({this.autoSyncPointViewPorts = true});
+  GChartController();
 
   void Function({
     required Offset position,
@@ -55,29 +54,69 @@ class GChartController extends ChangeNotifier {
     for (int p = 0; p < _chart.panels.length; p++) {
       GPanel panel = _chart.panels[p];
       if (panel.panelArea().contains(position)) {
-        int? graphIndex = _hitTestPanelGraphs(panel: panel, position: position);
-        if (graphIndex != null) {
-          return (panel, panel.graphs[graphIndex]);
+        GGraph? graph = _hitTestPanelGraphs(panel: panel, position: position);
+        if (graph != null) {
+          return (panel, graph);
         }
       }
     }
     return null;
   }
 
+  MouseCursor _mouseCursor({required Offset position}) {
+    if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
+      return SystemMouseCursors.basic;
+    }
+    for (int p = 0; p < _chart.panels.length; p++) {
+      GPanel panel = _chart.panels[p];
+      if (panel.graphArea().contains(position)) {
+        return SystemMouseCursors.precise;
+      }
+      for (int n = 0; n < panel.valueAxes.length; n++) {
+        Rect axisArea = panel.valueAxisArea(n);
+        if (axisArea.contains(position)) {
+          if (panel.valueAxes[n].scaleMode == GAxisScaleMode.move) {
+            return SystemMouseCursors.grab;
+          } else if (panel.valueAxes[n].scaleMode == GAxisScaleMode.zoom) {
+            return SystemMouseCursors.resizeUpDown;
+          } else if (panel.valueAxes[n].scaleMode == GAxisScaleMode.select) {
+            return SystemMouseCursors.resizeUpDown;
+          }
+          return SystemMouseCursors.basic;
+        }
+      }
+      for (int n = 0; n < panel.pointAxes.length; n++) {
+        Rect axisArea = panel.pointAxisArea(n);
+        if (axisArea.contains(position)) {
+          if (panel.pointAxes[n].scaleMode == GAxisScaleMode.move) {
+            return SystemMouseCursors.grab;
+          } else if (panel.pointAxes[n].scaleMode == GAxisScaleMode.zoom) {
+            return SystemMouseCursors.resizeLeftRight;
+          } else if (panel.pointAxes[n].scaleMode == GAxisScaleMode.select) {
+            return SystemMouseCursors.resizeLeftRight;
+          }
+          return SystemMouseCursors.basic;
+        }
+      }
+    }
+    return SystemMouseCursors.basic;
+  }
+
   void mouseHover({required Offset position}) {
     _chart.crosshair.setCrossPosition(position.dx, position.dy);
+    _chart.mouseCursor(newValue: _mouseCursor(position: position));
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
     for (int p = 0; p < _chart.panels.length; p++) {
       GPanel panel = _chart.panels[p];
       for (int g = 0; g < panel.graphs.length; g++) {
-        panel.graphs[g].highlight(newValue: false);
+        panel.graphs[g].highlight = false;
       }
     }
     final hit = hitTestGraph(position: position);
     if (hit != null) {
-      hit.$2.highlight(newValue: true);
+      hit.$2.highlight = true;
     }
     _notify();
   }
@@ -221,8 +260,8 @@ class GChartController extends ChangeNotifier {
     for (int p = 0; p < _chart.panels.length; p++) {
       GPanel panel = _chart.panels[p];
       if (panel.panelArea().contains(position)) {
-        int? graphIndex = _hitTestPanelGraphs(panel: panel, position: position);
-        if (graphIndex != null) {
+        GGraph? graph = _hitTestPanelGraphs(panel: panel, position: position);
+        if (graph != null) {
           break;
         }
       }
@@ -270,11 +309,14 @@ class GChartController extends ChangeNotifier {
     _notify();
   }
 
-  int? _hitTestPanelGraphs({required GPanel panel, required Offset position}) {
+  GGraph? _hitTestPanelGraphs({
+    required GPanel panel,
+    required Offset position,
+  }) {
     for (int g = panel.graphs.length - 1; g > 0; g--) {
       GGraph graph = panel.graphs[g];
       if (graph.visible && graph.getRender().hitTest(position: position)) {
-        return g;
+        return graph;
       }
     }
     return null;
@@ -439,10 +481,8 @@ class GChartController extends ChangeNotifier {
     if (!panel.graphArea().contains(start)) {
       return null;
     }
-    int graphIndex =
-        _hitTestPanelGraphs(panel: panel, position: start) ??
-        (panel.graphs.length - 1);
-    GGraph graph = panel.graphs[graphIndex];
+    final graph =
+        _hitTestPanelGraphs(panel: panel, position: start) ?? panel.graphs.last;
     GPointViewPort pointViewPort = _chart.pointViewPort;
     GValueViewPort? valueViewPort = panel.findValueViewPortById(
       graph.valueViewPortId,
@@ -454,9 +494,12 @@ class GChartController extends ChangeNotifier {
         required double scale,
         required double verticalScale,
       }) {
+        _chart.mouseCursor(newValue: SystemMouseCursors.precise);
         _chart.crosshair.setCrossPosition(position.dx, position.dy);
       };
-      _hookScaleEnd = (Velocity? velocity) {};
+      _hookScaleEnd = (Velocity? velocity) {
+        _chart.mouseCursor(newValue: SystemMouseCursors.basic);
+      };
       return graph;
     }
     pointViewPort.interactionStart();
@@ -471,6 +514,7 @@ class GChartController extends ChangeNotifier {
       required double verticalScale,
     }) {
       _chart.crosshair.clearCrossPosition();
+      _chart.mouseCursor(newValue: SystemMouseCursors.grab);
       double moveDistanceX = (position.dx - start.dx);
       if (scale != 1.0) {
         if (scale != 1.0 && scale > 0) {
@@ -489,6 +533,7 @@ class GChartController extends ChangeNotifier {
       }
     };
     _hookScaleEnd = (Velocity? velocity) {
+      _chart.mouseCursor(newValue: SystemMouseCursors.precise);
       pointViewPort.interactionEnd();
       if (scaleValue) {
         valueViewPort.interactionEnd();

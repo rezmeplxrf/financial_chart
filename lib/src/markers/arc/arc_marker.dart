@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../components/marker/marker.dart';
-import '../../components/marker/marker_render.dart';
-import '../../components/marker/marker_theme.dart';
 import '../../values/coord.dart';
 import '../../values/size.dart';
 import '../../values/value.dart';
@@ -30,33 +28,36 @@ class GArcMarker extends GGraphMarker {
   set close(bool value) => _close.value = value;
 
   GArcMarker({
-    String? id,
-    bool visible = true,
+    super.id,
+    super.visible,
+    super.theme,
+    super.layer,
+    super.hitTestMode,
     required GCoordinate centerCoord,
     required GCoordinate borderCoord,
     required double startTheta,
     required double endTheta,
     bool close = false,
-    GGraphMarkerTheme? theme,
-    super.render = const GArcMarkerRender(),
   }) : _radiusSize = GValue<GSize?>(null),
        _alignment = GValue<Alignment>(Alignment.center),
        _startTheta = GValue<double>(startTheta),
        _endTheta = GValue<double>(endTheta),
        _close = GValue<bool>(close),
        super(
-         id: id,
-         visible: visible,
          keyCoordinates: [
            centerCoord,
            borderCoord,
          ], // the distance between "center" and "border" decides the render radius
-         theme: theme,
-       );
+       ) {
+    super.render = GArcMarkerRender();
+  }
 
   GArcMarker.anchorAndRadius({
-    String? id,
-    bool visible = true,
+    super.id,
+    super.visible,
+    super.theme,
+    super.layer,
+    super.hitTestMode,
     required GCoordinate anchorCoord,
     required GSize radiusSize,
     required double startTheta,
@@ -65,20 +66,13 @@ class GArcMarker extends GGraphMarker {
     Alignment alignment =
         Alignment
             .center, // where anchor point located on the bound rect of the circle
-    GGraphMarkerTheme? theme,
-    GGraphMarkerRender render = const GArcMarkerRender(),
   }) : _radiusSize = GValue<GSize?>(radiusSize),
        _alignment = GValue<Alignment>(alignment),
        _startTheta = GValue<double>(startTheta),
        _endTheta = GValue<double>(endTheta),
        _close = GValue<bool>(close),
-       super(
-         id: id,
-         visible: visible,
-         keyCoordinates: [anchorCoord],
-         theme: theme,
-         render: render,
-       ) {
+       super(keyCoordinates: [anchorCoord]) {
     assert(radiusSize.sizeValue > 0, 'radius must be positive value.');
+    super.render = GArcMarkerRender();
   }
 }

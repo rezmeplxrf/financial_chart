@@ -1,6 +1,22 @@
-import 'package:example/data/sample_data.dart';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:financial_chart/financial_chart.dart';
+
+import '../data/sample_data.dart';
+
+class PlayApp extends StatelessWidget {
+  const PlayApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SafeArea(child: MaterialApp(home: ChartPlaygroundDemoPage()));
+  }
+}
+
+void main() {
+  runApp(const PlayApp());
+}
 
 class ChartPlaygroundDemoPage extends StatefulWidget {
   const ChartPlaygroundDemoPage({super.key});
@@ -233,7 +249,6 @@ class ChartPlaygroundDemoPageState extends State<ChartPlaygroundDemoPage>
         pointViewPort: GPointViewPort(),
         panels: panels,
         theme: chartTheme,
-        preRender: (GChart chart, Size size) {},
       );
     });
   }
@@ -248,17 +263,48 @@ class ChartPlaygroundDemoPageState extends State<ChartPlaygroundDemoPage>
           Container(
             height: 60,
             alignment: Alignment.center,
-            child: ElevatedButton(
-              onPressed: () {
-                if (chart != null) {
-                  if (chart!.theme.name == GThemeLight.themeName) {
-                    chart!.theme = GThemeDark();
-                  } else {
-                    chart!.theme = GThemeLight();
-                  }
-                }
-              },
-              child: const Text("theme"),
+            child: Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    if (chart != null) {
+                      if (chart!.theme.name == GThemeLight.themeName) {
+                        chart!.theme = GThemeDark();
+                      } else {
+                        chart!.theme = GThemeLight();
+                      }
+                    }
+                  },
+                  child: const Text("theme"),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (chart != null) {
+                      final image = await chart!.saveAsImage();
+                      var pngBytes = await image.toByteData(
+                        format: ImageByteFormat.png,
+                      );
+                      await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            content: Image.memory(
+                              pngBytes!.buffer.asUint8List(),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text("ok"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
+                  child: const Text("save image"),
+                ),
+              ],
             ),
           ),
           Expanded(

@@ -9,6 +9,14 @@ class GGraphGroup extends GGraph<GGraphTheme> {
 
   final List<GGraph> graphs;
 
+  @override
+  set highlight(bool value) {
+    super.highlight = value;
+    for (final graph in graphs) {
+      graph.highlight = value;
+    }
+  }
+
   GGraphGroup({
     super.id,
     required this.graphs,
@@ -27,11 +35,6 @@ class GGraphGroup extends GGraph<GGraphTheme> {
     );
     super.render = render ?? GGraphGroupRender();
     graphs.sort((a, b) => a.layer.compareTo(b.layer));
-    highlight.addListener(() {
-      for (final graph in graphs) {
-        graph.highlight(newValue: highlight());
-      }
-    });
   }
 
   @override

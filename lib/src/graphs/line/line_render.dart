@@ -40,7 +40,7 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
       double x = pointViewPort.pointToPosition(area, point.toDouble());
       double y = valueViewPort.valueToPosition(area, value);
       points.add(Vector2(x, y));
-      if (graph.highlight() && (point % highlightIntervalPoints == 0)) {
+      if (graph.highlight && (point % highlightIntervalPoints == 0)) {
         highlightMarks.add(Vector2(x, y));
       }
     }
@@ -53,7 +53,7 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
         y2: points[i + 1].y,
       );
     }
-    if (graph.hitTestMode() != HitTestMode.none) {
+    if (graph.hitTestMode != HitTestMode.none) {
       _hitTestLinePoints.addAll(points);
     }
     drawPath(canvas: canvas, path: tickLinesPath, style: theme.lineStyle);

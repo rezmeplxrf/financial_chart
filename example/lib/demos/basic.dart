@@ -107,6 +107,9 @@ class BasicDemoPageState extends State<BasicDemoPage>
                       }
                       final hit = chart!.hitTestGraph(position: position);
                       final panel = hit?.$1 ?? chart!.panels[0];
+                      if (!panel.graphArea().contains(position)) {
+                        return;
+                      }
                       final graph = hit?.$2;
                       final valueViewPort = hit?.$2.valueViewPortId ?? "";
                       final point =

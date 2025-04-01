@@ -108,7 +108,7 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
   }) {
     if (graph.axisMarkers.isNotEmpty) {
       final markers = [...graph.axisMarkers];
-      markers.sort((a, b) => a.layer().compareTo(b.layer()));
+      markers.sort((a, b) => a.layer.compareTo(b.layer));
       for (final marker in markers) {
         marker.getRender().renderMarker(
           canvas: canvas,
@@ -127,7 +127,7 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
     }
     if (graph.graphMarkers.isNotEmpty) {
       final markers = [...graph.graphMarkers];
-      markers.sort((a, b) => a.layer().compareTo(b.layer()));
+      markers.sort((a, b) => a.layer.compareTo(b.layer));
       for (final marker in markers) {
         marker.getRender().renderMarker(
           canvas: canvas,
@@ -138,9 +138,8 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
           area: panel.graphArea(),
           theme:
               (marker.theme ??
-                      theme.graphMarkerTheme ??
-                      chart.theme.graphMarkerTheme)
-                  as GGraphMarkerTheme,
+                  theme.graphMarkerTheme ??
+                  chart.theme.graphMarkerTheme),
         );
       }
     }
@@ -233,7 +232,7 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
   }) {
     if (graph.visible &&
         highlightMarks.isNotEmpty &&
-        graph.highlight() &&
+        graph.highlight &&
         theme.highlightMarkerTheme != null &&
         theme.highlightMarkerTheme!.size > 0) {
       for (int i = 0; i < highlightMarks.length; i++) {

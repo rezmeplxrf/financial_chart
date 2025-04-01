@@ -1,7 +1,6 @@
 import 'package:flutter/painting.dart';
 
 import '../../components/marker/marker.dart';
-import '../../components/marker/marker_theme.dart';
 import '../../values/coord.dart';
 import '../../values/size.dart';
 import '../../values/value.dart';
@@ -21,38 +20,32 @@ class GOvalMarker extends GGraphMarker {
   set alignment(Alignment value) => _alignment.value = value;
 
   GOvalMarker.corner({
-    String? id,
-    bool visible = true,
+    super.id,
+    super.visible,
+    super.layer,
+    super.hitTestMode,
+    super.theme,
     required GCoordinate startCoord,
     required GCoordinate endCoord,
-    GGraphMarkerTheme? theme,
     super.render = const GOvalMarkerRender(),
   }) : _pointRadiusSize = GValue<GSize?>(null),
        _valueRadiusSize = GValue<GSize?>(null),
        _alignment = GValue<Alignment>(Alignment.center),
-       super(
-         id: id,
-         visible: visible,
-         keyCoordinates: [startCoord, endCoord],
-         theme: theme,
-       );
+       super(keyCoordinates: [startCoord, endCoord]);
 
   GOvalMarker.anchorAndRadius({
-    String? id,
-    bool visible = true,
+    super.id,
+    super.visible,
+    super.layer,
+    super.hitTestMode,
+    super.theme,
     required GCoordinate anchorCoord,
     required GSize pointRadiusSize,
     required GSize valueRadiusSize,
     required Alignment alignment,
-    GGraphMarkerTheme? theme,
     super.render = const GOvalMarkerRender(),
   }) : _pointRadiusSize = GValue<GSize?>(pointRadiusSize),
        _valueRadiusSize = GValue<GSize?>(valueRadiusSize),
        _alignment = GValue<Alignment>(alignment),
-       super(
-         id: id,
-         visible: visible,
-         keyCoordinates: [anchorCoord],
-         theme: theme,
-       );
+       super(keyCoordinates: [anchorCoord]);
 }

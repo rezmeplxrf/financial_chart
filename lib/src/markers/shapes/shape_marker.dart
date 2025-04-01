@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../components/marker/marker.dart';
-import '../../components/marker/marker_theme.dart';
 import '../../values/coord.dart';
 import '../../values/size.dart';
 import '../../values/value.dart';
@@ -23,8 +22,11 @@ class GShapeMarker extends GGraphMarker {
   final Path Function(double radius) pathGenerator;
 
   GShapeMarker({
-    String? id,
-    bool visible = true,
+    super.id,
+    super.visible,
+    super.layer,
+    super.hitTestMode,
+    super.theme,
     required GCoordinate anchorCoord,
     required GSize radiusSize,
     double rotation = 0,
@@ -32,17 +34,11 @@ class GShapeMarker extends GGraphMarker {
         Alignment
             .center, // where anchor point located on the bound rect of the circle
     required this.pathGenerator,
-    GGraphMarkerTheme? theme,
     super.render = const GShapeMarkerRender(),
   }) : _radiusSize = GValue<GSize>(radiusSize),
        _alignment = GValue<Alignment>(alignment),
        _rotation = GValue<double>(rotation),
-       super(
-         id: id,
-         visible: visible,
-         keyCoordinates: [anchorCoord],
-         theme: theme,
-       ) {
+       super(keyCoordinates: [anchorCoord]) {
     assert(radiusSize.sizeValue > 0, 'radius must be positive value.');
   }
 }

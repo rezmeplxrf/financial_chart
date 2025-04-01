@@ -21,7 +21,9 @@ class GGraph<T extends GGraphTheme> extends GComponent {
   set layer(int value) => _layer.value = value;
 
   /// Whether the graph is highlighted (or selected).
-  final GValue<bool> highlight = GValue<bool>(false);
+  final GValue<bool> _highlight = GValue<bool>(false);
+  bool get highlight => _highlight.value;
+  set highlight(bool value) => _highlight.value = value;
 
   /// The value viewport id of the graph.
   ///
@@ -32,9 +34,11 @@ class GGraph<T extends GGraphTheme> extends GComponent {
   /// The hit test mode of the graph.
   ///
   /// see [HitTestMode] for more details.
-  final GValue<HitTestMode> hitTestMode = GValue<HitTestMode>(
+  final GValue<HitTestMode> _hitTestMode = GValue<HitTestMode>(
     HitTestMode.border,
   );
+  HitTestMode get hitTestMode => _hitTestMode.value;
+  set hitTestMode(HitTestMode value) => _hitTestMode.value = value;
 
   final List<String> crosshairHighlightValueKeys = [];
 
@@ -60,7 +64,7 @@ class GGraph<T extends GGraphTheme> extends GComponent {
     List<GGraphMarker> graphMarkers = const [],
   }) : _layer = GValue<int>(layer),
        super(id: id, render: render, theme: theme) {
-    this.hitTestMode(newValue: hitTestMode);
+    _hitTestMode(newValue: hitTestMode);
     if (axisMarkers.isNotEmpty) {
       _axisMarkers.addAll(axisMarkers);
     }

@@ -1,5 +1,4 @@
 import '../../components/marker/marker.dart';
-import '../../components/marker/marker_theme.dart';
 import '../../values/coord.dart';
 import '../../values/value.dart';
 import 'arrow_marker_render.dart';
@@ -14,20 +13,17 @@ class GArrowMarker extends GGraphMarker {
   set headLength(double value) => _headLength.value = value;
 
   GArrowMarker({
-    String? id,
-    bool visible = true,
+    super.id,
+    super.visible,
+    super.layer,
+    super.hitTestMode,
+    super.theme,
     required GCoordinate startCoord,
     required GCoordinate endCoord,
     double headWidth = 4,
     double headLength = 10,
-    GGraphMarkerTheme? theme,
     super.render = const GArrowMarkerRender(),
   }) : _headWidth = GValue<double>(headWidth),
        _headLength = GValue<double>(headLength),
-       super(
-         id: id,
-         visible: visible,
-         keyCoordinates: [startCoord, endCoord],
-         theme: theme,
-       );
+       super(keyCoordinates: [startCoord, endCoord]);
 }
