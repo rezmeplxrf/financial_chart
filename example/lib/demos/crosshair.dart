@@ -16,6 +16,8 @@ class DemoCrosshairPage extends DemoBasePage {
 class DemoCrosshairPageState extends DemoBasePageState {
   DemoCrosshairPageState();
 
+  Offset? pointerDownPosition;
+
   @override
   GChart buildChart(GDataSource dataSource) {
     final chartTheme = themes.first;
@@ -60,6 +62,60 @@ class DemoCrosshairPageState extends DemoBasePageState {
       pointViewPort: GPointViewPort(),
       panels: panels,
       theme: chartTheme,
+    );
+  }
+
+  @override
+  GChartWidget buildChartWidget(GChart chart, TickerProvider tickerProvider) {
+    return GChartWidget(
+      chart: chart,
+      tickerProvider: tickerProvider,
+      onPointerDown: (PointerDownEvent details) {
+        pointerDownPosition = details.localPosition;
+      },
+      onPointerUp: (PointerUpEvent details) {
+        final position = details.localPosition;
+        if (pointerDownPosition == null ||
+            (position - pointerDownPosition!).distance > 10) {
+          return;
+        }
+        for (final panel in chart.panels) {
+          final coord = panel.positionToViewPortCoord(
+            position: position,
+            pointViewPort: chart.pointViewPort,
+            valueViewPortId: "price",
+          );
+          if (coord != null) {
+            final point = coord.point.round();
+            final pointValue = chart.dataSource.pointValueFormater.call(
+              point,
+              chart.dataSource.getPointValue(point),
+            );
+            final value = coord.value;
+            final props = chart.dataSource.getSeriesProperty("close");
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return AlertDialog(
+                  content: Text(
+                    "You tapped: \n"
+                    "  point: $pointValue (#$point)\n"
+                    "  value: ${value.toStringAsFixed(props.precision)}\n",
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text("ok"),
+                    ),
+                  ],
+                );
+              },
+            );
+            break;
+          }
+        }
+      },
     );
   }
 

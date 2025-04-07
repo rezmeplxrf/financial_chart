@@ -312,9 +312,7 @@ class GChart extends ChangeNotifier {
           return panelArea;
         }).toList();
     for (int p = 0; p < panels.length; p++) {
-      var panel = panels[p];
-      var panelArea = panelAreas[p];
-      panel.layout(this, panelArea);
+      panels[p].layout(panelAreas[p]);
     }
   }
 
