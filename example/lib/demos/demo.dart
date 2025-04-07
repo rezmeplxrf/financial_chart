@@ -52,6 +52,10 @@ abstract class DemoBasePageState extends State<DemoBasePage>
 
   GChart buildChart(GDataSource dataSource);
 
+  GChartWidget buildChartWidget(GChart chart, TickerProvider tickerProvider) {
+    return GChartWidget(chart: chart, tickerProvider: tickerProvider);
+  }
+
   Widget buildControlPanel(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
@@ -86,7 +90,7 @@ abstract class DemoBasePageState extends State<DemoBasePage>
                     ? const Center(child: CircularProgressIndicator())
                     : Padding(
                       padding: const EdgeInsets.all(10),
-                      child: GChartWidget(chart: chart!, tickerProvider: this),
+                      child: buildChartWidget(chart!, this),
                     ),
           ),
         ],

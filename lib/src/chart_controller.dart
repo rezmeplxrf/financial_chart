@@ -65,13 +65,20 @@ class GChartController extends ChangeNotifier {
 
   MouseCursor _mouseCursor({required Offset position}) {
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
-      return SystemMouseCursors.basic;
+      return _chart.dataSource.isLoading
+          ? SystemMouseCursors.wait
+          : SystemMouseCursors.basic;
     }
     for (int p = 0; p < _chart.panels.length; p++) {
       GPanel panel = _chart.panels[p];
-      if (panel.graphArea().contains(position)) {
-        return SystemMouseCursors.precise;
+      // test if hit resize splitter
+      if (panel.resizable &&
+          p < _chart.panels.length - 1 &&
+          _chart.panels[p + 1].resizable &&
+          panel.splitterArea().contains(position)) {
+        return SystemMouseCursors.resizeUpDown;
       }
+      // test if hit axes (in case the axes may be inside graph area we test before testing graph)
       for (int n = 0; n < panel.valueAxes.length; n++) {
         Rect axisArea = panel.valueAxisArea(n);
         if (axisArea.contains(position)) {
@@ -97,6 +104,10 @@ class GChartController extends ChangeNotifier {
           }
           return SystemMouseCursors.basic;
         }
+      }
+      // test if hit graph
+      if (panel.graphArea().contains(position)) {
+        return SystemMouseCursors.precise;
       }
     }
     return SystemMouseCursors.basic;

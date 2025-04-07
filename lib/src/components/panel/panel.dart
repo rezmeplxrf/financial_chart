@@ -1,13 +1,13 @@
 import 'dart:math';
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../../values/value.dart';
-import '../component.dart';
-import '../marker/marker.dart';
-import '../tooltip/tooltip.dart';
 import 'panel_render.dart';
 import 'panel_theme.dart';
+import '../component.dart';
+import '../../values/coord.dart';
+import '../../values/value.dart';
+import '../marker/marker.dart';
+import '../tooltip/tooltip.dart';
 import '../graph/graph.dart';
 import '../axis/axis.dart';
 import '../viewport_h.dart';
@@ -115,7 +115,7 @@ class GPanel extends GComponent {
     // only one value viewport with empty id is allowed
   }
 
-  void layout(GChart chart, Rect panelArea) {
+  void layout(Rect panelArea) {
     _areas.clear();
     final (axesAreas, graphArea) = GAxis.placeAxes(panelArea, [
       ...pointAxes,
@@ -142,6 +142,27 @@ class GPanel extends GComponent {
       );
     }
     return found;
+  }
+
+  GViewPortCoord? positionToViewPortCoord({
+    required Offset position,
+    required GPointViewPort pointViewPort,
+    String valueViewPortId = "",
+  }) {
+    if (!graphArea().contains(position)) {
+      return null;
+    }
+    final valueViewPort =
+        valueViewPorts
+            .where((element) => element.id == valueViewPortId)
+            .firstOrNull;
+    if (valueViewPort == null) {
+      return null;
+    }
+    return GViewPortCoord(
+      point: pointViewPort.positionToPoint(graphArea(), position.dx),
+      value: valueViewPort.positionToValue(graphArea(), position.dy),
+    );
   }
 
   GGraph? findGraphById(String id) {

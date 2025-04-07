@@ -1,3 +1,10 @@
+## 0.1.7
+2025-04-07
+- fix mouse cursor for splitter
+- fix for an issue in example dependency
+- add GPanel.positionToViewPortCoord()
+- update examples
+
 ## 0.1.6
 2025-04-01  
 - add mouse cursor support

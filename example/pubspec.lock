@@ -103,7 +103,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.1.6"
+    version: "0.1.7"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -418,11 +418,12 @@ packages:
   yahoo_finance_data_reader:
     dependency: "direct main"
     description:
-      name: yahoo_finance_data_reader
-      sha256: "1ffab3dc347d65c9d246159aa61dfe9fe9fb9119a8fe4b431be1178101b7e6a7"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.12"
+      path: "."
+      ref: HEAD
+      resolved-ref: "53fa7d02ae7d470b0b1bfd77fd83a99c9ea2ae61"
+      url: "https://github.com/cjjapan/yahoo_finance_data_reader.git"
+    source: git
+    version: "1.0.11"
 sdks:
   dart: ">=3.7.2 <4.0.0"
   flutter: ">=3.29.2"
