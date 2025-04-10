@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/painting.dart';
-import 'package:path_drawing/path_drawing.dart';
 
+import '../style/dash_path.dart';
 import '../style/label_style.dart';
 import '../style/paint_style.dart';
 import 'axis/axis.dart';

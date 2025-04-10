@@ -489,17 +489,14 @@ class GChartController extends ChangeNotifier {
   }
 
   GGraph? _tryScalingGraph(GPanel panel, Offset start, int pointerCount) {
-    if (!panel.graphArea().contains(start)) {
+    Rect graphArea = panel.graphArea();
+    if (!graphArea.contains(start)) {
       return null;
     }
     final graph =
         _hitTestPanelGraphs(panel: panel, position: start) ?? panel.graphs.last;
-    GPointViewPort pointViewPort = _chart.pointViewPort;
-    GValueViewPort? valueViewPort = panel.findValueViewPortById(
-      graph.valueViewPortId,
-    );
-    Rect graphArea = panel.graphArea();
-    if (_isTouchCrossMode.value) {
+    if (_isTouchCrossMode.value || panel.graphPanMode == GGraphPanMode.none) {
+      // move crosshair only
       _hookScaleUpdate = ({
         required Offset position,
         required double scale,
@@ -508,11 +505,13 @@ class GChartController extends ChangeNotifier {
         _chart.mouseCursor(newValue: SystemMouseCursors.precise);
         _chart.crosshair.setCrossPosition(position.dx, position.dy);
       };
-      _hookScaleEnd = (Velocity? velocity) {
-        _chart.mouseCursor(newValue: SystemMouseCursors.basic);
-      };
+      _hookScaleEnd = (Velocity? velocity) {};
       return graph;
     }
+    GPointViewPort pointViewPort = _chart.pointViewPort;
+    GValueViewPort? valueViewPort = panel.findValueViewPortById(
+      graph.valueViewPortId,
+    );
     pointViewPort.interactionStart();
     pointViewPort.stopAnimation();
     bool scaleValue = !valueViewPort.autoScaleFlg;
@@ -551,7 +550,7 @@ class GChartController extends ChangeNotifier {
       }
       if (velocity != null && panel.momentumScrollSpeed > 0) {
         // momentum scrolling
-        final pointSize = pointViewPort.pointSize(panel.graphArea().width);
+        final pointSize = pointViewPort.pointSize(graphArea.width);
         final distance =
             velocity.pixelsPerSecond.dx / pointSize * panel.momentumScrollSpeed;
         final newRange = GRange.range(

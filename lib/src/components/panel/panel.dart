@@ -13,6 +13,15 @@ import '../axis/axis.dart';
 import '../viewport_h.dart';
 import '../viewport_v.dart';
 
+/// The action mode when panning the graph area of the panel.
+enum GGraphPanMode {
+  /// no pan interaction
+  none,
+
+  /// pan the graph
+  auto,
+}
+
 /// Panel of the chart.
 ///
 /// A chart is composed of multiple panels with vertical layout.
@@ -56,6 +65,11 @@ class GPanel extends GComponent {
   set momentumScrollSpeed(double value) =>
       _momentumScrollSpeed(newValue: value);
 
+  /// The action mode when panning the graph area of the panel.
+  final GValue<GGraphPanMode> _graphPanMode = GValue(GGraphPanMode.auto);
+  GGraphPanMode get graphPanMode => _graphPanMode();
+  set graphPanMode(GGraphPanMode value) => _graphPanMode(newValue: value);
+
   @override
   bool get visible => super.visible && heightWeight > 0;
 
@@ -96,6 +110,7 @@ class GPanel extends GComponent {
     this.tooltip,
     double heightWeight = 1.0,
     bool resizable = true,
+    GGraphPanMode graphPanMode = GGraphPanMode.auto,
     this.splitterHeight = 12,
     double momentumScrollSpeed = 0.5,
     GPanelTheme? theme,
@@ -105,6 +120,7 @@ class GPanel extends GComponent {
     _heightWeight.value = heightWeight;
     _resizable.value = resizable;
     _momentumScrollSpeed.value = min(max(momentumScrollSpeed, 0), 1.0);
+    _graphPanMode.value = graphPanMode;
     // at least one value viewport is required
     assert(valueViewPorts.isNotEmpty);
     // no duplicate id for value viewport

@@ -29,12 +29,12 @@ const String keyRSI = "rsi";
 const String keyADX = "adx";
 
 Future<GDataSource> loadSampleData({
+  String ticker = 'AAPL',
   int simulateLatencyMillis = 0,
   bool simulateEmpty = false,
 }) async {
-  // const String ticker = '^GSPC';
-  // const String ticker = 'GOOGL';
-  const String ticker = 'AAPL';
+  // ticker = '^GSPC';
+  // ticker = 'GOOGL';
   const pricePrecision = 2;
   final response = await loadYahooFinanceData(ticker);
 

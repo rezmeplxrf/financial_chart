@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/painting.dart' as painting;
 
-import 'package:path_drawing/path_drawing.dart';
+import 'dash_path.dart';
 
 /// Checks whether only one of the parameters is set. if [allowNone], none is set
 /// also returns true.

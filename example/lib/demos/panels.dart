@@ -172,6 +172,20 @@ class DemoPanelsPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
+          label: "Graph pan mode",
+          child: AppPopupMenu<GGraphPanMode>(
+            items: GGraphPanMode.values,
+            onSelected: (GGraphPanMode selected) {
+              for (var panel in chart!.panels) {
+                panel.graphPanMode = selected;
+              }
+              repaintChart();
+            },
+            selected: chart!.panels[0].graphPanMode,
+            labelResolver: (item) => item.name,
+          ),
+        ),
+        AppLabelWidget(
           label: "Momentum scroll speed",
           child: AppPopupMenu<double>(
             items: const [0, 0.1, 0.5, 1.0],

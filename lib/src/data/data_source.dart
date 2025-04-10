@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:equatable/equatable.dart';
 import 'package:financial_chart/financial_chart.dart';
 import 'package:flutter/foundation.dart';
-import 'package:intl/intl.dart';
 
 import '../values/value.dart';
 
@@ -37,13 +36,13 @@ class GDataSeriesProperty {
   });
 }
 
-/// Default formatter for point value which assumes the value is milliseconds since epoch.
+/// Default formatter for point value which format it as yyyy-MM-dd assumes the value is milliseconds since epoch.
 String defaultPointValueFormater(int point, dynamic pointValue) {
-  // assume the point value is milliseconds since epoch
   if (pointValue is int) {
-    return DateFormat(
-      'yyyy-MM-dd',
-    ).format(DateTime.fromMillisecondsSinceEpoch(pointValue));
+    // assume the point value is milliseconds since epoch
+    return DateTime.fromMillisecondsSinceEpoch(
+      pointValue,
+    ).toIso8601String().substring(0, 10);
   }
   return pointValue.toString();
 }
