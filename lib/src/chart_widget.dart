@@ -64,9 +64,7 @@ class GChartWidgetState extends State<GChartWidget> {
 
   void repaint() {}
 
-  @override
-  void initState() {
-    super.initState();
+  void initializeChart() {
     widget.chart.initialize(vsync: widget.tickerProvider);
     widget.chart.mouseCursor.addListener(cursorChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -75,9 +73,24 @@ class GChartWidgetState extends State<GChartWidget> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    initializeChart();
+  }
+
+  @override
   void dispose() {
     widget.chart.mouseCursor.removeListener(cursorChanged);
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant GChartWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.chart, widget.chart)) {
+      // if the chart instance is changed, we need to reinitialize it
+      initializeChart();
+    }
   }
 
   void cursorChanged() {

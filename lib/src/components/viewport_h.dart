@@ -31,6 +31,52 @@ class GPointViewPort extends ChangeNotifier {
   /// The end(right) point of the viewport.
   double get endPoint => _pointRange.end!;
 
+  /// min left point of the viewport.
+  final GValue<double> _startPointMin = GValue(double.negativeInfinity);
+  double get startPointMin => _startPointMin.value;
+  set startPointMin(double value) {
+    assert(
+      value < endPointMax,
+      'startPointMin should be less than endPointMax.',
+    );
+    if (_startPointMin.value == value) {
+      return;
+    }
+    _startPointMin.value = value;
+    if (isValid && startPoint < value) {
+      final points = _pointRange.end! - _pointRange.begin!;
+      setRange(
+        startPoint: value,
+        endPoint: value + points,
+        finished: true,
+        notify: false,
+      );
+    }
+  }
+
+  /// max right point of the viewport.
+  final GValue<double> _endPointMax = GValue(double.infinity);
+  double get endPointMax => _endPointMax.value;
+  set endPointMax(double value) {
+    assert(
+      value > startPointMin,
+      'endPointMax should be greater than startPointMin.',
+    );
+    if (_endPointMax.value == value) {
+      return;
+    }
+    _endPointMax.value = value;
+    if (isValid && endPoint > value) {
+      final points = _pointRange.end! - _pointRange.begin!;
+      setRange(
+        startPoint: value - points,
+        endPoint: value,
+        finished: true,
+        notify: false,
+      );
+    }
+  }
+
   /// current range of the viewport.
   GRange get range => _pointRange.clone();
 
@@ -69,14 +115,40 @@ class GPointViewPort extends ChangeNotifier {
     this.minPointWidth = 2,
     this.maxPointWidth = 100,
     this.defaultPointWidth = 10,
+    double startPointMin = double.negativeInfinity,
+    double endPointMax = double.infinity,
   }) {
     assert(
       (initialStartPoint == null && initialEndPoint == null) ||
           (initialStartPoint != null && initialEndPoint != null),
       'initialStartPoint and initialEndPoint should be both null or not null.',
     );
+    assert(
+      startPointMin < endPointMax,
+      'startPointMin should be less than endPointMax.',
+    );
+    _startPointMin.value = startPointMin;
+    _endPointMax.value = endPointMax;
+    assert(minPointWidth > 0, 'minPointWidth should be greater than 0.');
+    assert(
+      maxPointWidth >= minPointWidth,
+      'maxPointWidth should be greater than minPointWidth.',
+    );
+    assert(
+      defaultPointWidth >= minPointWidth,
+      'defaultPointWidth should be greater than minPointWidth.',
+    );
+    assert(
+      animationMilliseconds >= 0,
+      'animationMilliseconds should be greater than or equal to 0.',
+    );
     if (initialStartPoint != null && initialEndPoint != null) {
-      _pointRange.update(initialStartPoint, initialEndPoint);
+      setRange(
+        startPoint: initialStartPoint,
+        endPoint: initialEndPoint,
+        finished: true,
+        notify: false,
+      );
     }
     _animationMilliseconds.value = animationMilliseconds;
   }
@@ -166,6 +238,15 @@ class GPointViewPort extends ChangeNotifier {
         startPoint == this.startPoint &&
         endPoint == this.endPoint) {
       return;
+    }
+    if (startPoint < startPointMin) {
+      final points = endPoint - startPoint;
+      startPoint = startPointMin;
+      endPoint = startPoint + points;
+    } else if (endPoint > endPointMax) {
+      final points = endPoint - startPoint;
+      endPoint = endPointMax;
+      startPoint = endPoint - points;
     }
     _pointRange.update(startPoint, endPoint);
     if (notify) {

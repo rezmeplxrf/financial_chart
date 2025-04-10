@@ -160,6 +160,7 @@ class GValueViewPort extends ChangeNotifier {
     bool finished,
     bool animation, {
     VoidCallback? onFinished,
+    bool notify = true,
   }) {
     if (!animation ||
         _rangeAnimationController == null ||
@@ -168,6 +169,7 @@ class GValueViewPort extends ChangeNotifier {
         startValue: targetRange.begin!,
         endValue: targetRange.end!,
         finished: finished,
+        notify: notify,
       );
       onFinished?.call();
       return;
@@ -189,6 +191,7 @@ class GValueViewPort extends ChangeNotifier {
     required double startValue,
     required double endValue,
     bool finished = true,
+    bool notify = true,
   }) {
     assert(endValue > startValue);
     if (onRangeUpdate == null) {
@@ -201,7 +204,9 @@ class GValueViewPort extends ChangeNotifier {
       endValue,
     );
     _range.update(startValueClamped, endValueClamped);
-    _notifyRangeUpdated(finished: finished);
+    if (notify) {
+      _notifyRangeUpdated(finished: finished);
+    }
   }
 
   /// convert value to position
@@ -328,6 +333,7 @@ class GValueViewPort extends ChangeNotifier {
     bool finished = true,
     bool animation = true,
     VoidCallback? onFinished,
+    bool notify = true,
   }) {
     _autoScale.value = autoScaleFlg;
     if (autoScaleStrategy == null) {
@@ -351,6 +357,7 @@ class GValueViewPort extends ChangeNotifier {
       finished,
       animation,
       onFinished: onFinished,
+      notify: notify,
     );
   }
 

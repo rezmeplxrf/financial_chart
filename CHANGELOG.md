@@ -1,8 +1,16 @@
+## 0.1.8
+2025-04-10
+- fix issue `GChartWidget` not working correctly after `chart` object being recreated.
+- add `GPanel.graphPanMode` property to allow disable panning graph.
+- add `GPointViewPort.startPointMin`, `GPointViewPort.endPointMax` properties to allow range restriction.
+- remove dependency `intl` and `path_drawing` to reduce dependency conflict.
+- update Panels example.
+
 ## 0.1.7
 2025-04-07
 - fix mouse cursor for splitter
 - fix for an issue in example dependency
-- add GPanel.positionToViewPortCoord()
+- add `GPanel.positionToViewPortCoord()`
 - update examples
 
 ## 0.1.6
@@ -14,11 +22,11 @@
 ## 0.1.5
 2025-03-28  
 - expose GChartWidget.onTapXX callbacks
-- add GChart.hitTestGraph(), GChart.saveAsImage()
-- change GChart.preRender(), GChart.postRender() callbacks
+- add `GChart.hitTestGraph()`, `GChart.saveAsImage()`
+- change `GChart.preRender()`, `GChart.postRender()` callbacks
 - allow default valueViewPortId
 - update examples
-- [0.1.5+1] expose GChartWidget.onPointerDown, onPointerUp
+- [0.1.5+1] expose `GChartWidget`.`onPointerDown`, `onPointerUp`
 
 ## 0.1.4
 2025-03-23
