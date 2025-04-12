@@ -1,4 +1,5 @@
-import '../../components/marker/marker_theme.dart';
+import '../../components/marker/axis_marker_theme.dart';
+import '../../components/marker/overlay_marker_theme.dart';
 import '../../style/paint_style.dart';
 import '../../components/graph/graph_theme.dart';
 
@@ -10,7 +11,7 @@ class GGraphLineTheme extends GGraphTheme {
     required this.lineStyle,
     required this.pointStyle,
     super.axisMarkerTheme,
-    super.graphMarkerTheme,
+    super.overlayMarkerTheme,
     super.highlightMarkerTheme,
   });
 
@@ -18,14 +19,14 @@ class GGraphLineTheme extends GGraphTheme {
     PaintStyle? lineStyle,
     PaintStyle? pointStyle,
     GAxisMarkerTheme? axisMarkerTheme,
-    GGraphMarkerTheme? graphMarkerTheme,
+    GOverlayMarkerTheme? overlayMarkerTheme,
     GGraphHighlightMarkerTheme? highlightMarkerTheme,
   }) {
     return GGraphLineTheme(
       lineStyle: lineStyle ?? this.lineStyle,
       pointStyle: pointStyle ?? this.pointStyle,
       axisMarkerTheme: axisMarkerTheme ?? this.axisMarkerTheme,
-      graphMarkerTheme: graphMarkerTheme ?? this.graphMarkerTheme,
+      overlayMarkerTheme: overlayMarkerTheme ?? this.overlayMarkerTheme,
       highlightMarkerTheme: highlightMarkerTheme ?? this.highlightMarkerTheme,
     );
   }

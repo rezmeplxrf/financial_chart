@@ -1,4 +1,5 @@
-import '../../components/marker/marker_theme.dart';
+import '../../components/marker/axis_marker_theme.dart';
+import '../../components/marker/overlay_marker_theme.dart';
 import '../../style/paint_style.dart';
 import '../../components/graph/graph_theme.dart';
 
@@ -16,7 +17,7 @@ class GGraphOhlcTheme extends GGraphTheme {
     required this.barStyleMinus,
     this.barWidthRatio = 0.8,
     super.axisMarkerTheme,
-    super.graphMarkerTheme,
+    super.overlayMarkerTheme,
     super.highlightMarkerTheme,
   });
 
@@ -27,7 +28,7 @@ class GGraphOhlcTheme extends GGraphTheme {
     PaintStyle? barStyleMinus,
     double? barWidthRatio,
     GAxisMarkerTheme? axisMarkerTheme,
-    GGraphMarkerTheme? graphMarkerTheme,
+    GOverlayMarkerTheme? overlayMarkerTheme,
     GGraphHighlightMarkerTheme? highlightMarkerTheme,
   }) {
     return GGraphOhlcTheme(
@@ -37,7 +38,7 @@ class GGraphOhlcTheme extends GGraphTheme {
       barStyleMinus: barStyleMinus ?? this.barStyleMinus,
       barWidthRatio: barWidthRatio ?? this.barWidthRatio,
       axisMarkerTheme: axisMarkerTheme ?? this.axisMarkerTheme,
-      graphMarkerTheme: graphMarkerTheme ?? this.graphMarkerTheme,
+      overlayMarkerTheme: overlayMarkerTheme ?? this.overlayMarkerTheme,
       highlightMarkerTheme: highlightMarkerTheme ?? this.highlightMarkerTheme,
     );
   }

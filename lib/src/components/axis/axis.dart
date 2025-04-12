@@ -1,7 +1,10 @@
 import 'dart:ui';
 
+import 'package:financial_chart/src/components/marker/axis_marker.dart';
+
 import '../../values/value.dart';
 import '../component.dart';
+import '../marker/overlay_marker.dart';
 import 'axis_render.dart';
 import '../ticker.dart';
 
@@ -62,6 +65,12 @@ abstract class GAxis extends GComponent {
   GAxisScaleMode get scaleMode => _scaleMode.value;
   set scaleMode(GAxisScaleMode value) => _scaleMode.value = value;
 
+  /// Axis markers
+  final List<GAxisMarker> axisMarkers = [];
+
+  /// Overlay markers on the axis.
+  final List<GOverlayMarker> overlayMarkers = [];
+
   GAxis({
     super.id,
     super.visible,
@@ -70,10 +79,19 @@ abstract class GAxis extends GComponent {
     GAxisScaleMode scaleMode = GAxisScaleMode.zoom,
     super.render,
     super.theme,
+    List<GAxisMarker> axisMarkers = const [],
+    List<GOverlayMarker> overlayMarkers = const [],
   }) : _position = GValue<GAxisPosition>(position),
        _size = GValue<double>(size),
        _scaleMode = GValue<GAxisScaleMode>(scaleMode),
-       super();
+       super() {
+    if (axisMarkers.isNotEmpty) {
+      this.axisMarkers.addAll(axisMarkers);
+    }
+    if (overlayMarkers.isNotEmpty) {
+      this.overlayMarkers.addAll(overlayMarkers);
+    }
+  }
 
   /// Place the [axes] to the given [area] and return the areas of the axes ([axesAreas]) and the area left ([areaLeft]) for graph.
   static (List<Rect> axesAreas, Rect areaLeft) placeAxes(
@@ -129,7 +147,7 @@ abstract class GAxis extends GComponent {
 
 /// value axis for vertical direction.
 class GValueAxis extends GAxis {
-  /// The view port id of the value axis.
+  /// The value view port id of the value axis.
   final String viewPortId;
 
   /// The strategy to calculate the value ticks.
@@ -137,6 +155,7 @@ class GValueAxis extends GAxis {
 
   /// The formatter to format the value.
   final String Function(double value, int precision)? valueFormatter;
+
   GValueAxis({
     super.id,
     this.viewPortId = "", // empty means the default view port id
@@ -145,9 +164,11 @@ class GValueAxis extends GAxis {
     super.size = defaultVAxisSize,
     this.valueTickerStrategy = const GValueTickerStrategyDefault(),
     this.valueFormatter,
+    List<GValueAxisMarker> axisMarkers = const [],
+    super.overlayMarkers,
     super.theme,
     super.render = const GValueAxisRender(),
-  });
+  }) : super(axisMarkers: axisMarkers);
 
   bool get isAlignRight =>
       position == GAxisPosition.start || position == GAxisPosition.endInside;
@@ -200,11 +221,13 @@ class GPointAxis extends GAxis {
     super.position = GAxisPosition.end,
     super.scaleMode = GAxisScaleMode.zoom,
     super.size = defaultHAxisSize,
+    super.overlayMarkers,
+    List<GPointAxisMarker> axisMarkers = const [],
     this.pointTickerStrategy = const GPointTickerStrategyDefault(),
     this.pointFormatter,
     super.theme,
     super.render = const GPointAxisRender(),
-  });
+  }) : super(axisMarkers: axisMarkers);
 
   bool get isAlignBottom =>
       position == GAxisPosition.start || position == GAxisPosition.endInside;

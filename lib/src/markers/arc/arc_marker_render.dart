@@ -9,7 +9,7 @@ import '../../vector/vectors.dart';
 import '../markers.dart';
 
 class GArcMarkerRender
-    extends GGraphMarkerRender<GArcMarker, GGraphMarkerTheme> {
+    extends GOverlayMarkerRender<GArcMarker, GOverlayMarkerTheme> {
   GArcMarkerRender();
 
   @override
@@ -17,10 +17,10 @@ class GArcMarkerRender
     required Canvas canvas,
     required GChart chart,
     required GPanel panel,
-    required GGraph<GGraphTheme> graph,
+    required GComponent component,
     required GArcMarker marker,
     required Rect area,
-    required GGraphMarkerTheme theme,
+    required GOverlayMarkerTheme theme,
     required GPointViewPort pointViewPort,
     required GValueViewPort valueViewPort,
   }) {

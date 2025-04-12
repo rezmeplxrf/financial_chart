@@ -1,3 +1,13 @@
+## 0.2.0
+2025-04-12
+- <span style="color: orange; ">[breaking change]</span> refactor markers  
+  + rename `GGraphMarker` to `GOverlayMarker` so it can be also added to axes.
+  + remove `GGraph.axisMarkers` property and rename `GGraph.graphMarkers` property to `GGraph.overlayMarkers`. 
+  + add `GAxis.axisMarkers` and `GAxis.overlayMarkers` properties.
+  + update `GTheme` marker properties.
+- fix rendering label with rotation.
+- update Markers and Live examples.
+
 ## 0.1.8
 2025-04-10
 - fix issue `GChartWidget` not working correctly after `chart` object being recreated.

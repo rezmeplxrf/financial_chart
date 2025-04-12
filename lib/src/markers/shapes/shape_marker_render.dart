@@ -3,10 +3,9 @@ import 'dart:ui';
 import 'package:flutter/painting.dart';
 
 import '../../chart.dart';
-import '../../components/graph/graph.dart';
-import '../../components/graph/graph_theme.dart';
-import '../../components/marker/marker_render.dart';
-import '../../components/marker/marker_theme.dart';
+import '../../components/component.dart';
+import '../../components/marker/overlay_marker_theme.dart';
+import '../../components/marker/overlay_marker_render.dart';
 import '../../components/panel/panel.dart';
 import '../../components/render_util.dart';
 import '../../components/viewport_h.dart';
@@ -14,17 +13,17 @@ import '../../components/viewport_v.dart';
 import 'shape_marker.dart';
 
 class GShapeMarkerRender
-    extends GGraphMarkerRender<GShapeMarker, GGraphMarkerTheme> {
+    extends GOverlayMarkerRender<GShapeMarker, GOverlayMarkerTheme> {
   const GShapeMarkerRender();
   @override
   void doRenderMarker({
     required Canvas canvas,
     required GChart chart,
     required GPanel panel,
-    required GGraph<GGraphTheme> graph,
+    required GComponent component,
     required GShapeMarker marker,
     required Rect area,
-    required GGraphMarkerTheme theme,
+    required GOverlayMarkerTheme theme,
     required GPointViewPort pointViewPort,
     required GValueViewPort valueViewPort,
   }) {

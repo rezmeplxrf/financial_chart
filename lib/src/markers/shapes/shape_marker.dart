@@ -1,15 +1,17 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/painting.dart';
 
-import '../../components/marker/marker.dart';
+import '../../components/marker/overlay_marker.dart';
 import '../../values/coord.dart';
 import '../../values/size.dart';
 import '../../values/value.dart';
 import 'shape_marker_render.dart';
 
-class GShapeMarker extends GGraphMarker {
+class GShapeMarker extends GOverlayMarker {
   final GValue<GSize> _radiusSize;
   GSize get radiusSize => _radiusSize.value;
   set radiusSize(GSize value) => _radiusSize.value = value;
+
+  GCoordinate get anchorCoord => keyCoordinates[0];
 
   final GValue<Alignment> _alignment;
   Alignment get alignment => _alignment.value;

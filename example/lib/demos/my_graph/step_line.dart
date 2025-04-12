@@ -1,9 +1,9 @@
 import 'package:financial_chart/financial_chart.dart';
 
-import 'step_ine_render.dart';
+import 'step_line_render.dart';
 import 'step_line_theme.dart';
 
-/// Step line graph
+/// A example for custom graph times: Step line graph
 class GGraphStepLine extends GGraph<GGraphStepLineTheme> {
   static const String typeName = "stepLine";
 
@@ -18,8 +18,7 @@ class GGraphStepLine extends GGraph<GGraphStepLineTheme> {
     required this.valueKey,
     this.pointInterval = 10,
     super.hitTestMode,
-    super.axisMarkers,
-    super.graphMarkers,
+    super.overlayMarkers,
     super.theme,
     super.render,
   }) {

@@ -1,7 +1,6 @@
 import '../../style/label_style.dart';
 import '../../style/paint_style.dart';
-import '../component_theme.dart';
-import 'axis.dart';
+import '../components.dart';
 
 /// Theme for the axis component.
 class GAxisTheme extends GComponentTheme {
@@ -22,12 +21,20 @@ class GAxisTheme extends GComponentTheme {
   /// only used when [GAxis.scaleMode] is [GAxisScaleMode.select]
   final PaintStyle selectionStyle;
 
-  const GAxisTheme({
+  /// Theme for the axis markers
+  GAxisMarkerTheme? axisMarkerTheme;
+
+  /// Theme for the overlay markers
+  GOverlayMarkerTheme? overlayMarkerTheme;
+
+  GAxisTheme({
     required this.lineStyle,
     this.tickerLength = 5.0,
     required this.tickerStyle,
     required this.selectionStyle,
     required this.labelTheme,
+    this.axisMarkerTheme,
+    this.overlayMarkerTheme,
   });
 
   GAxisTheme copyWith({
@@ -36,6 +43,8 @@ class GAxisTheme extends GComponentTheme {
     PaintStyle? tickerStyle,
     PaintStyle? selectionStyle,
     GAxisLabelTheme? labelTheme,
+    GAxisMarkerTheme? axisMarkerTheme,
+    GOverlayMarkerTheme? overlayMarkerTheme,
   }) {
     return GAxisTheme(
       lineStyle: lineStyle ?? this.lineStyle,
@@ -43,6 +52,8 @@ class GAxisTheme extends GComponentTheme {
       tickerStyle: tickerStyle ?? this.tickerStyle,
       selectionStyle: selectionStyle ?? this.selectionStyle,
       labelTheme: labelTheme ?? this.labelTheme,
+      axisMarkerTheme: axisMarkerTheme ?? this.axisMarkerTheme,
+      overlayMarkerTheme: overlayMarkerTheme ?? this.overlayMarkerTheme,
     );
   }
 }

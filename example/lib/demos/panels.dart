@@ -94,7 +94,7 @@ class DemoPanelsPageState extends DemoBasePageState {
             id: "macd",
             valueViewPortId: "macd",
             valueKey: keyMACD,
-            graphMarkers: [
+            overlayMarkers: [
               GCalloutMarker(
                 text: "drag here to resize",
                 anchorCoord: GPositionCoord.rational(
@@ -104,10 +104,14 @@ class DemoPanelsPageState extends DemoBasePageState {
                   yOffset: 5,
                 ),
                 alignment: Alignment.bottomCenter,
-                theme: chartTheme.graphMarkerTheme.copyWith(
-                  labelStyle: chartTheme.graphMarkerTheme.labelStyle!.copyWith(
-                    textStyle: const TextStyle(fontSize: 16, color: Colors.red),
-                  ),
+                theme: chartTheme.overlayMarkerTheme.copyWith(
+                  labelStyle: chartTheme.overlayMarkerTheme.labelStyle!
+                      .copyWith(
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.red,
+                        ),
+                      ),
                 ),
               ),
             ],
@@ -205,17 +209,20 @@ class DemoPanelsPageState extends DemoBasePageState {
             items: const [true, false],
             onSelected: (bool selected) {
               for (var marker
-                  in chart!.panels[1].findGraphById("macd")!.graphMarkers) {
+                  in chart!.panels[1].findGraphById("macd")!.overlayMarkers) {
                 marker.visible = selected;
               }
               for (var marker
-                  in chart!.panels[1].findGraphById("macd")!.axisMarkers) {
+                  in chart!.panels[1].findGraphById("macd")!.overlayMarkers) {
                 marker.visible = selected;
               }
               repaintChart();
             },
             selected:
-                chart!.panels[1].findGraphById("macd")!.graphMarkers[0].visible,
+                chart!.panels[1]
+                    .findGraphById("macd")!
+                    .overlayMarkers[0]
+                    .visible,
           ),
         ),
       ],

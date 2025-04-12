@@ -1,27 +1,26 @@
 import 'dart:ui';
 
 import '../../chart.dart';
-import '../../components/graph/graph.dart';
-import '../../components/graph/graph_theme.dart';
-import '../../components/marker/marker_render.dart';
-import '../../components/marker/marker_theme.dart';
+import '../../components/component.dart';
+import '../../components/marker/overlay_marker_render.dart';
+import '../../components/marker/overlay_marker_theme.dart';
 import '../../components/panel/panel.dart';
 import '../../components/viewport_h.dart';
 import '../../components/viewport_v.dart';
 import 'label_marker.dart';
 
 class GLabelMarkerRender
-    extends GGraphMarkerRender<GLabelMarker, GGraphMarkerTheme> {
+    extends GOverlayMarkerRender<GLabelMarker, GOverlayMarkerTheme> {
   const GLabelMarkerRender();
   @override
   void doRenderMarker({
     required Canvas canvas,
     required GChart chart,
     required GPanel panel,
-    required GGraph<GGraphTheme> graph,
+    required GComponent component,
     required GLabelMarker marker,
     required Rect area,
-    required GGraphMarkerTheme theme,
+    required GOverlayMarkerTheme theme,
     required GPointViewPort pointViewPort,
     required GValueViewPort valueViewPort,
   }) {

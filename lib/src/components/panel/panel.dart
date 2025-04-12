@@ -6,7 +6,6 @@ import 'panel_theme.dart';
 import '../component.dart';
 import '../../values/coord.dart';
 import '../../values/value.dart';
-import '../marker/marker.dart';
 import '../tooltip/tooltip.dart';
 import '../graph/graph.dart';
 import '../axis/axis.dart';
@@ -183,16 +182,6 @@ class GPanel extends GComponent {
 
   GGraph? findGraphById(String id) {
     return graphs.where((element) => element.id == id).firstOrNull;
-  }
-
-  GMarker? findMarkerById(String id) {
-    for (var graph in graphs) {
-      final marker = graph.findMarkerById(id);
-      if (marker != null) {
-        return marker;
-      }
-    }
-    return null;
   }
 
   dispose() {

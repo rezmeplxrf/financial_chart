@@ -1,12 +1,12 @@
 import 'package:flutter/painting.dart';
 
-import '../../components/marker/marker.dart';
+import '../../components/marker/overlay_marker.dart';
 import '../../values/coord.dart';
 import '../../values/size.dart';
 import '../../values/value.dart';
 import 'rect_marker_render.dart';
 
-class GRectMarker extends GGraphMarker {
+class GRectMarker extends GOverlayMarker {
   final GValue<GSize?> _cornerRadiusSize;
   GSize? get cornerRadiusSize => _cornerRadiusSize.value;
   set cornerRadiusSize(GSize? value) => _cornerRadiusSize.value = value;
@@ -18,6 +18,13 @@ class GRectMarker extends GGraphMarker {
   final GValue<GSize?> _valueRadiusSize;
   GSize? get valueRadiusSize => _valueRadiusSize.value;
   set valueRadiusSize(GSize? value) => _valueRadiusSize.value = value;
+
+  GCoordinate? get anchorCoord =>
+      _pointRadiusSize.value == null ? null : keyCoordinates[0];
+  GCoordinate? get startCoord =>
+      _pointRadiusSize.value != null ? null : keyCoordinates[0];
+  GCoordinate? get endCoord =>
+      _pointRadiusSize.value != null ? null : keyCoordinates[1];
 
   final GValue<Alignment> _alignment;
   Alignment get alignment => _alignment.value;

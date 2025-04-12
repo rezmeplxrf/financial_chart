@@ -1,10 +1,10 @@
 import '../../values/value.dart';
+import '../marker/overlay_marker.dart';
 import '../render.dart';
 import 'graph_render.dart';
 import 'graph_theme.dart';
 import '../component.dart';
 import '../panel/panel.dart';
-import '../marker/marker.dart';
 import '../viewport_v.dart';
 
 /// Base class for graph components.
@@ -42,14 +42,9 @@ class GGraph<T extends GGraphTheme> extends GComponent {
 
   final List<String> crosshairHighlightValueKeys = [];
 
-  final List<GAxisMarker> _axisMarkers = [];
-  final List<GGraphMarker> _graphMarkers = [];
-
-  /// The axis markers of the graph.
-  List<GAxisMarker> get axisMarkers => List.unmodifiable(_axisMarkers);
-
   /// The graph markers of the graph.
-  List<GGraphMarker> get graphMarkers => List.unmodifiable(_graphMarkers);
+  List<GOverlayMarker> get overlayMarkers => List.unmodifiable(_overlayMarkers);
+  final List<GOverlayMarker> _overlayMarkers = [];
 
   GGraph({
     String? id,
@@ -60,74 +55,37 @@ class GGraph<T extends GGraphTheme> extends GComponent {
     T? theme,
     GGraphRender? render,
     List<String>? crosshairHighlightValueKeys,
-    List<GAxisMarker> axisMarkers = const [],
-    List<GGraphMarker> graphMarkers = const [],
+    List<GOverlayMarker> overlayMarkers = const [],
   }) : _layer = GValue<int>(layer),
        super(id: id, render: render, theme: theme) {
     _hitTestMode(newValue: hitTestMode);
-    if (axisMarkers.isNotEmpty) {
-      _axisMarkers.addAll(axisMarkers);
-    }
-    if (graphMarkers.isNotEmpty) {
-      _graphMarkers.addAll(graphMarkers);
+    if (overlayMarkers.isNotEmpty) {
+      _overlayMarkers.addAll(overlayMarkers);
     }
     if (crosshairHighlightValueKeys != null) {
       this.crosshairHighlightValueKeys.addAll(crosshairHighlightValueKeys);
     }
   }
 
-  GAxisMarker? findAxisMarker(String id) {
-    return _axisMarkers.where((marker) => marker.id == id).firstOrNull;
+  GOverlayMarker? findMarker(String id) {
+    return _overlayMarkers.where((marker) => marker.id == id).firstOrNull;
   }
 
-  GGraphMarker? findGraphMarker(String id) {
-    return _graphMarkers.where((marker) => marker.id == id).firstOrNull;
-  }
-
-  GMarker? findMarkerById(String id) {
-    final axisMarker = findAxisMarker(id);
-    if (axisMarker != null) {
-      return axisMarker;
-    }
-    final graphMarker = findGraphMarker(id);
-    if (graphMarker != null) {
-      return graphMarker;
-    }
-    return null;
-  }
-
-  GAxisMarker? removeAxisMarkerById(String id) {
-    final marker = findAxisMarker(id);
+  GOverlayMarker? removeMarkerById(String id) {
+    final marker = findMarker(id);
     if (marker != null) {
-      _axisMarkers.remove(marker);
+      _overlayMarkers.remove(marker);
       return marker;
     }
     return null;
   }
 
-  bool removeAxisMarker(GAxisMarker marker) {
-    return _axisMarkers.remove(marker);
+  bool removeMarker(GOverlayMarker marker) {
+    return _overlayMarkers.remove(marker);
   }
 
-  void addAxisMarker(GAxisMarker marker) {
-    _axisMarkers.add(marker);
-  }
-
-  GGraphMarker? removeGraphMarkerById(String id) {
-    final marker = findGraphMarker(id);
-    if (marker != null) {
-      _graphMarkers.remove(marker);
-      return marker;
-    }
-    return null;
-  }
-
-  bool removeGraphMarker(GGraphMarker marker) {
-    return _graphMarkers.remove(marker);
-  }
-
-  void addGraphMarker(GGraphMarker marker) {
-    _graphMarkers.add(marker);
+  void addMarker(GOverlayMarker marker) {
+    _overlayMarkers.add(marker);
   }
 
   @override
