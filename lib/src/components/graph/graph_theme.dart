@@ -1,16 +1,17 @@
 import '../../style/paint_style.dart';
 import '../component_theme.dart';
-import '../marker/marker_theme.dart';
+import '../marker/axis_marker_theme.dart';
+import '../marker/overlay_marker_theme.dart';
 
 /// Base class for graph themes
 class GGraphTheme extends GComponentTheme {
   final GAxisMarkerTheme? axisMarkerTheme;
-  final GGraphMarkerTheme? graphMarkerTheme;
+  final GOverlayMarkerTheme? overlayMarkerTheme;
   final GGraphHighlightMarkerTheme? highlightMarkerTheme;
 
   const GGraphTheme({
     this.axisMarkerTheme,
-    this.graphMarkerTheme,
+    this.overlayMarkerTheme,
     this.highlightMarkerTheme,
   });
 }

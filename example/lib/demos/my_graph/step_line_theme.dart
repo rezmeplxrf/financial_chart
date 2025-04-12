@@ -8,7 +8,7 @@ class GGraphStepLineTheme extends GGraphTheme {
     required this.lineUpStyle,
     required this.lineDownStyle,
     super.axisMarkerTheme,
-    super.graphMarkerTheme,
+    super.overlayMarkerTheme,
     super.highlightMarkerTheme,
   });
 
@@ -16,14 +16,14 @@ class GGraphStepLineTheme extends GGraphTheme {
     PaintStyle? lineUpStyle,
     PaintStyle? lineDownStyle,
     GAxisMarkerTheme? axisMarkerTheme,
-    GGraphMarkerTheme? graphMarkerTheme,
+    GOverlayMarkerTheme? overlayMarkerTheme,
     GGraphHighlightMarkerTheme? highlightMarkerTheme,
   }) {
     return GGraphStepLineTheme(
       lineUpStyle: lineUpStyle ?? this.lineUpStyle,
       lineDownStyle: lineDownStyle ?? this.lineDownStyle,
       axisMarkerTheme: axisMarkerTheme ?? this.axisMarkerTheme,
-      graphMarkerTheme: graphMarkerTheme ?? this.graphMarkerTheme,
+      overlayMarkerTheme: overlayMarkerTheme ?? this.overlayMarkerTheme,
       highlightMarkerTheme: highlightMarkerTheme ?? this.highlightMarkerTheme,
     );
   }

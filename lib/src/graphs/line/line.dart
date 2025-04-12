@@ -16,8 +16,7 @@ class GGraphLine extends GGraph<GGraphLineTheme> {
     required this.valueKey,
     super.hitTestMode,
     super.crosshairHighlightValueKeys,
-    super.axisMarkers,
-    super.graphMarkers,
+    super.overlayMarkers,
     super.theme,
     super.render,
   }) {

@@ -21,6 +21,24 @@ class GRenderUtil {
     canvas.restore();
   }
 
+  static void renderRotated({
+    required Canvas canvas,
+    required Offset center,
+    required double theta,
+    required void Function() render,
+  }) {
+    if (theta == 0) {
+      render();
+      return;
+    }
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.rotate(theta);
+    canvas.translate(-center.dx, -center.dy);
+    render();
+    canvas.restore();
+  }
+
   static void drawPath({
     required Canvas canvas,
     required Path path,
@@ -106,14 +124,25 @@ class GRenderUtil {
       defaultAlign: defaultAlign,
       style: style,
     );
-    if (style.backgroundStyle != null) {
-      final Path blockPath = addRectPath(
-        rect: blockArea,
-        cornerRadius: style.backgroundCornerRadius ?? 0,
-      );
-      drawPath(canvas: canvas, path: blockPath, style: style.backgroundStyle!);
-    }
-    painter.paint(canvas, textPaintPoint);
+    renderRotated(
+      canvas: canvas,
+      center: anchor,
+      theta: style.rotation ?? 0,
+      render: () {
+        if (style.backgroundStyle != null) {
+          final Path blockPath = addRectPath(
+            rect: blockArea,
+            cornerRadius: style.backgroundCornerRadius ?? 0,
+          );
+          drawPath(
+            canvas: canvas,
+            path: blockPath,
+            style: style.backgroundStyle!,
+          );
+        }
+        painter.paint(canvas, textPaintPoint);
+      },
+    );
     return blockArea;
   }
 

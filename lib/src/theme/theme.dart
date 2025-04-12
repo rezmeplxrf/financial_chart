@@ -1,5 +1,6 @@
 import '../components/background/background_theme.dart';
-import '../components/marker/marker_theme.dart';
+import '../components/marker/overlay_marker_theme.dart';
+import '../components/marker/axis_marker_theme.dart';
 import '../components/panel/panel_theme.dart';
 
 import '../components/tooltip/tooltip_theme.dart';
@@ -19,7 +20,7 @@ class GTheme {
   final GTooltipTheme tooltipTheme;
   final GSplitterTheme splitterTheme;
   final GAxisMarkerTheme axisMarkerTheme;
-  final GGraphMarkerTheme graphMarkerTheme;
+  final GOverlayMarkerTheme overlayMarkerTheme;
   final Map<String, GGraphTheme> graphThemes;
 
   const GTheme({
@@ -33,7 +34,7 @@ class GTheme {
     required this.splitterTheme,
     required this.graphThemes,
     required this.axisMarkerTheme,
-    required this.graphMarkerTheme,
+    required this.overlayMarkerTheme,
   });
 
   GTheme extend({
@@ -46,7 +47,7 @@ class GTheme {
     GTooltipTheme? tooltipTheme,
     GSplitterTheme? splitterTheme,
     GAxisMarkerTheme? axisMarkerTheme,
-    GGraphMarkerTheme? graphMarkerTheme,
+    GOverlayMarkerTheme? overlayMarkerTheme,
     Map<String, GGraphTheme>? graphThemes,
   }) {
     return GTheme(
@@ -59,7 +60,7 @@ class GTheme {
       tooltipTheme: tooltipTheme ?? this.tooltipTheme,
       splitterTheme: splitterTheme ?? this.splitterTheme,
       axisMarkerTheme: axisMarkerTheme ?? this.axisMarkerTheme,
-      graphMarkerTheme: graphMarkerTheme ?? this.graphMarkerTheme,
+      overlayMarkerTheme: overlayMarkerTheme ?? this.overlayMarkerTheme,
       graphThemes: this.graphThemes..addAll(graphThemes ?? {}),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/painting.dart';
 
 import '../../chart.dart';
+import '../marker/axis_marker.dart';
 import '../panel/panel.dart';
 import 'axis_theme.dart';
 import 'axis.dart';
@@ -68,6 +69,51 @@ class GValueAxisRender extends GAxisRender<GValueAxis> {
     }
     drawPath(canvas: canvas, path: tickLinesPath, style: theme.tickerStyle);
 
+    // draw axis markers
+    if (axis.axisMarkers.isNotEmpty) {
+      final axisMarkers = [...axis.axisMarkers];
+      axisMarkers.sort((a, b) => a.layer.compareTo(b.layer));
+      for (var marker in axisMarkers) {
+        if (marker is GValueAxisMarker) {
+          marker.getRender().renderMarker(
+            canvas: canvas,
+            chart: chart,
+            panel: panel,
+            component: component,
+            marker: marker,
+            area: area,
+            theme:
+                marker.theme ??
+                theme.axisMarkerTheme ??
+                chart.theme.axisMarkerTheme,
+            valueViewPort: valueViewPort,
+          );
+        }
+      }
+    }
+
+    // draw overlay markers
+    if (axis.overlayMarkers.isNotEmpty) {
+      final overlayMarkers = [...axis.overlayMarkers];
+      overlayMarkers.sort((a, b) => a.layer.compareTo(b.layer));
+      for (var marker in overlayMarkers) {
+        marker.getRender().renderMarker(
+          canvas: canvas,
+          chart: chart,
+          panel: panel,
+          component: component,
+          marker: marker,
+          area: area,
+          theme:
+              marker.theme ??
+              theme.overlayMarkerTheme ??
+              chart.theme.overlayMarkerTheme,
+          valueViewPort: valueViewPort,
+        );
+      }
+    }
+
+    // draw selected range
     if (valueViewPort.selectedRange.isNotEmpty) {
       Path selectedRangePath = addRectPath(
         rect: Rect.fromLTRB(
@@ -165,6 +211,49 @@ class GPointAxisRender extends GAxisRender<GPointAxis> {
     }
     drawPath(canvas: canvas, path: tickLinesPath, style: theme.tickerStyle);
 
+    // draw axis markers
+    if (axis.axisMarkers.isNotEmpty) {
+      final axisMarkers = [...axis.axisMarkers];
+      axisMarkers.sort((a, b) => a.layer.compareTo(b.layer));
+      for (var marker in axisMarkers) {
+        if (marker is GPointAxisMarker) {
+          marker.getRender().renderMarker(
+            canvas: canvas,
+            chart: chart,
+            panel: panel!,
+            component: component,
+            marker: marker,
+            area: area,
+            theme:
+                marker.theme ??
+                theme.axisMarkerTheme ??
+                chart.theme.axisMarkerTheme,
+          );
+        }
+      }
+    }
+
+    // draw overlay markers
+    if (axis.overlayMarkers.isNotEmpty) {
+      final overlayMarkers = [...axis.overlayMarkers];
+      overlayMarkers.sort((a, b) => a.layer.compareTo(b.layer));
+      for (var marker in overlayMarkers) {
+        marker.getRender().renderMarker(
+          canvas: canvas,
+          chart: chart,
+          panel: panel!,
+          component: component,
+          marker: marker,
+          area: area,
+          theme:
+              marker.theme ??
+              theme.overlayMarkerTheme ??
+              chart.theme.overlayMarkerTheme,
+        );
+      }
+    }
+
+    // draw selected range
     if (pointViewPort.selectedRange.isNotEmpty) {
       Path selectedRangePath = addRectPath(
         rect: Rect.fromLTRB(

@@ -54,6 +54,20 @@ abstract class GRender<C extends GComponent, T extends GComponentTheme> {
     );
   }
 
+  void renderRotated({
+    required Canvas canvas,
+    required Offset center,
+    required double theta,
+    required void Function() render,
+  }) {
+    GRenderUtil.renderRotated(
+      canvas: canvas,
+      center: center,
+      theta: theta,
+      render: render,
+    );
+  }
+
   void drawPath({
     required Canvas canvas,
     required Path path,

@@ -21,6 +21,12 @@ export 'graph/graph_theme.dart';
 export 'marker/marker.dart';
 export 'marker/marker_render.dart';
 export 'marker/marker_theme.dart';
+export 'marker/overlay_marker.dart';
+export 'marker/overlay_marker_render.dart';
+export 'marker/overlay_marker_theme.dart';
+export 'marker/axis_marker.dart';
+export 'marker/axis_marker_render.dart';
+export 'marker/axis_marker_theme.dart';
 
 export 'panel/panel.dart';
 export 'panel/panel_render.dart';

@@ -1,8 +1,9 @@
-import '../../components/marker/marker.dart';
+import '../../components/marker/overlay_marker.dart';
 import '../../values/coord.dart';
 import 'line_marker_render.dart';
 
-class GLineMarker extends GGraphMarker {
+class GLineMarker extends GOverlayMarker {
+  List<GCoordinate> get coordinates => [...keyCoordinates];
   GLineMarker({
     super.id,
     super.visible,

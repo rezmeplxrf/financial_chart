@@ -1,5 +1,6 @@
 import '../../components/graph/graph_theme.dart';
-import '../../components/marker/marker_theme.dart';
+import '../../components/marker/axis_marker_theme.dart';
+import '../../components/marker/overlay_marker_theme.dart';
 import '../../style/paint_style.dart';
 
 /// Theme for grid lines
@@ -12,7 +13,7 @@ class GGraphBarTheme extends GGraphTheme {
     required this.barStyleBelowBase,
     this.barWidthRatio = 0.8,
     super.axisMarkerTheme,
-    super.graphMarkerTheme,
+    super.overlayMarkerTheme,
     super.highlightMarkerTheme,
   });
 
@@ -21,7 +22,7 @@ class GGraphBarTheme extends GGraphTheme {
     PaintStyle? barStyleBelowBase,
     double? barWidthRatio,
     GAxisMarkerTheme? axisMarkerTheme,
-    GGraphMarkerTheme? graphMarkerTheme,
+    GOverlayMarkerTheme? overlayMarkerTheme,
     GGraphHighlightMarkerTheme? highlightMarkerTheme,
   }) {
     return GGraphBarTheme(
@@ -29,7 +30,7 @@ class GGraphBarTheme extends GGraphTheme {
       barStyleBelowBase: barStyleBelowBase ?? this.barStyleBelowBase,
       barWidthRatio: barWidthRatio ?? this.barWidthRatio,
       axisMarkerTheme: axisMarkerTheme ?? this.axisMarkerTheme,
-      graphMarkerTheme: graphMarkerTheme ?? this.graphMarkerTheme,
+      overlayMarkerTheme: overlayMarkerTheme ?? this.overlayMarkerTheme,
       highlightMarkerTheme: highlightMarkerTheme ?? this.highlightMarkerTheme,
     );
   }

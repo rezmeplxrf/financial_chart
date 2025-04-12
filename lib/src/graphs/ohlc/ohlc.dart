@@ -27,8 +27,7 @@ class GGraphOhlc extends GGraph<GGraphOhlcTheme> {
     super.visible,
     super.hitTestMode,
     super.crosshairHighlightValueKeys,
-    super.axisMarkers,
-    super.graphMarkers,
+    super.overlayMarkers,
     super.theme,
     super.render,
   }) : _drawAsCandle = GValue(drawAsCandle) {

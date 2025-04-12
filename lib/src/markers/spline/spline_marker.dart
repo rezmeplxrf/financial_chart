@@ -1,12 +1,14 @@
-import '../../components/marker/marker.dart';
+import '../../components/marker/overlay_marker.dart';
 import '../../values/coord.dart';
 import '../../values/value.dart';
 import 'spline_marker_render.dart';
 
-class GSplineMarker extends GGraphMarker {
+class GSplineMarker extends GOverlayMarker {
   final GValue<bool> _close;
   bool get close => _close.value;
   set close(bool value) => _close.value = value;
+
+  List<GCoordinate> get coordinates => [...keyCoordinates];
 
   GSplineMarker({
     super.id,

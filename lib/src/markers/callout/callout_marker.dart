@@ -1,15 +1,17 @@
 import 'package:flutter/painting.dart';
 
-import '../../components/marker/marker.dart';
-import '../../components/marker/marker_render.dart';
+import '../../components/marker/overlay_marker.dart';
+import '../../components/marker/overlay_marker_render.dart';
 import '../../values/coord.dart';
 import '../../values/value.dart';
 import 'callout_marker_render.dart';
 
-class GCalloutMarker extends GGraphMarker {
+class GCalloutMarker extends GOverlayMarker {
   final GValue<String> _text;
   String get text => _text.value;
   set text(String value) => _text.value = value;
+
+  GCoordinate get anchorCoord => keyCoordinates[0];
 
   final GValue<Alignment> _alignment;
   Alignment get alignment => _alignment.value;
@@ -34,7 +36,7 @@ class GCalloutMarker extends GGraphMarker {
     Alignment alignment = Alignment.center,
     double pointerSize = 10,
     double pointerMargin = 10,
-    GGraphMarkerRender render = const GCalloutMarkerRender(),
+    GOverlayMarkerRender render = const GCalloutMarkerRender(),
   }) : _text = GValue<String>(text),
        _alignment = GValue<Alignment>(alignment),
        _pointerSize = GValue<double>(pointerSize),

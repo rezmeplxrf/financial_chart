@@ -1,29 +1,22 @@
 import 'package:flutter/painting.dart';
 
 import '../../chart.dart';
-import '../../components/graph/graph.dart';
-import '../../components/graph/graph_theme.dart';
-import '../../components/marker/marker_render.dart';
-import '../../components/marker/marker_theme.dart';
-import '../../components/panel/panel.dart';
-import '../../components/render_util.dart';
-import '../../components/viewport_h.dart';
-import '../../components/viewport_v.dart';
+import '../../components/components.dart';
 import '../../vector/vectors/circle.dart';
 import 'callout_marker.dart';
 
 class GCalloutMarkerRender
-    extends GGraphMarkerRender<GCalloutMarker, GGraphMarkerTheme> {
+    extends GOverlayMarkerRender<GCalloutMarker, GOverlayMarkerTheme> {
   const GCalloutMarkerRender();
   @override
   void doRenderMarker({
     required Canvas canvas,
     required GChart chart,
     required GPanel panel,
-    required GGraph<GGraphTheme> graph,
+    required GComponent component,
     required GCalloutMarker marker,
     required Rect area,
-    required GGraphMarkerTheme theme,
+    required GOverlayMarkerTheme theme,
     required GPointViewPort pointViewPort,
     required GValueViewPort valueViewPort,
   }) {
@@ -68,7 +61,7 @@ class GCalloutMarkerRender
 
   Path _createBackgroundPath(
     GCalloutMarker marker,
-    GGraphMarkerTheme theme,
+    GOverlayMarkerTheme theme,
     Offset anchor,
     Rect textRect,
   ) {

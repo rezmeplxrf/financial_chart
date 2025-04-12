@@ -20,7 +20,8 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
   int updateIntervalMillis = 200;
   Timer? timer;
   GDataSource? dataSource;
-  GAxisMarker? axisMarker;
+  GPointAxisMarker? pointAxisMarker;
+  GValueAxisMarker? valueAxisMarker;
   GLineMarker? lineMarker;
 
   DemoLiveUpdatePageState();
@@ -87,8 +88,8 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
     lineMarker!.keyCoordinates[1] = (lineMarker!.keyCoordinates[1]
             as GCustomCoord)
         .copyWith(y: latestPrice);
-    axisMarker!.values[0] = latestPrice;
-    axisMarker!.points[0] = dataSource.lastPoint;
+    valueAxisMarker!.labelValue = latestPrice;
+    pointAxisMarker!.point = dataSource.lastPoint;
     // redraw chart
     final autoScalePointViewPort =
         (chart!.pointViewPort.endPoint - dataSource.lastPoint - 10)
@@ -108,12 +109,17 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
   @override
   GChart buildChart(GDataSource dataSource) {
     final chartTheme = themes.first;
-    axisMarker = GAxisMarker(
+    valueAxisMarker = GValueAxisMarker.label(
       id: "axis-marker-latest",
-      points: [dataSource.lastPoint],
-      values: [
-        dataSource.getSeriesValue(point: dataSource.lastPoint, key: keyClose)!,
-      ],
+      labelValue:
+          dataSource.getSeriesValue(
+            point: dataSource.lastPoint,
+            key: keyClose,
+          )!,
+    );
+    pointAxisMarker = GPointAxisMarker.label(
+      id: "axis-marker-latest",
+      point: dataSource.lastPoint,
     );
     if (dataSource.isNotEmpty) {
       lineMarker = GLineMarker(
@@ -138,7 +144,7 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
             coordinateConvertor: kCoordinateConvertorXPositionYValue,
           ),
         ],
-        theme: GGraphMarkerTheme(
+        theme: GOverlayMarkerTheme(
           markerStyle: PaintStyle(strokeColor: Colors.orange),
         ),
       );
@@ -159,9 +165,15 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
             viewPortId: 'price',
             position: GAxisPosition.end,
             scaleMode: GAxisScaleMode.zoom,
+            axisMarkers: [valueAxisMarker!],
           ),
         ],
-        pointAxes: [GPointAxis(position: GAxisPosition.end)],
+        pointAxes: [
+          GPointAxis(
+            position: GAxisPosition.end,
+            axisMarkers: [pointAxisMarker!],
+          ),
+        ],
         graphs: [
           GGraphGrids(id: "grids", valueViewPortId: 'price'),
           GGraphOhlc(
@@ -170,8 +182,7 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
             valueViewPortId: "price",
             drawAsCandle: true,
             ohlcValueKeys: const [keyOpen, keyHigh, keyLow, keyClose],
-            graphMarkers: [if (lineMarker != null) lineMarker!],
-            axisMarkers: [axisMarker!],
+            overlayMarkers: [if (lineMarker != null) lineMarker!],
           ),
           GGraphLine(
             id: "line",
@@ -224,17 +235,28 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
             items: const [true, false],
             onSelected: (bool selected) {
               for (var marker
-                  in chart!.panels[0].findGraphById("ohlc")!.graphMarkers) {
+                  in chart!.panels[0].findGraphById("ohlc")!.overlayMarkers) {
                 marker.visible = selected;
               }
-              for (var marker
-                  in chart!.panels[0].findGraphById("ohlc")!.axisMarkers) {
-                marker.visible = selected;
+              for (final panel in chart!.panels) {
+                for (final axis in panel.valueAxes) {
+                  for (final marker in axis.axisMarkers) {
+                    marker.visible = selected;
+                  }
+                }
+                for (final axis in panel.pointAxes) {
+                  for (final marker in axis.axisMarkers) {
+                    marker.visible = selected;
+                  }
+                }
               }
               repaintChart();
             },
             selected:
-                chart!.panels[0].findGraphById("ohlc")!.graphMarkers[0].visible,
+                chart!.panels[0]
+                    .findGraphById("ohlc")!
+                    .overlayMarkers[0]
+                    .visible,
           ),
         ),
         AppLabelWidget(

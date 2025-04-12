@@ -1,5 +1,6 @@
 import '../../components/graph/graph_theme.dart';
-import '../../components/marker/marker_theme.dart';
+import '../../components/marker/axis_marker_theme.dart';
+import '../../components/marker/overlay_marker_theme.dart';
 import '../../style/paint_style.dart';
 
 /// Theme for area graph
@@ -17,7 +18,7 @@ class GGraphAreaTheme extends GGraphTheme {
     required this.styleAboveArea,
     required this.styleBelowArea,
     super.axisMarkerTheme,
-    super.graphMarkerTheme,
+    super.overlayMarkerTheme,
     super.highlightMarkerTheme,
   });
 
@@ -28,7 +29,7 @@ class GGraphAreaTheme extends GGraphTheme {
     PaintStyle? styleAboveArea,
     PaintStyle? styleBelowArea,
     GAxisMarkerTheme? axisMarkerTheme,
-    GGraphMarkerTheme? graphMarkerTheme,
+    GOverlayMarkerTheme? overlayMarkerTheme,
     GGraphHighlightMarkerTheme? highlightMarkerTheme,
   }) {
     return GGraphAreaTheme(
@@ -38,7 +39,7 @@ class GGraphAreaTheme extends GGraphTheme {
       styleAboveArea: styleAboveArea ?? this.styleAboveArea,
       styleBelowArea: styleBelowArea ?? this.styleBelowArea,
       axisMarkerTheme: axisMarkerTheme ?? this.axisMarkerTheme,
-      graphMarkerTheme: graphMarkerTheme ?? this.graphMarkerTheme,
+      overlayMarkerTheme: overlayMarkerTheme ?? this.overlayMarkerTheme,
       highlightMarkerTheme: highlightMarkerTheme ?? this.highlightMarkerTheme,
     );
   }

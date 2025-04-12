@@ -23,8 +23,7 @@ class GGraphGroup extends GGraph<GGraphTheme> {
     super.valueViewPortId,
     super.layer,
     super.visible,
-    super.axisMarkers,
-    super.graphMarkers,
+    super.overlayMarkers,
     super.render,
   }) : super(
          hitTestMode: HitTestMode.none, // unused

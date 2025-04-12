@@ -1,10 +1,9 @@
 import 'dart:ui';
 
 import '../../chart.dart';
-import '../../components/graph/graph.dart';
-import '../../components/graph/graph_theme.dart';
-import '../../components/marker/marker_render.dart';
-import '../../components/marker/marker_theme.dart';
+import '../../components/component.dart';
+import '../../components/marker/overlay_marker_theme.dart';
+import '../../components/marker/overlay_marker_render.dart';
 import '../../components/panel/panel.dart';
 import '../../components/render_util.dart';
 import '../../components/viewport_h.dart';
@@ -13,7 +12,7 @@ import '../../vector/vectors.dart';
 import 'spline_marker.dart';
 
 class GSplineMarkerRender
-    extends GGraphMarkerRender<GSplineMarker, GGraphMarkerTheme> {
+    extends GOverlayMarkerRender<GSplineMarker, GOverlayMarkerTheme> {
   const GSplineMarkerRender();
 
   @override
@@ -21,10 +20,10 @@ class GSplineMarkerRender
     required Canvas canvas,
     required GChart chart,
     required GPanel panel,
-    required GGraph<GGraphTheme> graph,
+    required GComponent component,
     required GSplineMarker marker,
     required Rect area,
-    required GGraphMarkerTheme theme,
+    required GOverlayMarkerTheme theme,
     required GPointViewPort pointViewPort,
     required GValueViewPort valueViewPort,
   }) {

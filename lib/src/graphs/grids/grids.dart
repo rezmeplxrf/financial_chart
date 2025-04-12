@@ -21,8 +21,7 @@ class GGraphGrids extends GGraph<GGraphGridsTheme> {
     this.valueTickerStrategy = const GValueTickerStrategyDefault(),
     this.pointTickerStrategy = const GPointTickerStrategyDefault(),
     super.hitTestMode,
-    super.axisMarkers,
-    super.graphMarkers,
+    super.overlayMarkers,
     super.theme,
     super.render = const GGraphGridsRender(),
   });

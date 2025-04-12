@@ -1,4 +1,5 @@
-import '../../components/marker/marker_theme.dart';
+import '../../components/marker/axis_marker_theme.dart';
+import '../../components/marker/overlay_marker_theme.dart';
 import '../../style/paint_style.dart';
 import '../../components/graph/graph_theme.dart';
 
@@ -8,20 +9,20 @@ class GGraphGridsTheme extends GGraphTheme {
   const GGraphGridsTheme({
     required this.lineStyle,
     super.axisMarkerTheme,
-    super.graphMarkerTheme,
+    super.overlayMarkerTheme,
     super.highlightMarkerTheme,
   });
 
   GGraphGridsTheme copyWith({
     PaintStyle? lineStyle,
     GAxisMarkerTheme? axisMarkerTheme,
-    GGraphMarkerTheme? graphMarkerTheme,
+    GOverlayMarkerTheme? overlayMarkerTheme,
     GGraphHighlightMarkerTheme? highlightMarkerTheme,
   }) {
     return GGraphGridsTheme(
       lineStyle: lineStyle ?? this.lineStyle,
       axisMarkerTheme: axisMarkerTheme ?? this.axisMarkerTheme,
-      graphMarkerTheme: graphMarkerTheme ?? this.graphMarkerTheme,
+      overlayMarkerTheme: overlayMarkerTheme ?? this.overlayMarkerTheme,
       highlightMarkerTheme: highlightMarkerTheme ?? this.highlightMarkerTheme,
     );
   }

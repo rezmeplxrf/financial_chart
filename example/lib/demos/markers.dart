@@ -37,12 +37,54 @@ class DemoMarkersPageState extends DemoBasePageState {
         ],
         valueAxes: [
           GValueAxis(
+            size: 80,
             viewPortId: 'price',
             position: GAxisPosition.end,
             scaleMode: GAxisScaleMode.zoom,
+            axisMarkers: [
+              GValueAxisMarker.label(
+                labelValue:
+                    dataSource.getSeriesValue(
+                      point: dataSource.lastPoint,
+                      key: keySMA,
+                    )!,
+              ),
+            ],
+            overlayMarkers: [
+              GLabelMarker(
+                id: "a marker to show a title in axis",
+                text: "Price in dollar",
+                anchorCoord: GPositionCoord.rational(x: 0.75, y: 0.5),
+                alignment: Alignment.center,
+                theme: chartTheme.overlayMarkerTheme.copyWith(
+                  markerStyle: PaintStyle(),
+                  labelStyle: LabelStyle(
+                    textStyle: const TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 20.0,
+                    ),
+                    backgroundStyle: PaintStyle(),
+                    backgroundPadding: const EdgeInsets.all(5),
+                    backgroundCornerRadius: 0,
+                    rotation: pi / 2,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
-        pointAxes: [GPointAxis(position: GAxisPosition.end)],
+        pointAxes: [
+          GPointAxis(
+            position: GAxisPosition.end,
+            axisMarkers: [
+              GPointAxisMarker.label(point: dataSource.lastPoint),
+              GPointAxisMarker.range(
+                startPoint: dataSource.lastPoint - 60,
+                endPoint: dataSource.lastPoint - 50,
+              ),
+            ],
+          ),
+        ],
         graphs: [
           GGraphGrids(id: "grids", valueViewPortId: 'price'),
           GGraphOhlc(
@@ -56,25 +98,27 @@ class DemoMarkersPageState extends DemoBasePageState {
             id: "line",
             valueViewPortId: "price",
             valueKey: keySMA,
-            graphMarkers: [
+            overlayMarkers: [
               GCalloutMarker(
                 id: "c1",
-                text: "This pins to \nfixed position of \nthe view port",
+                text:
+                    "☀️☀️☀️☀️☀️☀️☀️☀️☀️☀️\nThis pins to fixed position of the view port \n☀️☀️☀️☀️☀️☀️☀️☀️☀️☀️",
                 anchorCoord: GPositionCoord.absolute(x: 0, y: 0),
                 alignment: Alignment.bottomRight,
-                theme: chartTheme.graphMarkerTheme.copyWith(
-                  labelStyle: chartTheme.graphMarkerTheme.labelStyle!.copyWith(
-                    textStyle: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
-                  ),
+                theme: chartTheme.overlayMarkerTheme.copyWith(
+                  labelStyle: chartTheme.overlayMarkerTheme.labelStyle!
+                      .copyWith(
+                        textStyle: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                      ),
                 ),
               ),
               GRectMarker(
                 startCoord: GPositionCoord.rational(x: 0, y: 0.1),
                 endCoord: GPositionCoord.rational(x: 1, y: 0.2),
-                theme: GGraphMarkerTheme(
+                theme: GOverlayMarkerTheme(
                   markerStyle: PaintStyle(
                     fillColor: Colors.yellow.withAlpha(100),
                     strokeColor: Colors.yellow,
@@ -112,7 +156,7 @@ class DemoMarkersPageState extends DemoBasePageState {
                           )!,
                     ),
                   ],
-                  theme: GGraphMarkerTheme(
+                  theme: GOverlayMarkerTheme(
                     markerStyle: PaintStyle(strokeColor: Colors.orange),
                   ),
                 ),
@@ -129,7 +173,7 @@ class DemoMarkersPageState extends DemoBasePageState {
                     coordinateConvertor: kCoordinateConvertorXPointYPosition,
                   ),
                 ],
-                theme: GGraphMarkerTheme(
+                theme: GOverlayMarkerTheme(
                   markerStyle: PaintStyle(strokeColor: Colors.orange),
                 ),
               ),
@@ -145,7 +189,7 @@ class DemoMarkersPageState extends DemoBasePageState {
                 pointRadiusSize: GSize.viewSize(10),
                 valueRadiusSize: GSize.viewSize(10),
                 alignment: Alignment.center,
-                theme: GGraphMarkerTheme(
+                theme: GOverlayMarkerTheme(
                   markerStyle: PaintStyle(
                     fillColor: Colors.red.withAlpha(100),
                     strokeColor: Colors.red,
@@ -242,23 +286,6 @@ class DemoMarkersPageState extends DemoBasePageState {
                 ),
               ),
             ],
-            axisMarkers: [
-              GAxisMarker(
-                points: [dataSource.lastPoint],
-                pointRanges: [
-                  GRange.range(
-                    dataSource.lastPoint - 60,
-                    dataSource.lastPoint - 50,
-                  ),
-                ],
-                values: [
-                  dataSource.getSeriesValue(
-                    point: dataSource.lastPoint,
-                    key: keySMA,
-                  )!,
-                ],
-              ),
-            ],
           ),
         ],
         tooltip: GTooltip(
@@ -325,10 +352,10 @@ class DemoMarkersPageState extends DemoBasePageState {
               Alignment.centerRight,
             ],
             onSelected: (Alignment selected) {
-              (chart!.panels[0].findGraphById("line")!.findGraphMarker("c1")
+              (chart!.panels[0].findGraphById("line")!.findMarker("c1")
                       as GCalloutMarker)
                   .alignment = Alignment(-selected.x, -selected.y);
-              (chart!.panels[0].findGraphById("line")!.findGraphMarker("c1")
+              (chart!.panels[0].findGraphById("line")!.findMarker("c1")
                       as GCalloutMarker)
                   .keyCoordinates
                 ..clear()
@@ -341,11 +368,11 @@ class DemoMarkersPageState extends DemoBasePageState {
               repaintChart();
             },
             selected: Alignment(
-              -(chart!.panels[0].findGraphById("line")!.findGraphMarker("c1")
+              -(chart!.panels[0].findGraphById("line")!.findMarker("c1")
                       as GCalloutMarker)
                   .alignment
                   .x,
-              -(chart!.panels[0].findGraphById("line")!.findGraphMarker("c1")
+              -(chart!.panels[0].findGraphById("line")!.findMarker("c1")
                       as GCalloutMarker)
                   .alignment
                   .y,
@@ -369,17 +396,20 @@ class DemoMarkersPageState extends DemoBasePageState {
             items: const [true, false],
             onSelected: (bool selected) {
               for (var marker
-                  in chart!.panels[0].findGraphById("line")!.graphMarkers) {
+                  in chart!.panels[0].findGraphById("line")!.overlayMarkers) {
                 marker.visible = selected;
               }
               for (var marker
-                  in chart!.panels[0].findGraphById("line")!.axisMarkers) {
+                  in chart!.panels[0].findGraphById("line")!.overlayMarkers) {
                 marker.visible = selected;
               }
               repaintChart();
             },
             selected:
-                chart!.panels[0].findGraphById("line")!.graphMarkers[0].visible,
+                chart!.panels[0]
+                    .findGraphById("line")!
+                    .overlayMarkers[0]
+                    .visible,
           ),
         ),
       ],

@@ -24,7 +24,8 @@ import '../../components/crosshair/crosshair_theme.dart';
 import '../../components/splitter/splitter_theme.dart';
 import '../../components/tooltip/tooltip_theme.dart';
 import '../../components/background/background_theme.dart';
-import '../../components/marker/marker_theme.dart';
+import '../../components/marker/overlay_marker_theme.dart';
+import '../../components/marker/axis_marker_theme.dart';
 
 /// Preset light theme.
 class GThemeLight extends GTheme {
@@ -42,7 +43,7 @@ class GThemeLight extends GTheme {
         graphThemes: {
           GGraph.typeName: GGraphTheme(
             axisMarkerTheme: axisMarkerThemeDefault,
-            graphMarkerTheme: graphMarkerThemeDefault,
+            overlayMarkerTheme: overlayMarkerThemeDefault,
           ),
           GGraphGrids.typeName: gridsGraphTheme,
           GGraphOhlc.typeName: ohlcGraphTheme,
@@ -51,7 +52,7 @@ class GThemeLight extends GTheme {
           GGraphArea.typeName: areaGraphTheme,
         },
         axisMarkerTheme: axisMarkerThemeDefault,
-        graphMarkerTheme: graphMarkerThemeDefault,
+        overlayMarkerTheme: overlayMarkerThemeDefault,
       );
 
   static final GBackgroundTheme backgroundThemeDefault = GBackgroundTheme(
@@ -189,7 +190,7 @@ class GThemeLight extends GTheme {
       strokeWidth: 0.5,
     ),
     axisMarkerTheme: axisMarkerThemeDefault,
-    graphMarkerTheme: graphMarkerThemeDefault,
+    overlayMarkerTheme: overlayMarkerThemeDefault,
     highlightMarkerTheme: graphHighlightMarkThemeDefault,
   );
 
@@ -197,7 +198,7 @@ class GThemeLight extends GTheme {
     barStyleAboveBase: PaintStyle(fillColor: Colors.teal.withAlpha(150)),
     barStyleBelowBase: PaintStyle(fillColor: Colors.red.withAlpha(150)),
     axisMarkerTheme: axisMarkerThemeDefault,
-    graphMarkerTheme: graphMarkerThemeDefault,
+    overlayMarkerTheme: overlayMarkerThemeDefault,
     highlightMarkerTheme: graphHighlightMarkThemeDefault,
   );
 
@@ -222,12 +223,12 @@ class GThemeLight extends GTheme {
       gradientBounds: const Rect.fromLTRB(0, 0, 1000, 1000),
     ),
     axisMarkerTheme: axisMarkerThemeDefault,
-    graphMarkerTheme: graphMarkerThemeDefault,
+    overlayMarkerTheme: overlayMarkerThemeDefault,
     highlightMarkerTheme: graphHighlightMarkThemeDefault,
   );
 
   static final GAxisMarkerTheme axisMarkerThemeDefault = GAxisMarkerTheme(
-    valueAxisLabelTheme: GAxisLabelTheme(
+    labelTheme: GAxisLabelTheme(
       labelStyle: LabelStyle(
         textStyle: const TextStyle(color: Color(0xFFEEEEEE), fontSize: 10.0),
         backgroundStyle: PaintStyle(fillColor: const Color(0xFF0000EE)),
@@ -235,40 +236,32 @@ class GThemeLight extends GTheme {
         backgroundCornerRadius: 2,
       ),
     ),
-    pointAxisLabelTheme: GAxisLabelTheme(
-      labelStyle: LabelStyle(
-        textStyle: const TextStyle(color: Color(0xFFEEEEEE), fontSize: 10.0),
-        backgroundStyle: PaintStyle(fillColor: const Color(0xFF0000EE)),
-        backgroundPadding: const EdgeInsets.all(2),
-        backgroundCornerRadius: 2,
-      ),
-    ),
-    valueRangeStyle: PaintStyle(fillColor: Colors.blue.withAlpha(150)),
-    pointRangeStyle: PaintStyle(fillColor: Colors.blue.withAlpha(150)),
+    rangeStyle: PaintStyle(fillColor: Colors.blue.withAlpha(150)),
   );
 
-  static final GGraphMarkerTheme graphMarkerThemeDefault = GGraphMarkerTheme(
-    markerStyle: PaintStyle(
-      fillColor: Colors.blueAccent.withAlpha(120),
-      strokeColor: Colors.blue,
-      strokeWidth: 2,
-    ),
-    controlPointsStyle: PaintStyle(
-      fillColor: Colors.white,
-      strokeColor: Colors.blueAccent,
-      strokeWidth: 2,
-    ),
-    labelStyle: LabelStyle(
-      textStyle: const TextStyle(color: Colors.black, fontSize: 10.0),
-      backgroundStyle: PaintStyle(
-        fillColor: Colors.white,
-        strokeColor: Colors.black,
-        strokeWidth: 1,
-      ),
-      backgroundPadding: const EdgeInsets.all(5),
-      backgroundCornerRadius: 5,
-    ),
-  );
+  static final GOverlayMarkerTheme overlayMarkerThemeDefault =
+      GOverlayMarkerTheme(
+        markerStyle: PaintStyle(
+          fillColor: Colors.blueAccent.withAlpha(120),
+          strokeColor: Colors.blue,
+          strokeWidth: 2,
+        ),
+        controlPointsStyle: PaintStyle(
+          fillColor: Colors.white,
+          strokeColor: Colors.blueAccent,
+          strokeWidth: 2,
+        ),
+        labelStyle: LabelStyle(
+          textStyle: const TextStyle(color: Colors.black, fontSize: 10.0),
+          backgroundStyle: PaintStyle(
+            fillColor: Colors.white,
+            strokeColor: Colors.black,
+            strokeWidth: 1,
+          ),
+          backgroundPadding: const EdgeInsets.all(5),
+          backgroundCornerRadius: 5,
+        ),
+      );
 
   static final GGraphHighlightMarkerTheme graphHighlightMarkThemeDefault =
       GGraphHighlightMarkerTheme(

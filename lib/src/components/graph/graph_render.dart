@@ -10,7 +10,6 @@ import '../viewport_v.dart';
 import 'graph_theme.dart';
 import 'graph.dart';
 import '../render.dart';
-import '../marker/marker_theme.dart';
 
 /// Base class for [GGraph] renderers.
 class GGraphRender<C extends GGraph, T extends GGraphTheme>
@@ -40,7 +39,7 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
     );
 
     // Render the markers
-    if (component.axisMarkers.isNotEmpty || component.graphMarkers.isNotEmpty) {
+    if (component.overlayMarkers.isNotEmpty) {
       Rect panelArea = panel!.panelArea();
       canvas.save();
       canvas.clipPath(Path()..addRect(panelArea));
@@ -106,40 +105,22 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
     required Rect area,
     required T theme,
   }) {
-    if (graph.axisMarkers.isNotEmpty) {
-      final markers = [...graph.axisMarkers];
+    if (graph.overlayMarkers.isNotEmpty) {
+      final markers = [...graph.overlayMarkers];
       markers.sort((a, b) => a.layer.compareTo(b.layer));
       for (final marker in markers) {
         marker.getRender().renderMarker(
           canvas: canvas,
           chart: chart,
           panel: panel,
-          graph: graph,
-          marker: marker,
-          area: area,
-          theme:
-              (marker.theme ??
-                      theme.axisMarkerTheme ??
-                      chart.theme.axisMarkerTheme)
-                  as GAxisMarkerTheme,
-        );
-      }
-    }
-    if (graph.graphMarkers.isNotEmpty) {
-      final markers = [...graph.graphMarkers];
-      markers.sort((a, b) => a.layer.compareTo(b.layer));
-      for (final marker in markers) {
-        marker.getRender().renderMarker(
-          canvas: canvas,
-          chart: chart,
-          panel: panel,
-          graph: graph,
+          component: graph,
           marker: marker,
           area: panel.graphArea(),
           theme:
               (marker.theme ??
-                  theme.graphMarkerTheme ??
-                  chart.theme.graphMarkerTheme),
+                  theme.overlayMarkerTheme ??
+                  chart.theme.overlayMarkerTheme),
+          valueViewPort: panel.findValueViewPortById(graph.valueViewPortId),
         );
       }
     }
