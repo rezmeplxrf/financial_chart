@@ -136,24 +136,37 @@ class DemoPanelsPageState extends DemoBasePageState {
   @override
   Widget buildControlPanel(BuildContext context) {
     return Row(
+      spacing: 8,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         buildThemeSelectWidget(context),
         AppLabelWidget(
-          label: "Panel resizable",
+          label: "GPanel.resizable",
+          description:
+              "Enable/disable resizing of the panels. "
+              "\nOnly when both panels are resizable, the resizing splitter will be shown.",
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {
               chart!.panels[0].resizable = selected;
               chart!.panels[1].resizable = selected;
+              for (var marker
+                  in chart!.panels[1].findGraphById("macd")!.overlayMarkers) {
+                marker.visible = selected;
+              }
+              for (var marker
+                  in chart!.panels[1].findGraphById("macd")!.overlayMarkers) {
+                marker.visible = selected;
+              }
               repaintChart();
             },
             selected: chart!.panels[0].resizable,
           ),
         ),
         AppLabelWidget(
-          label: "Second panel visible",
+          label: "GPanel.visible",
+          description: "Show/hide a panel.",
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {
@@ -164,7 +177,8 @@ class DemoPanelsPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Pointer scroll mode",
+          label: "GChart.pointerScrollMode",
+          description: "Change the behavior when scrolling the mouse wheel.",
           child: AppPopupMenu<GPointerScrollMode>(
             items: GPointerScrollMode.values,
             onSelected: (GPointerScrollMode selected) {
@@ -176,7 +190,11 @@ class DemoPanelsPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Graph pan mode",
+          label: "GPanel.graphPanMode",
+          description:
+              "Change the behavior when dragging the graph area."
+              "\nnone means no dragging allowed. "
+              "\nauto means allow dragging, dragging vertically is enabled ony when GValueViewPort.autoScale is off.",
           child: AppPopupMenu<GGraphPanMode>(
             items: GGraphPanMode.values,
             onSelected: (GGraphPanMode selected) {
@@ -190,7 +208,10 @@ class DemoPanelsPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Momentum scroll speed",
+          label: "GPanel.momentumScrollSpeed",
+          description:
+              "Change the speed of the momentum scroll when drag and release the graph area. "
+              "\nA value between 0 and 1 the smaller value means slower scrolling, 0 to disable.",
           child: AppPopupMenu<double>(
             items: const [0, 0.1, 0.5, 1.0],
             onSelected: (double selected) {
@@ -201,28 +222,6 @@ class DemoPanelsPageState extends DemoBasePageState {
             },
             selected: chart!.panels[0].momentumScrollSpeed,
             labelResolver: (item) => item.toString(),
-          ),
-        ),
-        AppLabelWidget(
-          label: "Markers visible",
-          child: AppPopupMenu<bool>(
-            items: const [true, false],
-            onSelected: (bool selected) {
-              for (var marker
-                  in chart!.panels[1].findGraphById("macd")!.overlayMarkers) {
-                marker.visible = selected;
-              }
-              for (var marker
-                  in chart!.panels[1].findGraphById("macd")!.overlayMarkers) {
-                marker.visible = selected;
-              }
-              repaintChart();
-            },
-            selected:
-                chart!.panels[1]
-                    .findGraphById("macd")!
-                    .overlayMarkers[0]
-                    .visible,
           ),
         ),
       ],

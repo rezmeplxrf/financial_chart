@@ -45,13 +45,14 @@ class GRenderUtil {
     required PaintStyle style,
     Rect? gradientBounds,
   }) {
-    final gBounds = gradientBounds ?? path.getBounds();
-    final fillPaint = style.getFillPaint(gradientBounds: gBounds);
+    final fillBounds = (style.fillGradient == null) ? null : (gradientBounds ?? style.gradientBounds ?? path.getBounds());
+    final fillPaint = style.getFillPaint(gradientBounds: fillBounds);
     if (fillPaint != null) {
       canvas.drawPath(path, fillPaint);
     }
 
-    final strokePaint = style.getStrokePaint(gradientBounds: gBounds);
+    final strokeBounds = (style.strokeGradient == null) ? null : (gradientBounds ?? style.gradientBounds ?? path.getBounds());
+    final strokePaint = style.getStrokePaint(gradientBounds: strokeBounds);
     if (strokePaint != null) {
       Path? theDashPath;
       if (style.dash != null) {

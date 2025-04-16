@@ -165,7 +165,7 @@ class GPointAxisMarkerRender extends GAxisMarkerRender<GPointAxisMarker> {
         panel: panel,
         axis: axis,
         axisArea: area,
-        point: marker.point,
+        point: marker.labelPoint,
         theme: theme as GAxisMarkerTheme,
         pointViewPort: chart.pointViewPort,
       );

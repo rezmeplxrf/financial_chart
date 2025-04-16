@@ -48,26 +48,26 @@ class GPanel extends GComponent {
   ///
   /// A resize handle will be shown at the middle of two panels when both are resizable.
   final GValue<bool> _resizable = GValue(true);
-  bool get resizable => _resizable();
-  set resizable(bool value) => _resizable(newValue: value);
+  bool get resizable => _resizable.value;
+  set resizable(bool value) => _resizable.value = value;
 
   /// The height weight of the panel. height will be chart.height * [_heightWeight].
   final GValue<double> _heightWeight = GValue(1.0);
-  double get heightWeight => _heightWeight();
-  set heightWeight(double value) => _heightWeight(newValue: value);
+  double get heightWeight => _heightWeight.value;
+  set heightWeight(double value) => _heightWeight.value = value;
 
   /// The speed of the momentum scrolling.
   ///
   /// A value between 0 and 1.0, larger value means faster scrolling, 0 to disable.
   final GValue<double> _momentumScrollSpeed = GValue(0.5);
-  double get momentumScrollSpeed => _momentumScrollSpeed();
+  double get momentumScrollSpeed => _momentumScrollSpeed.value;
   set momentumScrollSpeed(double value) =>
-      _momentumScrollSpeed(newValue: value);
+      _momentumScrollSpeed.value = min(max(value, 0), 1.0);
 
   /// The action mode when panning the graph area of the panel.
   final GValue<GGraphPanMode> _graphPanMode = GValue(GGraphPanMode.auto);
-  GGraphPanMode get graphPanMode => _graphPanMode();
-  set graphPanMode(GGraphPanMode value) => _graphPanMode(newValue: value);
+  GGraphPanMode get graphPanMode => _graphPanMode.value;
+  set graphPanMode(GGraphPanMode value) => _graphPanMode.value = value;
 
   @override
   bool get visible => super.visible && heightWeight > 0;

@@ -7,6 +7,7 @@ import '../chart.dart';
 import '../values/range.dart';
 import '../values/value.dart';
 import 'panel/panel.dart';
+import 'viewport_resize.dart';
 import 'viewport_v_scaler.dart';
 
 /// Viewport for value (vertical) axis
@@ -41,12 +42,17 @@ class GValueViewPort extends ChangeNotifier {
   final GRange _selectedRange = GRange.empty();
 
   /// Whether the viewport is auto scaling mode.
-  bool get autoScaleFlg => _autoScale();
-  set autoScaleFlg(bool value) => _autoScale(newValue: value);
+  bool get autoScaleFlg => _autoScale.value;
+  set autoScaleFlg(bool value) => _autoScale.value = value;
   final GValue<bool> _autoScale = GValue<bool>(true);
 
   /// The auto scale strategy to calculate the range when auto scale enabled.
   final GValueViewPortAutoScaleStrategy? autoScaleStrategy;
+
+  /// Defines the behavior of how to update the viewport range when view size changed.
+  final GValue<GViewPortResizeMode> _viewPortResizeMode = GValue<GViewPortResizeMode>(GViewPortResizeMode.keepRange);
+  GViewPortResizeMode get viewPortResizeMode => _viewPortResizeMode.value;
+  set viewPortResizeMode(GViewPortResizeMode value) => _viewPortResizeMode.value = value;
 
   /// The minimum value range when scaling.
   final double? minValueRange;
@@ -206,6 +212,48 @@ class GValueViewPort extends ChangeNotifier {
     _range.update(startValueClamped, endValueClamped);
     if (notify) {
       _notifyRangeUpdated(finished: finished);
+    }
+  }
+
+  /// update the viewport range when view size changed (ignored when auto scaling is on).
+  void resize(double fromSize, double toSize, bool notify) {
+    if (viewPortResizeMode == GViewPortResizeMode.keepRange || fromSize == toSize || !isValid || autoScaleFlg) {
+      return;
+    }
+    final valueDensityCurrent = (endValue - startValue) / fromSize;
+    if (valueDensityCurrent <= 0) {
+      return;
+    }
+    switch (viewPortResizeMode) {
+      case GViewPortResizeMode.keepStart:
+        setRange(
+          startValue: startValue,
+          endValue: startValue + valueDensityCurrent * toSize,
+          finished: true,
+          notify: notify,
+        );
+        break;
+      case GViewPortResizeMode.keepEnd:
+        setRange(
+          startValue: endValue - valueDensityCurrent * toSize,
+          endValue: endValue,
+          finished: true,
+          notify: notify,
+        );
+        break;
+      case GViewPortResizeMode.keepCenter:
+        final centerValue = (endValue + startValue) / 2;
+        final newStartValue = centerValue - valueDensityCurrent * toSize / 2;
+        final newEndValue = centerValue + valueDensityCurrent * toSize / 2;
+        setRange(
+          startValue: newStartValue,
+          endValue: newEndValue,
+          finished: true,
+          notify: notify,
+        );
+        break;
+      case GViewPortResizeMode.keepRange:
+        break;
     }
   }
 

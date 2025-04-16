@@ -26,8 +26,8 @@ class GGraphStepLineRender
     double previousX = double.nan;
     double previousY = double.nan;
     for (
-      var point = pointViewPort.startPoint.floor();
-      point <= pointViewPort.endPoint.ceil();
+      var point = pointViewPort.startPoint.floor() - graph.pointInterval;
+      point <= pointViewPort.endPoint.ceil() + graph.pointInterval;
       point++
     ) {
       double? value = dataSource.getSeriesValue(

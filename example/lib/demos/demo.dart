@@ -17,6 +17,7 @@ abstract class DemoBasePageState extends State<DemoBasePage>
     with TickerProviderStateMixin {
   DemoBasePageState();
 
+  final scrollController = ScrollController();
   GChart? chart;
   late Future<GDataSource<int, GData<int>>> dataSourceFuture;
 
@@ -79,7 +80,7 @@ abstract class DemoBasePageState extends State<DemoBasePage>
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Container(
-            height: 70,
+            height: 60,
             width: double.infinity,
             alignment: Alignment.center,
             child: chart == null ? Container() : _buildControlPanel(context),
@@ -99,15 +100,26 @@ abstract class DemoBasePageState extends State<DemoBasePage>
   }
 
   Widget _buildControlPanel(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: buildControlPanel(context),
+    return Scrollbar(
+      controller: scrollController,
+      thumbVisibility: true,
+      trackVisibility: true,
+      interactive: true,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+          child: buildControlPanel(context),
+        ),
+      ),
     );
   }
 
   Widget buildThemeSelectWidget(BuildContext context) {
     return AppLabelWidget(
-      label: "Theme",
+      label: "GChart.theme",
+      description: "Change the theme of the chart",
       child: AppPopupMenu<GTheme>(
         items: themes,
         onSelected: (GTheme selected) {

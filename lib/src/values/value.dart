@@ -17,13 +17,4 @@ class GValue<T> extends ValueNotifier<T> {
     : super(initialValue) {
     assert(validator(initialValue), 'Invalid value');
   }
-
-  /// get current value if [newValue] is not provided.
-  /// set [newValue] as the new value if it is not null and return the updated value.
-  T call({T? newValue}) {
-    if (newValue != null) {
-      value = newValue;
-    }
-    return value;
-  }
 }

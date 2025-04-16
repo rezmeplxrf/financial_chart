@@ -89,7 +89,7 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
             as GCustomCoord)
         .copyWith(y: latestPrice);
     valueAxisMarker!.labelValue = latestPrice;
-    pointAxisMarker!.point = dataSource.lastPoint;
+    pointAxisMarker!.labelPoint = dataSource.lastPoint;
     // redraw chart
     final autoScalePointViewPort =
         (chart!.pointViewPort.endPoint - dataSource.lastPoint - 10)
@@ -225,12 +225,16 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
   @override
   Widget buildControlPanel(BuildContext context) {
     return Row(
+      spacing: 8,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         buildThemeSelectWidget(context),
         AppLabelWidget(
-          label: "Markers visible",
+          label: "GOverlayMarker.visible",
+          description:
+              "Show or hide the overlay markers: "
+              "\nWhich are the price value line and axis labels indicating the latest price in this example.",
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {
@@ -261,6 +265,9 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
         ),
         AppLabelWidget(
           label: "Live update interval",
+          description:
+              "Change the update interval of the chart. "
+              "\n(This example uses fake update with fixed interval and random price change)",
           child: AppPopupMenu<int>(
             items: const [0, 100, 200, 500, 1000],
             onSelected: (int selected) {

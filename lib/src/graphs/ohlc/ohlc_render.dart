@@ -176,7 +176,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
         }
       }
 
-      if (graph.hitTestMode != HitTestMode.none) {
+      if (graph.hitTestMode != GHitTestMode.none) {
         if (graph.drawAsCandle) {
           _hitTestLines.addAll([
             [Vector2(barPosition, hp), Vector2(barPosition, lp)],

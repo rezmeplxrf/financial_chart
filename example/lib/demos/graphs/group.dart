@@ -3,8 +3,8 @@ import 'package:example/widgets/popup_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:financial_chart/financial_chart.dart';
 
-import '../widgets/label_widget.dart';
-import 'demo.dart';
+import '../../widgets/label_widget.dart';
+import '../demo.dart';
 
 class DemoGraphGroupPage extends DemoBasePage {
   const DemoGraphGroupPage({super.key}) : super(title: 'Graph group');
@@ -54,12 +54,6 @@ class DemoGraphGroupPageState extends DemoBasePageState {
         pointAxes: [GPointAxis(position: GAxisPosition.end)],
         graphs: [
           GGraphGrids(id: "grids", valueViewPortId: 'price'),
-          GGraphOhlc(
-            id: "ohlc",
-            valueViewPortId: "price",
-            drawAsCandle: true,
-            ohlcValueKeys: const [keyOpen, keyHigh, keyLow, keyClose],
-          ),
           GGraphGroup(
             id: "ichimoku",
             valueViewPortId: "price",
@@ -166,23 +160,14 @@ class DemoGraphGroupPageState extends DemoBasePageState {
   @override
   Widget buildControlPanel(BuildContext context) {
     return Row(
+      spacing: 8,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         buildThemeSelectWidget(context),
         AppLabelWidget(
-          label: "OHLC visible",
-          child: AppPopupMenu<bool>(
-            items: const [true, false],
-            onSelected: (bool selected) {
-              chart!.panels[0].findGraphById("ohlc")!.visible = selected;
-              repaintChart();
-            },
-            selected: chart!.panels[0].findGraphById("ohlc")!.visible,
-          ),
-        ),
-        AppLabelWidget(
-          label: "Group visible",
+          label: "GGraphGroup.visible",
+          description: "Show or hide all graphs in a single group.",
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {

@@ -8,7 +8,7 @@ import 'value.dart';
 /// User defined function to convert a value to size in view [area] with [pointViewPort] and [valueViewPort].
 ///
 /// see [GPointViewPort] and [GValueViewPort] for more details about viewports.
-typedef ViewSizeConvertor =
+typedef GViewSizeConvertor =
     double Function({
       required double sizeValue,
       required Rect area,
@@ -41,7 +41,7 @@ enum GSizeValueType {
 
   /// size is calculated by a user defined custom function.
   ///
-  /// see [ViewSizeConvertor] for more details.
+  /// see [GViewSizeConvertor] for more details.
   custom,
 }
 
@@ -50,7 +50,7 @@ enum GSizeValueType {
 /// see different [sizeType] defined in [GSizeValueType].
 class GSize extends GValue<double> {
   final GSizeValueType sizeType;
-  final ViewSizeConvertor? viewSizeConvertor;
+  final GViewSizeConvertor? viewSizeConvertor;
   double get sizeValue => value;
 
   /// Create a size value with [size] as value in view area.

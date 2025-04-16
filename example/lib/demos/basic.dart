@@ -68,14 +68,28 @@ class BasicDemoPageState extends State<BasicDemoPage>
               valuePrecision: 2,
               autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
                 dataKeys: ["high", "low"],
+                marginStart: GSize.viewHeightRatio(0.3),
+              ),
+            ),
+            GValueViewPort(
+              id: "volume",
+              valuePrecision: 0,
+              autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
+                dataKeys: ["volume"],
+                marginStart: GSize.viewSize(0),
+                marginEnd: GSize.viewHeightRatio(0.7),
               ),
             ),
           ],
-          valueAxes: [GValueAxis()],
+          valueAxes: [
+            GValueAxis(),
+            GValueAxis(viewPortId: "volume", position: GAxisPosition.start),
+          ],
           pointAxes: [GPointAxis()],
           graphs: [
             GGraphGrids(),
             GGraphOhlc(ohlcValueKeys: const ["open", "high", "low", "close"]),
+            GGraphBar(valueKey: "volume", valueViewPortId: "volume"),
           ],
         ),
       ],

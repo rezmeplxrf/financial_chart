@@ -45,3 +45,4 @@ export 'viewport_h.dart';
 export 'viewport_h_scaler.dart';
 export 'viewport_v.dart';
 export 'viewport_v_scaler.dart';
+export 'viewport_resize.dart';

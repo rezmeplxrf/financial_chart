@@ -4,7 +4,6 @@ import '../../chart.dart';
 import '../component.dart';
 import '../panel/panel.dart';
 import '../render.dart';
-import '../graph/graph.dart';
 import 'marker.dart';
 import 'marker_theme.dart';
 import '../viewport_v.dart';
@@ -12,10 +11,9 @@ import '../viewport_h.dart';
 
 /// Base class for rendering a [GMarker].
 ///
-/// This has different implementations from super [GRender] for it needs an extra [GGraph] parameter for rendering.
-/// use [renderMarker] instead of super [GRender.render] to render a [GMarker].
-abstract class GMarkerRender<M extends GMarker, T extends GMarkerTheme>
-    extends GRender<M, T> {
+/// [GMarkerRender] has different implementations from super [GRender] for it needs some extra parameters for rendering.
+/// use [GMarkerRender.renderMarker] instead of super [GRender.render] to render a [GMarker].
+abstract class GMarkerRender<M extends GMarker, T extends GMarkerTheme> extends GRender<M, T> {
   const GMarkerRender();
 
   void renderMarker({
@@ -31,22 +29,29 @@ abstract class GMarkerRender<M extends GMarker, T extends GMarkerTheme>
     if (!component.visible || !marker.visible) {
       return;
     }
+    final pointViewPort = chart.pointViewPort;
+    if (!pointViewPort.isValid) {
+      return;
+    }
+    final validValueViewPort = valueViewPort ?? panel.valueViewPorts.first;
+    if (!validValueViewPort.isValid) {
+      return;
+    }
     renderClipped(
       canvas: canvas,
       clipRect: area,
-      render: () {
-        doRenderMarker(
-          canvas: canvas,
-          chart: chart,
-          panel: panel,
-          component: component,
-          marker: marker,
-          area: area,
-          theme: theme,
-          pointViewPort: chart.pointViewPort,
-          valueViewPort: valueViewPort ?? panel.valueViewPorts.first,
-        );
-      },
+      render:
+          () => doRenderMarker(
+            canvas: canvas,
+            chart: chart,
+            panel: panel,
+            component: component,
+            marker: marker,
+            area: area,
+            theme: theme,
+            pointViewPort: pointViewPort,
+            valueViewPort: validValueViewPort,
+          ),
     );
   }
 

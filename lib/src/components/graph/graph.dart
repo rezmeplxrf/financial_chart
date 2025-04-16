@@ -33,12 +33,12 @@ class GGraph<T extends GGraphTheme> extends GComponent {
 
   /// The hit test mode of the graph.
   ///
-  /// see [HitTestMode] for more details.
-  final GValue<HitTestMode> _hitTestMode = GValue<HitTestMode>(
-    HitTestMode.border,
+  /// see [GHitTestMode] for more details.
+  final GValue<GHitTestMode> _hitTestMode = GValue<GHitTestMode>(
+    GHitTestMode.border,
   );
-  HitTestMode get hitTestMode => _hitTestMode.value;
-  set hitTestMode(HitTestMode value) => _hitTestMode.value = value;
+  GHitTestMode get hitTestMode => _hitTestMode.value;
+  set hitTestMode(GHitTestMode value) => _hitTestMode.value = value;
 
   final List<String> crosshairHighlightValueKeys = [];
 
@@ -51,14 +51,14 @@ class GGraph<T extends GGraphTheme> extends GComponent {
     this.valueViewPortId = "", // empty means the default view port id
     int layer = kDefaultLayer,
     super.visible,
-    HitTestMode hitTestMode = HitTestMode.border,
+    GHitTestMode hitTestMode = GHitTestMode.border,
     T? theme,
     GGraphRender? render,
     List<String>? crosshairHighlightValueKeys,
     List<GOverlayMarker> overlayMarkers = const [],
   }) : _layer = GValue<int>(layer),
        super(id: id, render: render, theme: theme) {
-    _hitTestMode(newValue: hitTestMode);
+    _hitTestMode.value = hitTestMode;
     if (overlayMarkers.isNotEmpty) {
       _overlayMarkers.addAll(overlayMarkers);
     }

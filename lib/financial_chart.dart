@@ -20,7 +20,7 @@ export 'src/values/range.dart';
 export 'src/values/size.dart';
 
 export 'src/chart.dart';
-export 'src/chart_controller.dart';
+export 'src/chart_interaction.dart';
 export 'src/chart_render.dart';
 
 export 'src/chart_widget.dart';

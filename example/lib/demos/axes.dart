@@ -60,12 +60,14 @@ class DemoAxesPageState extends DemoBasePageState {
   @override
   Widget buildControlPanel(BuildContext context) {
     return Row(
+      spacing: 8,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         buildThemeSelectWidget(context),
         AppLabelWidget(
-          label: "Point axis position",
+          label: "GPointAxis.position",
+          description: "Change the position of the Point axis (X axis)",
           child: AppPopupMenu<GAxisPosition>(
             items: GAxisPosition.values,
             onSelected: (GAxisPosition selected) {
@@ -81,7 +83,8 @@ class DemoAxesPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Value axis position",
+          label: "GValueAxis.position",
+          description: "Change the position of the Value axis (Y axis)",
           child: AppPopupMenu<GAxisPosition>(
             items: GAxisPosition.values,
             onSelected: (GAxisPosition selected) {
@@ -97,7 +100,11 @@ class DemoAxesPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Point axis scale mode",
+          label: "GPointAxis.scaleMode",
+          description:
+              "Change the behavior when dragging the Point axis (X axis). "
+              "\ndrag the axis to change the viewport manually. "
+              "\ndouble tap the axis to reset to auto scale after changed viewport manually by dragging.",
           child: AppPopupMenu<GAxisScaleMode>(
             items: GAxisScaleMode.values,
             onSelected: (GAxisScaleMode selected) {
@@ -113,7 +120,11 @@ class DemoAxesPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Value axis scale mode",
+          label: "GValueAxis.scaleMode",
+          description:
+              "Change the behavior when dragging the Value axis (Y axis). "
+              "\ndrag the axis to change the viewport manually. "
+              "\ndouble tap the axis to reset to auto scale after changed viewport manually by dragging.",
           child: AppPopupMenu<GAxisScaleMode>(
             items: GAxisScaleMode.values,
             onSelected: (GAxisScaleMode selected) {
@@ -129,7 +140,8 @@ class DemoAxesPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Point axis size",
+          label: "GPointAxis.size",
+          description: "Change the size (height) of the Point axis (X axis)",
           child: AppPopupMenu<double>(
             items: const [30, 40],
             onSelected: (double selected) {
@@ -145,7 +157,8 @@ class DemoAxesPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Value axis size",
+          label: "GValueAxis.size",
+          description: "Change the size (width) of the Value axis (Y axis)",
           child: AppPopupMenu<double>(
             items: const [60, 80],
             onSelected: (double selected) {
@@ -158,6 +171,43 @@ class DemoAxesPageState extends DemoBasePageState {
             },
             selected: chart!.panels[0].valueAxes[0].size,
             labelResolver: (item) => item.toStringAsFixed(0),
+          ),
+        ),
+        AppLabelWidget(
+          label: "GPointAxis.viewPortResizeMode",
+          description:
+              "Change the behavior of how to update the Point viewport (X direction) range when resizing the chart. "
+              "\nResize the window to see how it works.",
+          child: AppPopupMenu<GViewPortResizeMode>(
+            items: GViewPortResizeMode.values,
+            onSelected: (GViewPortResizeMode selected) {
+              chart!.pointViewPort.viewPortResizeMode = selected;
+              repaintChart();
+            },
+            selected: chart!.pointViewPort.viewPortResizeMode,
+            labelResolver: (item) => item.name,
+          ),
+        ),
+        AppLabelWidget(
+          label: "GValueAxis.viewPortResizeMode",
+          description:
+              "Change the behavior of how to update the Value viewport (Y direction) range when resizing the chart. "
+              "\nResize the window to see how it works.",
+          child: AppPopupMenu<GViewPortResizeMode>(
+            items: GViewPortResizeMode.values,
+            onSelected: (GViewPortResizeMode selected) {
+              for (GPanel panel in chart!.panels) {
+                for (GValueViewPort viewPort in panel.valueViewPorts) {
+                  viewPort.viewPortResizeMode = selected;
+                  if (selected != GViewPortResizeMode.keepRange) {
+                    viewPort.autoScaleFlg = false;
+                  }
+                }
+              }
+              repaintChart();
+            },
+            selected: chart!.panels[0].valueViewPorts[0].viewPortResizeMode,
+            labelResolver: (item) => item.name,
           ),
         ),
       ],

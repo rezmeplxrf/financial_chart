@@ -1,4 +1,5 @@
 import '../../components/graph/graph.dart';
+import '../../values/value.dart';
 import 'bar_render.dart';
 import 'bar_theme.dart';
 
@@ -13,12 +14,14 @@ class GGraphBar extends GGraph<GGraphBarTheme> {
   ///
   /// If this value is not null, the bar will be the space between the value and the base value.
   /// else the bar will be the space between the value and the bottom of the viewport.
-  final double? baseValue;
+  final GValue<double?> _baseValue = GValue(null);
+  double? get baseValue => _baseValue.value;
+  set baseValue(double? value) => _baseValue.value = value;
 
   GGraphBar({
     super.id,
     required this.valueKey,
-    this.baseValue,
+    double? baseValue,
     super.layer,
     super.visible,
     super.valueViewPortId,
@@ -28,6 +31,7 @@ class GGraphBar extends GGraph<GGraphBarTheme> {
     super.theme,
     super.render,
   }) {
+    _baseValue.value = baseValue;
     super.render = render ?? GGraphBarRender();
   }
 

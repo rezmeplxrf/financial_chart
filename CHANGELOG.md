@@ -1,6 +1,18 @@
+## 0.2.1
+2025-04-16
+- **[breaking change]** rename `HitTestMode` to `GHitTestMode`.
+- **[breaking change]** rename `GChartController` to `GChartInteractionHandler`.
+- **[breaking change]** rename `ViewSizeConvertor` to `GViewSizeConvertor`.
+- **[breaking change]** rename `GPointAxisMarker`.`point` to `labelPoint`.
+- **[breaking change]** remove `GValue`.`call()`.
+- add `viewPortResizeMode` and `viewPortResizeMode` to viewPorts to allow define the behavior when resizing.
+- allow update graph properties (added setters).
+- fix notifyListeners error after disposed.
+- update examples.
+
 ## 0.2.0
 2025-04-12
-- <span style="color: orange; ">[breaking change]</span> refactor markers  
+- **[breaking change]** refactor markers  
   + rename `GGraphMarker` to `GOverlayMarker` so it can be also added to axes.
   + remove `GGraph.axisMarkers` property and rename `GGraph.graphMarkers` property to `GGraph.overlayMarkers`. 
   + add `GAxis.axisMarkers` and `GAxis.overlayMarkers` properties.

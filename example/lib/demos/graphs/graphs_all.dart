@@ -1,12 +1,12 @@
 import 'package:example/data/sample_data.dart';
-import 'package:example/demos/my_graph/step_line.dart';
 import 'package:example/widgets/popup_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:financial_chart/financial_chart.dart';
 
-import '../widgets/label_widget.dart';
-import 'demo.dart';
-import 'my_graph/step_line_theme.dart';
+import '../../widgets/label_widget.dart';
+import '../demo.dart';
+import './my_graph/step_line_theme.dart';
+import './my_graph/step_line.dart';
 
 class DemoGraphsPage extends DemoBasePage {
   const DemoGraphsPage({super.key, String? title})
@@ -93,7 +93,7 @@ class DemoGraphsPageState extends DemoBasePageState {
             valueViewPortId: "price",
           ),
           GGraphStepLine(
-            id: "stepLine",
+            id: "step",
             valueViewPortId: "price",
             valueKey: keyEMA,
           ),
@@ -126,73 +126,16 @@ class DemoGraphsPageState extends DemoBasePageState {
   @override
   Widget buildControlPanel(BuildContext context) {
     return Row(
+      spacing: 8,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         buildThemeSelectWidget(context),
         AppLabelWidget(
-          label: "OHLC graph style",
-          child: AppPopupMenu<String>(
-            items: const ["candle", "ohlc"],
-            onSelected: (String selected) {
-              (chart!.panels[0].findGraphById("ohlc")! as GGraphOhlc)
-                  .drawAsCandle = (selected == "candle");
-              repaintChart();
-            },
-            selected:
-                (chart!.panels[0].findGraphById("ohlc")! as GGraphOhlc)
-                        .drawAsCandle
-                    ? "candle"
-                    : "ohlc",
-            labelResolver: (item) => item,
-          ),
-        ),
-        AppLabelWidget(
-          label: "OHLC visible",
-          child: AppPopupMenu<bool>(
-            items: const [true, false],
-            onSelected: (bool selected) {
-              chart!.panels[0].findGraphById("ohlc")!.visible = selected;
-              repaintChart();
-            },
-            selected: chart!.panels[0].findGraphById("ohlc")!.visible,
-          ),
-        ),
-        AppLabelWidget(
-          label: "Bar visible",
-          child: AppPopupMenu<bool>(
-            items: const [true, false],
-            onSelected: (bool selected) {
-              chart!.panels[0].findGraphById("bar")!.visible = selected;
-              repaintChart();
-            },
-            selected: chart!.panels[0].findGraphById("bar")!.visible,
-          ),
-        ),
-        AppLabelWidget(
-          label: "Line visible",
-          child: AppPopupMenu<bool>(
-            items: const [true, false],
-            onSelected: (bool selected) {
-              chart!.panels[0].findGraphById("line")!.visible = selected;
-              repaintChart();
-            },
-            selected: chart!.panels[0].findGraphById("line")!.visible,
-          ),
-        ),
-        AppLabelWidget(
-          label: "Area visible",
-          child: AppPopupMenu<bool>(
-            items: const [true, false],
-            onSelected: (bool selected) {
-              chart!.panels[0].findGraphById("area")!.visible = selected;
-              repaintChart();
-            },
-            selected: chart!.panels[0].findGraphById("area")!.visible,
-          ),
-        ),
-        AppLabelWidget(
-          label: "Area layer",
+          label: "GGraphArea.layer",
+          description:
+              "Change the layer of the Area graph. "
+              "\nlayer is a int value that determines the painting order of the graph.",
           child: AppPopupMenu<String>(
             items: const ["top", "bottom"],
             onSelected: (String selected) {
