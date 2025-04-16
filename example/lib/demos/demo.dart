@@ -80,7 +80,7 @@ abstract class DemoBasePageState extends State<DemoBasePage>
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Container(
-            height: 60,
+            //height: 100,
             width: double.infinity,
             alignment: Alignment.center,
             child: chart == null ? Container() : _buildControlPanel(context),
@@ -109,7 +109,12 @@ abstract class DemoBasePageState extends State<DemoBasePage>
         scrollDirection: Axis.horizontal,
         controller: scrollController,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+          padding: const EdgeInsets.only(
+            bottom: 16,
+            left: 16,
+            right: 16,
+            top: 0,
+          ),
           child: buildControlPanel(context),
         ),
       ),

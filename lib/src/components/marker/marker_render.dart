@@ -13,7 +13,8 @@ import '../viewport_h.dart';
 ///
 /// [GMarkerRender] has different implementations from super [GRender] for it needs some extra parameters for rendering.
 /// use [GMarkerRender.renderMarker] instead of super [GRender.render] to render a [GMarker].
-abstract class GMarkerRender<M extends GMarker, T extends GMarkerTheme> extends GRender<M, T> {
+abstract class GMarkerRender<M extends GMarker, T extends GMarkerTheme>
+    extends GRender<M, T> {
   const GMarkerRender();
 
   void renderMarker({
