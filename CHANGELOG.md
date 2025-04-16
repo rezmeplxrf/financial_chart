@@ -9,6 +9,7 @@
 - allow update graph properties (added setters).
 - fix notifyListeners error after disposed.
 - update examples.
+- [0.2.1+1] code format & update examples.
 
 ## 0.2.0
 2025-04-12

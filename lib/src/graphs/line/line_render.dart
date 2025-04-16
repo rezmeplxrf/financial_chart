@@ -52,12 +52,15 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
         x2: points[i + 1].x,
         y2: points[i + 1].y,
       );
-      if(theme.pointRadius > 0) {
+      if (theme.pointRadius > 0) {
         Path pointPath = Path();
-        addOvalPath(rect: Rect.fromCircle(
-          center: Offset(points[i].x, points[i].y),
-          radius: theme.pointRadius,
-        ), toPath: pointPath);
+        addOvalPath(
+          rect: Rect.fromCircle(
+            center: Offset(points[i].x, points[i].y),
+            radius: theme.pointRadius,
+          ),
+          toPath: pointPath,
+        );
         drawPath(canvas: canvas, path: pointPath, style: theme.pointStyle);
       }
     }

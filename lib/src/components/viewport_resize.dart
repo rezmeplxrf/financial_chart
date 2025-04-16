@@ -1,4 +1,3 @@
-
 /// Defines the behavior of how to update the viewport range when view size changed.
 enum GViewPortResizeMode {
   /// no update to the range

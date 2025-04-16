@@ -18,7 +18,7 @@ class AppLabelWidget extends StatelessWidget {
       //width: 200,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.start,
         spacing: 2,
         children: [
           TextButton.icon(

@@ -36,14 +36,22 @@ class GPointViewPort extends ChangeNotifier {
   final GValue<double> _startPointMin = GValue(double.negativeInfinity);
   double get startPointMin => _startPointMin.value;
   set startPointMin(double value) {
-    assert(value < endPointMax, 'startPointMin should be less than endPointMax.');
+    assert(
+      value < endPointMax,
+      'startPointMin should be less than endPointMax.',
+    );
     if (_startPointMin.value == value) {
       return;
     }
     _startPointMin.value = value;
     if (isValid && startPoint < value) {
       final points = _pointRange.end! - _pointRange.begin!;
-      setRange(startPoint: value, endPoint: value + points, finished: true, notify: false);
+      setRange(
+        startPoint: value,
+        endPoint: value + points,
+        finished: true,
+        notify: false,
+      );
     }
   }
 
@@ -51,14 +59,22 @@ class GPointViewPort extends ChangeNotifier {
   final GValue<double> _endPointMax = GValue(double.infinity);
   double get endPointMax => _endPointMax.value;
   set endPointMax(double value) {
-    assert(value > startPointMin, 'endPointMax should be greater than startPointMin.');
+    assert(
+      value > startPointMin,
+      'endPointMax should be greater than startPointMin.',
+    );
     if (_endPointMax.value == value) {
       return;
     }
     _endPointMax.value = value;
     if (isValid && endPoint > value) {
       final points = _pointRange.end! - _pointRange.begin!;
-      setRange(startPoint: value - points, endPoint: value, finished: true, notify: false);
+      setRange(
+        startPoint: value - points,
+        endPoint: value,
+        finished: true,
+        notify: false,
+      );
     }
   }
 
@@ -80,9 +96,11 @@ class GPointViewPort extends ChangeNotifier {
   final GPointViewPortAutoScaleStrategy? autoScaleStrategy;
 
   /// Defines the behavior of how to update the viewport range when view size changed.
-  final GValue<GViewPortResizeMode> _viewPortResizeMode = GValue<GViewPortResizeMode>(GViewPortResizeMode.keepEnd);
+  final GValue<GViewPortResizeMode> _viewPortResizeMode =
+      GValue<GViewPortResizeMode>(GViewPortResizeMode.keepEnd);
   GViewPortResizeMode get viewPortResizeMode => _viewPortResizeMode.value;
-  set viewPortResizeMode(GViewPortResizeMode value) => _viewPortResizeMode.value = value;
+  set viewPortResizeMode(GViewPortResizeMode value) =>
+      _viewPortResizeMode.value = value;
 
   /// The animation milliseconds when auto scaling.
   ///
@@ -109,18 +127,36 @@ class GPointViewPort extends ChangeNotifier {
     double endPointMax = double.infinity,
   }) {
     assert(
-      (initialStartPoint == null && initialEndPoint == null) || (initialStartPoint != null && initialEndPoint != null),
+      (initialStartPoint == null && initialEndPoint == null) ||
+          (initialStartPoint != null && initialEndPoint != null),
       'initialStartPoint and initialEndPoint should be both null or not null.',
     );
-    assert(startPointMin < endPointMax, 'startPointMin should be less than endPointMax.');
+    assert(
+      startPointMin < endPointMax,
+      'startPointMin should be less than endPointMax.',
+    );
     _startPointMin.value = startPointMin;
     _endPointMax.value = endPointMax;
     assert(minPointWidth > 0, 'minPointWidth should be greater than 0.');
-    assert(maxPointWidth >= minPointWidth, 'maxPointWidth should be greater than minPointWidth.');
-    assert(defaultPointWidth >= minPointWidth, 'defaultPointWidth should be greater than minPointWidth.');
-    assert(animationMilliseconds >= 0, 'animationMilliseconds should be greater than or equal to 0.');
+    assert(
+      maxPointWidth >= minPointWidth,
+      'maxPointWidth should be greater than minPointWidth.',
+    );
+    assert(
+      defaultPointWidth >= minPointWidth,
+      'defaultPointWidth should be greater than minPointWidth.',
+    );
+    assert(
+      animationMilliseconds >= 0,
+      'animationMilliseconds should be greater than or equal to 0.',
+    );
     if (initialStartPoint != null && initialEndPoint != null) {
-      setRange(startPoint: initialStartPoint, endPoint: initialEndPoint, finished: true, notify: false);
+      setRange(
+        startPoint: initialStartPoint,
+        endPoint: initialEndPoint,
+        finished: true,
+        notify: false,
+      );
     }
     _animationMilliseconds.value = animationMilliseconds;
   }
@@ -131,10 +167,12 @@ class GPointViewPort extends ChangeNotifier {
         vsync: vsync,
         duration: Duration(milliseconds: animationMilliseconds),
       );
-      _rangeAnimation = Tween<double>(
-        begin: 0,
-        end: 1,
-      ).animate(CurvedAnimation(parent: _rangeAnimationController!, curve: Curves.easeOutCubic));
+      _rangeAnimation = Tween<double>(begin: 0, end: 1).animate(
+        CurvedAnimation(
+          parent: _rangeAnimationController!,
+          curve: Curves.easeOutCubic,
+        ),
+      );
       _rangeAnimation!.addListener(_rangeAnimationListener);
     }
   }
@@ -149,13 +187,33 @@ class GPointViewPort extends ChangeNotifier {
     if (_animationStartRange.isEmpty || _animationTargetRange.isEmpty) {
       return;
     }
-    final updatedRange = GRange.lerp(_animationStartRange, _animationTargetRange, _rangeAnimation!.value);
-    setRange(startPoint: updatedRange.first!, endPoint: updatedRange.last!, finished: false);
+    final updatedRange = GRange.lerp(
+      _animationStartRange,
+      _animationTargetRange,
+      _rangeAnimation!.value,
+    );
+    setRange(
+      startPoint: updatedRange.first!,
+      endPoint: updatedRange.last!,
+      finished: false,
+    );
   }
 
-  void animateToRange(GChart chart, GRange targetRange, bool finished, bool animation, {Simulation? simulation}) {
-    if (!animation || _rangeAnimationController == null || (targetRange == _pointRange)) {
-      setRange(startPoint: targetRange.begin!, endPoint: targetRange.end!, finished: finished);
+  void animateToRange(
+    GChart chart,
+    GRange targetRange,
+    bool finished,
+    bool animation, {
+    Simulation? simulation,
+  }) {
+    if (!animation ||
+        _rangeAnimationController == null ||
+        (targetRange == _pointRange)) {
+      setRange(
+        startPoint: targetRange.begin!,
+        endPoint: targetRange.end!,
+        finished: finished,
+      );
       return;
     }
     stopAnimation();
@@ -177,9 +235,16 @@ class GPointViewPort extends ChangeNotifier {
     });
   }
 
-  void setRange({required double startPoint, required double endPoint, required bool finished, bool notify = true}) {
+  void setRange({
+    required double startPoint,
+    required double endPoint,
+    required bool finished,
+    bool notify = true,
+  }) {
     assert(startPoint < endPoint);
-    if (_pointRange.isNotEmpty && startPoint == this.startPoint && endPoint == this.endPoint) {
+    if (_pointRange.isNotEmpty &&
+        startPoint == this.startPoint &&
+        endPoint == this.endPoint) {
       return;
     }
     if (startPoint < startPointMin) {
@@ -224,12 +289,15 @@ class GPointViewPort extends ChangeNotifier {
 
   /// Get the nearest point from position in view area.
   int nearestPoint(Rect area, Offset position) {
-    return ((position.dx - area.left) / pointSize(area.width) + startPoint).round();
+    return ((position.dx - area.left) / pointSize(area.width) + startPoint)
+        .round();
   }
 
   /// update the viewport range when view size changed
   void resize(double fromSize, double toSize, bool notify) {
-    if (viewPortResizeMode == GViewPortResizeMode.keepRange || fromSize == toSize || !isValid) {
+    if (viewPortResizeMode == GViewPortResizeMode.keepRange ||
+        fromSize == toSize ||
+        !isValid) {
       return;
     }
     final pointSizeCurrent = _pointSize(fromSize, startPoint, endPoint);
@@ -239,17 +307,32 @@ class GPointViewPort extends ChangeNotifier {
     switch (viewPortResizeMode) {
       case GViewPortResizeMode.keepStart:
         final newEndPoint = startPoint + toSize / pointSizeCurrent;
-        setRange(startPoint: startPoint, endPoint: newEndPoint, finished: true, notify: notify);
+        setRange(
+          startPoint: startPoint,
+          endPoint: newEndPoint,
+          finished: true,
+          notify: notify,
+        );
         break;
       case GViewPortResizeMode.keepEnd:
         final newStartPoint = endPoint - toSize / pointSizeCurrent;
-        setRange(startPoint: newStartPoint, endPoint: endPoint, finished: true, notify: notify);
+        setRange(
+          startPoint: newStartPoint,
+          endPoint: endPoint,
+          finished: true,
+          notify: notify,
+        );
         break;
       case GViewPortResizeMode.keepCenter:
         final centerPoint = (startPoint + endPoint) / 2;
         final newStartPoint = centerPoint - toSize / (2 * pointSizeCurrent);
         final newEndPoint = centerPoint + toSize / (2 * pointSizeCurrent);
-        setRange(startPoint: newStartPoint, endPoint: newEndPoint, finished: true, notify: notify);
+        setRange(
+          startPoint: newStartPoint,
+          endPoint: newEndPoint,
+          finished: true,
+          notify: notify,
+        );
         break;
       case GViewPortResizeMode.keepRange:
         break;
@@ -266,32 +349,59 @@ class GPointViewPort extends ChangeNotifier {
     _notify(finished: true);
   }
 
-  void zoomUpdate(GRange startRange, Rect area, double zoomRatio, double centerPoint, {bool finished = true}) {
+  void zoomUpdate(
+    GRange startRange,
+    Rect area,
+    double zoomRatio,
+    double centerPoint, {
+    bool finished = true,
+  }) {
     if (startRange.isEmpty) {
       return;
     }
-    double pointWidthStart = _pointSize(area.width, startRange.first!, startRange.last!);
-    double pointWidthNew = min(max(pointWidthStart * zoomRatio, minPointWidth), maxPointWidth);
+    double pointWidthStart = _pointSize(
+      area.width,
+      startRange.first!,
+      startRange.last!,
+    );
+    double pointWidthNew = min(
+      max(pointWidthStart * zoomRatio, minPointWidth),
+      maxPointWidth,
+    );
     double centerPosition = pointToPosition(area, centerPoint);
     double leftSize = centerPosition - area.left;
     double rightSize = area.right - centerPosition;
     double startPointNew = centerPoint - leftSize / pointWidthNew;
     double endPointNew = centerPoint + rightSize / pointWidthNew;
-    setRange(startPoint: startPointNew, endPoint: endPointNew, finished: finished);
+    setRange(
+      startPoint: startPointNew,
+      endPoint: endPointNew,
+      finished: finished,
+    );
   }
 
   void interactionZoomUpdate(Rect area, double zoomRatio) {
     if (_pointRangeScaling.isEmpty) {
       return;
     }
-    zoomUpdate(_pointRangeScaling, area, zoomRatio, _pointRangeScaling.end!, finished: false);
+    zoomUpdate(
+      _pointRangeScaling,
+      area,
+      zoomRatio,
+      _pointRangeScaling.end!,
+      finished: false,
+    );
   }
 
   void interactionMoveUpdate(Rect area, double movedDistance) {
     if (_pointRangeScaling.isEmpty) {
       return;
     }
-    double pointWidthStart = _pointSize(area.width, _pointRangeScaling.first!, _pointRangeScaling.last!);
+    double pointWidthStart = _pointSize(
+      area.width,
+      _pointRangeScaling.first!,
+      _pointRangeScaling.last!,
+    );
     double pointsMoved = movedDistance / pointWidthStart;
     double startPointNew = _pointRangeScaling.begin! - pointsMoved;
     double endPointNew = _pointRangeScaling.end! - pointsMoved;
@@ -327,15 +437,29 @@ class GPointViewPort extends ChangeNotifier {
         pointLeftNew = center - minPoints / 2;
         pointRightNew = center + minPoints / 2;
       }
-      animateToRange(chart, GRange.range(pointLeftNew, pointRightNew), finished, animation);
+      animateToRange(
+        chart,
+        GRange.range(pointLeftNew, pointRightNew),
+        finished,
+        animation,
+      );
     }
   }
 
-  void autoScaleReset({required GChart chart, required GPanel panel, required bool finished, bool animation = true}) {
+  void autoScaleReset({
+    required GChart chart,
+    required GPanel panel,
+    required bool finished,
+    bool animation = true,
+  }) {
     if (autoScaleStrategy == null) {
       return;
     }
-    final newRange = autoScaleStrategy!.getScale(chart: chart, panel: panel, pointViewPort: this);
+    final newRange = autoScaleStrategy!.getScale(
+      chart: chart,
+      panel: panel,
+      pointViewPort: this,
+    );
     if (newRange.isNotEmpty) {
       animateToRange(chart, newRange, finished, animation);
     }
