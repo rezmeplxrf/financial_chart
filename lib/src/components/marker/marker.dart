@@ -13,10 +13,10 @@ class GMarker extends GComponent {
   int get layer => _layer.value;
   set layer(int value) => _layer.value = value;
 
-  /// [HitTestMode] of the marker.
-  final GValue<HitTestMode> _hitTestMode;
-  HitTestMode get hitTestMode => _hitTestMode.value;
-  set hitTestMode(HitTestMode value) => _hitTestMode.value = value;
+  /// [GHitTestMode] of the marker.
+  final GValue<GHitTestMode> _hitTestMode;
+  GHitTestMode get hitTestMode => _hitTestMode.value;
+  set hitTestMode(GHitTestMode value) => _hitTestMode.value = value;
 
   /// Whether the marker is highlighted (or selected).
   final GValue<bool> _highlight = GValue<bool>(false);
@@ -29,9 +29,9 @@ class GMarker extends GComponent {
     super.theme,
     super.render,
     int layer = kDefaultLayer,
-    HitTestMode hitTestMode = HitTestMode.border,
+    GHitTestMode hitTestMode = GHitTestMode.border,
   }) : _layer = GValue<int>(layer),
-       _hitTestMode = GValue<HitTestMode>(hitTestMode);
+       _hitTestMode = GValue<GHitTestMode>(hitTestMode);
 
   @override
   GMarkerRender<GMarker, GMarkerTheme> getRender() {
@@ -43,7 +43,7 @@ class GMarker extends GComponent {
     double? epsilon,
     autoHighlight = true,
   }) {
-    if (hitTestMode == HitTestMode.none) {
+    if (hitTestMode == GHitTestMode.none) {
       return false;
     }
     bool test = getRender().hitTest(position: position, epsilon: epsilon);

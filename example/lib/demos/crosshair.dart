@@ -122,12 +122,15 @@ class DemoCrosshairPageState extends DemoBasePageState {
   @override
   Widget buildControlPanel(BuildContext context) {
     return Row(
+      spacing: 8,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         buildThemeSelectWidget(context),
         AppLabelWidget(
-          label: "Point snap",
+          label: "GCrosshair.snapToPoint",
+          description:
+              "Snap the vertical line to the nearest point on Point axis or not when moving the crosshair.",
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {
@@ -138,7 +141,8 @@ class DemoCrosshairPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Point lines",
+          label: "GCrosshair.pointLinesVisible",
+          description: "Show/hide the vertical line.",
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {
@@ -149,7 +153,8 @@ class DemoCrosshairPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Value lines",
+          label: "GCrosshair.valueLinesVisible",
+          description: "Show/hide the horizontal line.",
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {
@@ -160,7 +165,8 @@ class DemoCrosshairPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Point axis labels",
+          label: "GCrosshair.pointAxisLabelsVisible",
+          description: "Show/hide the label on point axis (X axis).",
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {
@@ -171,7 +177,8 @@ class DemoCrosshairPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Value axis labels",
+          label: "GCrosshair.valueAxisLabelsVisible",
+          description: "Show/hide the label on value axis (Y axis).",
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {

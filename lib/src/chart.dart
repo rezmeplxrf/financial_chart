@@ -5,7 +5,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
-import 'chart_controller.dart';
+import 'chart_interaction.dart';
 import 'chart_render.dart';
 import 'components/components.dart';
 import 'data/data_source.dart';
@@ -100,23 +100,23 @@ class GChart extends ChangeNotifier {
   final Size minSize;
 
   /// The controller for user interaction.
-  late final GChartController _controller;
-  GChartController get controller => _controller;
+  late final GChartInteractionHandler _controller;
+  GChartInteractionHandler get controller => _controller;
 
   /// The pre-render callback which is called right before rendering.
   ///
-  /// This gives a chance to modify the chart before rendering.
+  /// It is able to update something to the chart here before rendering.
+  /// Do not make any update that would cause the chart to re-paint in this callback.
   final void Function(GChart chart, Canvas canvas, Rect area)? preRender;
 
   /// The post-render callback which is called right after rendering finished.
   ///
-  /// still it is able to draw something additional on the canvas.
+  /// It is able to draw something additional on the canvas here.
+  /// Do not make any update that would cause the chart to re-paint in this callback.
   final void Function(GChart chart, Canvas canvas, Rect area)? postRender;
 
   /// current mouse cursor
-  final GValue<MouseCursor> mouseCursor = GValue<MouseCursor>(
-    SystemMouseCursors.basic,
-  );
+  final GValue<MouseCursor> mouseCursor = GValue<MouseCursor>(SystemMouseCursors.basic);
 
   final _debounceHelper = DebounceHelper(milliseconds: 500);
 
@@ -134,16 +134,13 @@ class GChart extends ChangeNotifier {
     this.minSize = const Size(200, 200),
     this.preRender,
     this.postRender,
-  }) : _controller = GChartController(),
+  }) : _controller = GChartInteractionHandler(),
        background = (background ?? GBackground()),
        crosshair = (crosshair ?? GCrosshair()),
        splitter = (splitter ?? GSplitter()),
        _pointerScrollMode = GValue(pointerScrollMode),
        pointViewPort =
-           pointViewPort ??
-           GPointViewPort(
-             autoScaleStrategy: const GPointViewPortAutoScaleStrategyLatest(),
-           ),
+           pointViewPort ?? GPointViewPort(autoScaleStrategy: const GPointViewPortAutoScaleStrategyLatest()),
        _theme = GValue(theme),
        _area = GValue(area) {
     controller.attach(this);
@@ -159,9 +156,7 @@ class GChart extends ChangeNotifier {
     pointViewPort.addListener(_pointViewPortChanged);
     for (var panel in panels) {
       for (var valueViewPort in panel.valueViewPorts) {
-        valueViewPort.addListener(
-          () => _valueViewPortChanged(updatedViewPort: valueViewPort),
-        );
+        valueViewPort.addListener(() => _valueViewPortChanged(updatedViewPort: valueViewPort));
         if (vsync != null) {
           valueViewPort.initializeAnimation(vsync);
         }
@@ -175,26 +170,14 @@ class GChart extends ChangeNotifier {
   void ensureInitialData() {
     assert(!dataSource.isLoading);
     layout(area);
-    final fromPoint =
-        pointViewPort.isValid
-            ? pointViewPort.startPoint.floor()
-            : dataSource.indexToPoint(0);
-    final points =
-        panels[0].graphArea().width / pointViewPort.defaultPointWidth;
-    final toPoint =
-        pointViewPort.isValid
-            ? pointViewPort.endPoint.ceil()
-            : ((fromPoint + points).ceil() + 10);
+    final fromPoint = pointViewPort.isValid ? pointViewPort.startPoint.floor() : dataSource.indexToPoint(0);
+    final points = panels[0].graphArea().width / pointViewPort.defaultPointWidth;
+    final toPoint = pointViewPort.isValid ? pointViewPort.endPoint.ceil() : ((fromPoint + points).ceil() + 10);
     dataSource.ensureData(fromPoint: fromPoint, toPoint: toPoint).then((_) {
       if (!pointViewPort.isValid) {
         // if not being set with initial value, set it with the auto scaled value.
         if (pointViewPort.autoScaleStrategy != null) {
-          pointViewPort.autoScaleReset(
-            chart: this,
-            panel: panels[0],
-            finished: true,
-            animation: false,
-          );
+          pointViewPort.autoScaleReset(chart: this, panel: panels[0], finished: true, animation: false);
         } else {
           pointViewPort.setRange(
             startPoint: dataSource.lastPoint - points,
@@ -203,11 +186,7 @@ class GChart extends ChangeNotifier {
           );
         }
       }
-      autoScaleViewports(
-        resetPointViewPort: false,
-        resetValueViewPort: true,
-        animation: false,
-      );
+      autoScaleViewports(resetPointViewPort: false, resetValueViewPort: true, animation: false);
     });
   }
 
@@ -236,55 +215,45 @@ class GChart extends ChangeNotifier {
 
   /// Resize the chart view area.
   void resize({required Rect newArea}) {
-    if (newArea == _area()) {
+    if (newArea == _area.value) {
       return;
     }
     Rect refinedArea = newArea.translate(0, 0);
     if (refinedArea.width < minSize.width) {
-      refinedArea = Rect.fromLTWH(
-        refinedArea.left,
-        refinedArea.top,
-        minSize.width,
-        refinedArea.height,
-      );
+      refinedArea = Rect.fromLTWH(refinedArea.left, refinedArea.top, minSize.width, refinedArea.height);
     }
     if (refinedArea.height < minSize.height) {
-      refinedArea = Rect.fromLTWH(
-        refinedArea.left,
-        refinedArea.top,
-        refinedArea.width,
-        minSize.height,
-      );
+      refinedArea = Rect.fromLTWH(refinedArea.left, refinedArea.top, refinedArea.width, minSize.height);
     }
-    if (_area() != refinedArea) {
+    if (_area.value != refinedArea) {
       final visiblePanel = panels.where((p) => p.visible).first;
-      double graphSizeBefore =
-          visiblePanel.isLayoutReady ? visiblePanel.graphArea().width : 0;
+      double graphWidthBefore = visiblePanel.isLayoutReady ? visiblePanel.graphArea().width : 0;
+      double graphHeightBefore = visiblePanel.isLayoutReady ? visiblePanel.graphArea().height : 0;
       crosshair.clearCrossPosition();
-      layout(_area(newValue: refinedArea));
+      _area.value = refinedArea;
+      layout(_area.value);
 
-      if (graphSizeBefore > 0) {
-        // reset point viewport's startPoint to keep point width same as before
-        pointViewPort.resize(
-          graphSizeBefore,
-          visiblePanel.graphArea().width,
-          false,
-        );
-        autoScaleViewports(
-          resetPointViewPort: false,
-          resetValueViewPort: true,
-          animation: false,
-        );
-        _debounceHelper.run(() {
-          _pointViewPortChanged();
-          pointViewPort.notifyListeners();
-        });
+      if (graphWidthBefore > 0 || graphHeightBefore > 0) {
+        // update viewports
+        if (graphWidthBefore > 0) {
+          pointViewPort.resize(graphWidthBefore, visiblePanel.graphArea().width, false);
+          autoScaleViewports(resetPointViewPort: false, resetValueViewPort: true, animation: false);
+          _debounceHelper.run(() {
+            _pointViewPortChanged();
+            pointViewPort.notifyListeners();
+          });
+        }
+        if (graphHeightBefore > 0) {
+          for (var panel in panels) {
+            for (var valueViewPort in panel.valueViewPorts) {
+              if (!valueViewPort.autoScaleFlg) {
+                valueViewPort.resize(graphHeightBefore, panel.graphArea().height, true);
+              }
+            }
+          }
+        }
       } else {
-        autoScaleViewports(
-          resetPointViewPort: false,
-          resetValueViewPort: true,
-          animation: false,
-        );
+        autoScaleViewports(resetPointViewPort: false, resetValueViewPort: true, animation: false);
         _notify();
       }
     }
@@ -296,10 +265,7 @@ class GChart extends ChangeNotifier {
   /// - Decide the axis areas of each panel based on the position of the axes.
   /// - Decide the graph areas of each panel from panel area and axis areas.
   void layout(Rect area) {
-    double totalHeightWeight = panels.fold(
-      0,
-      (sum, panel) => sum + (panel.visible ? panel.heightWeight : 0),
-    );
+    double totalHeightWeight = panels.fold(0, (sum, panel) => sum + (panel.visible ? panel.heightWeight : 0));
     double y = area.top;
     List<Rect> panelAreas =
         panels.map((panel) {
@@ -317,18 +283,9 @@ class GChart extends ChangeNotifier {
   }
 
   /// Auto scale all viewports that have a autoScaleStrategy.
-  void autoScaleViewports({
-    bool resetPointViewPort = true,
-    bool resetValueViewPort = true,
-    bool animation = true,
-  }) {
+  void autoScaleViewports({bool resetPointViewPort = true, bool resetValueViewPort = true, bool animation = true}) {
     if (resetPointViewPort && pointViewPort.autoScaleStrategy != null) {
-      pointViewPort.autoScaleReset(
-        chart: this,
-        panel: panels[0],
-        finished: true,
-        animation: animation,
-      );
+      pointViewPort.autoScaleReset(chart: this, panel: panels[0], finished: true, animation: animation);
     }
     for (int p = 0; p < panels.length; p++) {
       var panel = panels[p];
@@ -336,14 +293,8 @@ class GChart extends ChangeNotifier {
         continue;
       }
       for (var valueViewPort in panel.valueViewPorts) {
-        if (resetValueViewPort &&
-            valueViewPort.autoScaleFlg &&
-            valueViewPort.autoScaleStrategy != null) {
-          valueViewPort.autoScaleReset(
-            chart: this,
-            panel: panel,
-            animation: animation,
-          );
+        if (resetValueViewPort && valueViewPort.autoScaleFlg && valueViewPort.autoScaleStrategy != null) {
+          valueViewPort.autoScaleReset(chart: this, panel: panel, animation: animation);
         }
       }
     }
@@ -358,23 +309,12 @@ class GChart extends ChangeNotifier {
     if (!updatedViewPort.isAnimating && !updatedViewPort.isScaling) {
       // load data if necessary
       dataSource
-          .ensureData(
-            fromPoint: updatedViewPort.startPoint.floor(),
-            toPoint: updatedViewPort.endPoint.ceil(),
-          )
+          .ensureData(fromPoint: updatedViewPort.startPoint.floor(), toPoint: updatedViewPort.endPoint.ceil())
           .then((_) {
-            autoScaleViewports(
-              resetPointViewPort: false,
-              resetValueViewPort: true,
-              animation: false,
-            );
+            autoScaleViewports(resetPointViewPort: false, resetValueViewPort: true, animation: false);
           });
     } else {
-      autoScaleViewports(
-        resetPointViewPort: false,
-        resetValueViewPort: true,
-        animation: false,
-      );
+      autoScaleViewports(resetPointViewPort: false, resetValueViewPort: true, animation: false);
     }
     _notify();
   }
@@ -385,7 +325,9 @@ class GChart extends ChangeNotifier {
 
   /// Notify the listeners.
   void _notify() {
-    notifyListeners();
+    if (hasListeners) {
+      notifyListeners();
+    }
   }
 
   void repaint({bool layout = true}) {

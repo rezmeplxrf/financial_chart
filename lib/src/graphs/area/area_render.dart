@@ -72,7 +72,7 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
       }
     }
 
-    if (graph.hitTestMode != HitTestMode.none) {
+    if (graph.hitTestMode != GHitTestMode.none) {
       _hitTestLinePoints1.addAll(valuePoints.map((e) => Vector2(e.dx, e.dy)));
       if (graph.baseValueKey != null || graph.baseValue != null) {
         _hitTestLinePoints2.addAll(basePoints.map((e) => Vector2(e.dx, e.dy)));

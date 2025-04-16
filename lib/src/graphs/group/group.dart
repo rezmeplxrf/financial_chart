@@ -26,7 +26,7 @@ class GGraphGroup extends GGraph<GGraphTheme> {
     super.overlayMarkers,
     super.render,
   }) : super(
-         hitTestMode: HitTestMode.none, // unused
+         hitTestMode: GHitTestMode.none, // unused
          theme: const GGraphTheme(), // unused
        ) {
     assert(

@@ -14,16 +14,19 @@ import 'components/viewport_h.dart';
 import 'values/range.dart';
 import 'values/value.dart';
 
-/// GChartController for handling user interactions for the attached chart.
+/// [GChartInteractionHandler] for handling user interactions for the attached chart.
 // ignore_for_file: avoid_print
 // ignore: must_be_immutable
-class GChartController extends ChangeNotifier {
+class GChartInteractionHandler extends ChangeNotifier {
   late final GChart _chart;
-  int? resizingPanelIndex;
+  // The panel index that currently being resizing interactively
+  final GValue<int?> _resizingPanelIndex = GValue(null);
+  get resizingPanelIndex => _resizingPanelIndex.value;
+
   final GValue<bool> _isTouchEvent = GValue(false);
   final GValue<bool> _isTouchCrossMode = GValue(false);
 
-  GChartController();
+  GChartInteractionHandler();
 
   void Function({
     required Offset position,
@@ -115,7 +118,7 @@ class GChartController extends ChangeNotifier {
 
   void mouseHover({required Offset position}) {
     _chart.crosshair.setCrossPosition(position.dx, position.dy);
-    _chart.mouseCursor(newValue: _mouseCursor(position: position));
+    _chart.mouseCursor.value = _mouseCursor(position: position);
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
@@ -238,8 +241,8 @@ class GChartController extends ChangeNotifier {
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
-    if (_isTouchEvent()) {
-      _isTouchCrossMode(newValue: true);
+    if (_isTouchEvent.value) {
+      _isTouchCrossMode.value = true;
       _chart.crosshair.setCrossPosition(position.dx, position.dy);
       _notify();
     }
@@ -256,16 +259,16 @@ class GChartController extends ChangeNotifier {
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
-    _isTouchEvent(newValue: isTouch);
+    _isTouchEvent.value = isTouch;
   }
 
   void tapUp({required Offset position, required bool isTouch}) {
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
-    if (_isTouchCrossMode()) {
-      _isTouchCrossMode(newValue: false);
-      _isTouchEvent(newValue: false);
+    if (_isTouchCrossMode.value) {
+      _isTouchCrossMode.value = false;
+      _isTouchEvent.value = false;
       _chart.crosshair.clearCrossPosition();
     }
     for (int p = 0; p < _chart.panels.length; p++) {
@@ -348,7 +351,7 @@ class GChartController extends ChangeNotifier {
       double moveToleranceMin = -panel1.graphArea().height + 50;
       double moveToleranceMax = panel2.graphArea().height - 50;
       double weightUnit = panel1.heightWeight / (h1 / _chart.size.height);
-      resizingPanelIndex = panel1Index;
+      _resizingPanelIndex.value = panel1Index;
       _hookScaleUpdate = ({
         required Offset position,
         required double scale,
@@ -365,7 +368,7 @@ class GChartController extends ChangeNotifier {
         _chart.layout(_chart.area);
       };
       _hookScaleEnd = (Velocity? velocity) {
-        resizingPanelIndex = null;
+        _resizingPanelIndex.value = null;
       };
       return panel1;
     }
@@ -502,7 +505,7 @@ class GChartController extends ChangeNotifier {
         required double scale,
         required double verticalScale,
       }) {
-        _chart.mouseCursor(newValue: SystemMouseCursors.precise);
+        _chart.mouseCursor.value = SystemMouseCursors.precise;
         _chart.crosshair.setCrossPosition(position.dx, position.dy);
       };
       _hookScaleEnd = (Velocity? velocity) {};
@@ -524,7 +527,7 @@ class GChartController extends ChangeNotifier {
       required double verticalScale,
     }) {
       _chart.crosshair.clearCrossPosition();
-      _chart.mouseCursor(newValue: SystemMouseCursors.grab);
+      _chart.mouseCursor.value = SystemMouseCursors.grab;
       double moveDistanceX = (position.dx - start.dx);
       if (scale != 1.0) {
         if (scale != 1.0 && scale > 0) {
@@ -543,7 +546,7 @@ class GChartController extends ChangeNotifier {
       }
     };
     _hookScaleEnd = (Velocity? velocity) {
-      _chart.mouseCursor(newValue: SystemMouseCursors.precise);
+      _chart.mouseCursor.value = SystemMouseCursors.precise;
       pointViewPort.interactionEnd();
       if (scaleValue) {
         valueViewPort.interactionEnd();
@@ -571,6 +574,8 @@ class GChartController extends ChangeNotifier {
   }
 
   void _notify() {
-    notifyListeners();
+    if (hasListeners) {
+      notifyListeners();
+    }
   }
 }

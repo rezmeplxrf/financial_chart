@@ -13,13 +13,13 @@ abstract class GComponent {
 
   /// Theme of the component to override the global default theme.
   final GValue<GComponentTheme?> _theme;
-  GComponentTheme? get theme => _theme();
-  set theme(GComponentTheme? value) => _theme(newValue: value);
+  GComponentTheme? get theme => _theme.value;
+  set theme(GComponentTheme? value) => _theme.value = value;
 
   /// Whether the graph is visible.
   final GValue<bool> _visible;
-  bool get visible => _visible();
-  set visible(bool value) => _visible(newValue: value);
+  bool get visible => _visible.value;
+  set visible(bool value) => _visible.value = value;
 
   /// Render of the component.
   @protected
@@ -39,7 +39,7 @@ abstract class GComponent {
 }
 
 /// Hit test mode of the component.
-enum HitTestMode {
+enum GHitTestMode {
   /// No hit test.
   none,
 

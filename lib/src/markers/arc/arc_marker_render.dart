@@ -37,7 +37,7 @@ class GArcMarkerRender
         pointViewPort: pointViewPort,
       );
       final radius = (border - center).distance;
-      if (marker.hitTestMode != HitTestMode.none) {
+      if (marker.hitTestMode != GHitTestMode.none) {
         this.center = center;
         this.radius = radius;
         startTheta = marker.startTheta;
@@ -89,7 +89,7 @@ class GArcMarkerRender
         height: radius * 2,
         alignment: alignment,
       );
-      if (marker.hitTestMode != HitTestMode.none) {
+      if (marker.hitTestMode != GHitTestMode.none) {
         center = rect.center;
         this.radius = radius;
         startTheta = marker.startTheta;

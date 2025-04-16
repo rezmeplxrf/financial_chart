@@ -1,3 +1,4 @@
+import '../../components/component.dart';
 import '../../components/graph/graph.dart';
 import '../../components/ticker.dart';
 import 'grids_render.dart';
@@ -15,12 +16,12 @@ class GGraphGrids extends GGraph<GGraphGridsTheme> {
 
   GGraphGrids({
     super.id,
-    super.layer = 1,
+    super.layer,
     super.visible,
     super.valueViewPortId,
     this.valueTickerStrategy = const GValueTickerStrategyDefault(),
     this.pointTickerStrategy = const GPointTickerStrategyDefault(),
-    super.hitTestMode,
+    super.hitTestMode = GHitTestMode.none,
     super.overlayMarkers,
     super.theme,
     super.render = const GGraphGridsRender(),

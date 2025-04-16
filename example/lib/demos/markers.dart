@@ -102,7 +102,8 @@ class DemoMarkersPageState extends DemoBasePageState {
               GCalloutMarker(
                 id: "c1",
                 text:
-                    "☀️☀️☀️☀️☀️☀️☀️☀️☀️☀️\nThis pins to fixed position of the view port \n☀️☀️☀️☀️☀️☀️☀️☀️☀️☀️",
+                    "A GCalloutMarker. "
+                    "\nIt pins to specified position of the view port.",
                 anchorCoord: GPositionCoord.absolute(x: 0, y: 0),
                 alignment: Alignment.bottomRight,
                 theme: chartTheme.overlayMarkerTheme.copyWith(
@@ -131,7 +132,9 @@ class DemoMarkersPageState extends DemoBasePageState {
               ),
               GLabelMarker(
                 text:
-                    "This area covers \n0.1 * height ~ 0.2 * height \nof the view port",
+                    "This area covers "
+                    "\n0.1 * height ~ 0.2 * height "
+                    "\nof the view port",
                 anchorCoord: GPositionCoord.rational(x: 0.51, y: 0.15),
                 alignment: Alignment.centerRight,
               ),
@@ -322,12 +325,28 @@ class DemoMarkersPageState extends DemoBasePageState {
   @override
   Widget buildControlPanel(BuildContext context) {
     return Row(
+      spacing: 8,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         buildThemeSelectWidget(context),
         AppLabelWidget(
-          label: "OHLC visible",
+          label: "GGraphLine.visible",
+          description:
+              "Show/hide the line graph. "
+              "\nwhen the graph is hidden, the overlay markers on the graph will be hidden too.",
+          child: AppPopupMenu<bool>(
+            items: const [true, false],
+            onSelected: (bool selected) {
+              chart!.panels[0].findGraphById("line")!.visible = selected;
+              repaintChart();
+            },
+            selected: chart!.panels[0].findGraphById("line")!.visible,
+          ),
+        ),
+        AppLabelWidget(
+          label: "GGraphOhlc.visible",
+          description: "Show/hide the OHLC graph. ",
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {
@@ -338,7 +357,8 @@ class DemoMarkersPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Callout position",
+          label: "GCalloutMarker.alignment",
+          description: "Change the alignment of the callout marker.",
           child: AppPopupMenu<Alignment>(
             items: const [
               Alignment.topLeft,
@@ -380,18 +400,10 @@ class DemoMarkersPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Line graph visible",
-          child: AppPopupMenu<bool>(
-            items: const [true, false],
-            onSelected: (bool selected) {
-              chart!.panels[0].findGraphById("line")!.visible = selected;
-              repaintChart();
-            },
-            selected: chart!.panels[0].findGraphById("line")!.visible,
-          ),
-        ),
-        AppLabelWidget(
-          label: "Markers visible",
+          label: "GOverlayMarker.visible",
+          description:
+              "Show/hide the overlay markers. "
+              "\noverlay markers can be placed on graphs and also axes.",
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {
@@ -402,6 +414,18 @@ class DemoMarkersPageState extends DemoBasePageState {
               for (var marker
                   in chart!.panels[0].findGraphById("line")!.overlayMarkers) {
                 marker.visible = selected;
+              }
+              for (final panel in chart!.panels) {
+                for (final axis in panel.valueAxes) {
+                  for (final marker in axis.overlayMarkers) {
+                    marker.visible = selected;
+                  }
+                }
+                for (final axis in panel.pointAxes) {
+                  for (final marker in axis.overlayMarkers) {
+                    marker.visible = selected;
+                  }
+                }
               }
               repaintChart();
             },
@@ -410,6 +434,29 @@ class DemoMarkersPageState extends DemoBasePageState {
                     .findGraphById("line")!
                     .overlayMarkers[0]
                     .visible,
+          ),
+        ),
+        AppLabelWidget(
+          label: "GAxisMarker.visible",
+          description: "Show/hide the axis markers.",
+          child: AppPopupMenu<bool>(
+            items: const [true, false],
+            onSelected: (bool selected) {
+              for (final panel in chart!.panels) {
+                for (final axis in panel.valueAxes) {
+                  for (final marker in axis.axisMarkers) {
+                    marker.visible = selected;
+                  }
+                }
+                for (final axis in panel.pointAxes) {
+                  for (final marker in axis.axisMarkers) {
+                    marker.visible = selected;
+                  }
+                }
+              }
+              repaintChart();
+            },
+            selected: chart!.panels[0].valueAxes[0].axisMarkers[0].visible,
           ),
         ),
       ],

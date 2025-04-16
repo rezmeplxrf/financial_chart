@@ -73,12 +73,14 @@ class DemoTooltipPageState extends DemoBasePageState {
   @override
   Widget buildControlPanel(BuildContext context) {
     return Row(
+      spacing: 8,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         buildThemeSelectWidget(context),
         AppLabelWidget(
-          label: "Tooltip position",
+          label: "GTooltip.position",
+          description: "Change the position of the tooltip",
           child: AppPopupMenu<GTooltipPosition>(
             items: GTooltipPosition.values,
             onSelected: (GTooltipPosition selected) {
@@ -89,22 +91,23 @@ class DemoTooltipPageState extends DemoBasePageState {
             labelResolver: (item) => item.name,
           ),
         ),
-        if (chart!.panels[0].tooltip!.position ==
-            GTooltipPosition.followPointer)
-          AppLabelWidget(
-            label: "Follow key",
-            child: AppPopupMenu<String?>(
-              items: const [null, keyOpen, keyHigh, keyLow, keyClose, keySMA],
-              onSelected: (String? selected) {
-                chart!.panels[0].tooltip!.followValueKey = selected;
-                repaintChart();
-              },
-              selected: chart!.panels[0].tooltip!.followValueKey,
-              labelResolver: (item) => item == null ? "-" : "\"$item\"",
-            ),
-          ),
         AppLabelWidget(
-          label: "Point line highlight",
+          label: "GTooltip.followValueKey",
+          description:
+              "The value key that decides tooltip's vertical position when GTooltip.position is followPointer",
+          child: AppPopupMenu<String?>(
+            items: const [null, keyOpen, keyHigh, keyLow, keyClose, keySMA],
+            onSelected: (String? selected) {
+              chart!.panels[0].tooltip!.followValueKey = selected;
+              repaintChart();
+            },
+            selected: chart!.panels[0].tooltip!.followValueKey,
+            labelResolver: (item) => item == null ? "-" : "\"$item\"",
+          ),
+        ),
+        AppLabelWidget(
+          label: "GTooltip.pointLineHighlightVisible",
+          description: "Show/hide the vertical highlight line of current point",
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {
@@ -115,7 +118,9 @@ class DemoTooltipPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "Value line highlight",
+          label: "GTooltip.valueLineHighlightVisible",
+          description:
+              "Show/hide the horizontal highlight line of value defined by followValueKey",
           child: AppPopupMenu<bool>(
             items: const [true, false],
             onSelected: (bool selected) {

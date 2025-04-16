@@ -72,16 +72,23 @@ class GValueAxisMarker extends GAxisMarker {
 }
 
 /// Markers on the point axis. it can be a label or a range.
-class GPointAxisMarker<P> extends GAxisMarker {
+class GPointAxisMarker extends GAxisMarker {
   /// the point of the label marker.
-  final GValue<int> _point = GValue<int>(0);
-  int get point => _point.value;
-  set point(int value) => _point.value = value;
+  final GValue<int> _labelPoint = GValue<int>(0);
+  int get labelPoint => _labelPoint.value;
+  set labelPoint(int point) {
+    _labelPoint.value = point;
+    _range.clear();
+  }
 
   /// the point range of the rect marker.
   final GRange _range = GRange.empty();
   GRange get range => _range;
-  set range(GRange value) => _range.copy(value);
+  set range(GRange value) {
+    assert(value.isNotEmpty);
+    _range.copy(value);
+    _labelPoint.value = 0;
+  }
 
   /// create a label marker with point.
   GPointAxisMarker.label({
@@ -93,7 +100,7 @@ class GPointAxisMarker<P> extends GAxisMarker {
     super.render = const GPointAxisMarkerRender(),
     required int point,
   }) {
-    _point.value = point;
+    _labelPoint.value = point;
   }
 
   /// create a range marker with start and end point.
