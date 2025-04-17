@@ -174,22 +174,22 @@ class DemoAxesPageState extends DemoBasePageState {
           ),
         ),
         AppLabelWidget(
-          label: "GPointAxis.viewPortResizeMode",
+          label: "GPointAxis.resizeMode",
           description:
               "Change the behavior of how to update the Point viewport (X direction) range when resizing the chart. "
               "\nResize the window to see how it works.",
           child: AppPopupMenu<GViewPortResizeMode>(
             items: GViewPortResizeMode.values,
             onSelected: (GViewPortResizeMode selected) {
-              chart!.pointViewPort.viewPortResizeMode = selected;
+              chart!.pointViewPort.resizeMode = selected;
               repaintChart();
             },
-            selected: chart!.pointViewPort.viewPortResizeMode,
+            selected: chart!.pointViewPort.resizeMode,
             labelResolver: (item) => item.name,
           ),
         ),
         AppLabelWidget(
-          label: "GValueAxis.viewPortResizeMode",
+          label: "GValueAxis.resizeMode",
           description:
               "Change the behavior of how to update the Value viewport (Y direction) range when resizing the chart. "
               "\nResize the window to see how it works.",
@@ -198,7 +198,7 @@ class DemoAxesPageState extends DemoBasePageState {
             onSelected: (GViewPortResizeMode selected) {
               for (GPanel panel in chart!.panels) {
                 for (GValueViewPort viewPort in panel.valueViewPorts) {
-                  viewPort.viewPortResizeMode = selected;
+                  viewPort.resizeMode = selected;
                   if (selected != GViewPortResizeMode.keepRange) {
                     viewPort.autoScaleFlg = false;
                   }
@@ -206,7 +206,7 @@ class DemoAxesPageState extends DemoBasePageState {
               }
               repaintChart();
             },
-            selected: chart!.panels[0].valueViewPorts[0].viewPortResizeMode,
+            selected: chart!.panels[0].valueViewPorts[0].resizeMode,
             labelResolver: (item) => item.name,
           ),
         ),

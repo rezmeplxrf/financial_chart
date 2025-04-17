@@ -5,11 +5,12 @@
 - **[breaking change]** rename `ViewSizeConvertor` to `GViewSizeConvertor`.
 - **[breaking change]** rename `GPointAxisMarker`.`point` to `labelPoint`.
 - **[breaking change]** remove `GValue`.`call()`.
-- add `viewPortResizeMode` and `viewPortResizeMode` to viewPorts to allow define the behavior when resizing.
+- add `resizeMode` to `GPointViewPort` and `GValueViewPort` to allow config the behavior when resizing.
 - allow update graph properties (added setters).
 - fix notifyListeners error after disposed.
 - update examples.
 - [0.2.1+1] code format & update examples.
+- [0.2.1+2] property name `viewPortResizeMode` -> `resizeMode` and add to constructor.
 
 ## 0.2.0
 2025-04-12

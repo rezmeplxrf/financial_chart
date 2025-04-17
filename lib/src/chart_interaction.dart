@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/rendering.dart';
@@ -17,7 +16,7 @@ import 'values/value.dart';
 /// [GChartInteractionHandler] for handling user interactions for the attached chart.
 // ignore_for_file: avoid_print
 // ignore: must_be_immutable
-class GChartInteractionHandler extends ChangeNotifier {
+class GChartInteractionHandler {
   late final GChart _chart;
   // The panel index that currently being resizing interactively
   final GValue<int?> _resizingPanelIndex = GValue(null);
@@ -574,8 +573,6 @@ class GChartInteractionHandler extends ChangeNotifier {
   }
 
   void _notify() {
-    if (hasListeners) {
-      notifyListeners();
-    }
+    _chart.repaint(layout: false);
   }
 }
