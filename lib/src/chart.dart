@@ -153,7 +153,6 @@ class GChart extends ChangeNotifier {
 
   /// Internal initialization of the chart.
   void initialize({TickerProvider? vsync}) {
-    controller.addListener(_notify);
     dataSource.addListener(_notify);
     if (vsync != null) {
       pointViewPort.initializeAnimation(vsync);
@@ -425,8 +424,6 @@ class GChart extends ChangeNotifier {
       panel.dispose();
     }
     dataSource.removeListener(_notify);
-    controller.removeListener(_notify);
-    controller.dispose();
     super.dispose();
   }
 }

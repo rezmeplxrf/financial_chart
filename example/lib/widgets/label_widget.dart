@@ -30,7 +30,13 @@ class AppLabelWidget extends StatelessWidget {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: Text(label),
+                            title: Text(
+                              label,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             content: Text(description!),
                             actions: [
                               TextButton(

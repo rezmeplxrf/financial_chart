@@ -50,11 +50,11 @@ class GValueViewPort extends ChangeNotifier {
   final GValueViewPortAutoScaleStrategy? autoScaleStrategy;
 
   /// Defines the behavior of how to update the viewport range when view size changed.
-  final GValue<GViewPortResizeMode> _viewPortResizeMode =
-      GValue<GViewPortResizeMode>(GViewPortResizeMode.keepRange);
-  GViewPortResizeMode get viewPortResizeMode => _viewPortResizeMode.value;
-  set viewPortResizeMode(GViewPortResizeMode value) =>
-      _viewPortResizeMode.value = value;
+  final GValue<GViewPortResizeMode> _resizeMode = GValue<GViewPortResizeMode>(
+    GViewPortResizeMode.keepRange,
+  );
+  GViewPortResizeMode get resizeMode => _resizeMode.value;
+  set resizeMode(GViewPortResizeMode value) => _resizeMode.value = value;
 
   /// The minimum value range when scaling.
   final double? minValueRange;
@@ -88,6 +88,7 @@ class GValueViewPort extends ChangeNotifier {
     double? initialStartValue,
     required this.valuePrecision,
     this.autoScaleStrategy,
+    GViewPortResizeMode? resizeMode,
     int animationMilliseconds = 200,
     this.onRangeUpdate,
     this.maxValueRange,
@@ -113,6 +114,9 @@ class GValueViewPort extends ChangeNotifier {
     }
     _range.update(initialStartValue ?? 0, initialEndValue ?? 1);
     _animationMilliseconds.value = animationMilliseconds;
+    if (resizeMode != null) {
+      _resizeMode.value = resizeMode;
+    }
   }
 
   void initializeAnimation(TickerProvider vsync) {
@@ -219,7 +223,7 @@ class GValueViewPort extends ChangeNotifier {
 
   /// update the viewport range when view size changed (ignored when auto scaling is on).
   void resize(double fromSize, double toSize, bool notify) {
-    if (viewPortResizeMode == GViewPortResizeMode.keepRange ||
+    if (resizeMode == GViewPortResizeMode.keepRange ||
         fromSize == toSize ||
         !isValid ||
         autoScaleFlg) {
@@ -229,7 +233,7 @@ class GValueViewPort extends ChangeNotifier {
     if (valueDensityCurrent <= 0) {
       return;
     }
-    switch (viewPortResizeMode) {
+    switch (resizeMode) {
       case GViewPortResizeMode.keepStart:
         setRange(
           startValue: startValue,

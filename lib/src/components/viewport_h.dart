@@ -96,11 +96,11 @@ class GPointViewPort extends ChangeNotifier {
   final GPointViewPortAutoScaleStrategy? autoScaleStrategy;
 
   /// Defines the behavior of how to update the viewport range when view size changed.
-  final GValue<GViewPortResizeMode> _viewPortResizeMode =
-      GValue<GViewPortResizeMode>(GViewPortResizeMode.keepEnd);
-  GViewPortResizeMode get viewPortResizeMode => _viewPortResizeMode.value;
-  set viewPortResizeMode(GViewPortResizeMode value) =>
-      _viewPortResizeMode.value = value;
+  final GValue<GViewPortResizeMode> _resizeMode = GValue<GViewPortResizeMode>(
+    GViewPortResizeMode.keepEnd,
+  );
+  GViewPortResizeMode get resizeMode => _resizeMode.value;
+  set resizeMode(GViewPortResizeMode value) => _resizeMode.value = value;
 
   /// The animation milliseconds when auto scaling.
   ///
@@ -119,6 +119,7 @@ class GPointViewPort extends ChangeNotifier {
     double? initialStartPoint,
     double? initialEndPoint,
     this.autoScaleStrategy = const GPointViewPortAutoScaleStrategyLatest(),
+    GViewPortResizeMode? resizeMode,
     int animationMilliseconds = 200,
     this.minPointWidth = 2,
     this.maxPointWidth = 100,
@@ -159,6 +160,9 @@ class GPointViewPort extends ChangeNotifier {
       );
     }
     _animationMilliseconds.value = animationMilliseconds;
+    if (resizeMode != null) {
+      _resizeMode.value = resizeMode;
+    }
   }
 
   void initializeAnimation(TickerProvider vsync) {
@@ -295,7 +299,7 @@ class GPointViewPort extends ChangeNotifier {
 
   /// update the viewport range when view size changed
   void resize(double fromSize, double toSize, bool notify) {
-    if (viewPortResizeMode == GViewPortResizeMode.keepRange ||
+    if (resizeMode == GViewPortResizeMode.keepRange ||
         fromSize == toSize ||
         !isValid) {
       return;
@@ -304,7 +308,7 @@ class GPointViewPort extends ChangeNotifier {
     if (pointSizeCurrent <= 0) {
       return;
     }
-    switch (viewPortResizeMode) {
+    switch (resizeMode) {
       case GViewPortResizeMode.keepStart:
         final newEndPoint = startPoint + toSize / pointSizeCurrent;
         setRange(
