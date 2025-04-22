@@ -62,8 +62,6 @@ class GChartWidgetState extends State<GChartWidget> {
   bool printEvents = false;
   MouseCursor cursor = SystemMouseCursors.basic;
 
-  void repaint() {}
-
   void initializeChart() {
     widget.chart.initialize(vsync: widget.tickerProvider);
     widget.chart.mouseCursor.addListener(cursorChanged);
@@ -146,10 +144,7 @@ class GChartWidgetState extends State<GChartWidget> {
                     child: RepaintBoundary(
                       child: CustomPaint(
                         size: chart.size,
-                        painter: GChartPainter(
-                          chart: chart,
-                          repaintListener: chart,
-                        ),
+                        painter: GChartPainter(chart: chart),
                       ),
                     ),
                     onPointerDown: (PointerDownEvent details) {
@@ -287,8 +282,7 @@ class GChartWidgetState extends State<GChartWidget> {
 
 class GChartPainter extends CustomPainter {
   final GChart chart;
-  GChartPainter({required this.chart, Listenable? repaintListener})
-    : super(repaint: repaintListener);
+  GChartPainter({required this.chart}) : super(repaint: chart);
 
   @override
   void paint(Canvas canvas, Size size) {

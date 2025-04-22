@@ -1,3 +1,16 @@
+## 0.2.2
+2025-04-22
+- **[breaking change]** code refactoring.
+  - remove `GGraphAreaTheme`.`styleValueAboveLine` and `styleValueBelowLine`.
+  - rename `GGraphAreaTheme`.`styleAboveArea`, `styleAboveArea` to `styleAboveBase`, `styleBelowBase`.
+  - move `GGraph`.`layer`, `hitTestMode`, `highlight` to parent `GComponent` class.
+  - remove `GGraphOhlcTheme`.`lineStyleMinus` and `lineStylePlus`.
+  - remove `PaintStyle`.`elevation` and `PaintStyle`.
+- draw point value label (time string) to tooltip.
+- fix notifyListeners error after disposed.
+- add `autoScaleFlg` to `GPointViewPort` (fix issue [#34](https://github.com/cjjapan/financial_chart/issues/34)).
+- update examples.  
+
 ## 0.2.1
 2025-04-16
 - **[breaking change]** rename `HitTestMode` to `GHitTestMode`.

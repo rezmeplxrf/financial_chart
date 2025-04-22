@@ -56,8 +56,6 @@ class PaintStyle extends Equatable {
     this.strokeCap,
     this.strokeJoin,
     this.strokeMiterLimit,
-    this.elevation,
-    Color? shadowColor,
     this.dash,
     this.dashOffset,
   }) : assert(isSingle([fillColor, fillGradient, fillShader], allowNone: true)),
@@ -73,14 +71,18 @@ class PaintStyle extends Equatable {
                  strokeJoin == null ||
                  strokeMiterLimit == null),
        ),
-       assert(elevation != null || shadowColor == null),
-       assert(dash != null || dashOffset == null),
-       shadowColor =
-           elevation == null
-               ? null
-               : fillColor ?? (strokeColor ?? const Color(0xFF000000)) {
+       assert(dash != null || dashOffset == null) {
     _fillPaint = _createFillPaint();
     _strokePaint = _createStrokePaint();
+    isSimple =
+        (fillGradient == null &&
+            fillShader == null &&
+            strokeGradient == null &&
+            strokeShader == null &&
+            gradientBounds == null &&
+            dash == null &&
+            dashOffset == null);
+    isEmpty = (_fillPaint == null && _strokePaint == null);
   }
 
   PaintStyle copyWith({
@@ -114,8 +116,6 @@ class PaintStyle extends Equatable {
       strokeCap: strokeCap ?? this.strokeCap,
       strokeJoin: strokeJoin ?? this.strokeJoin,
       strokeMiterLimit: strokeMiterLimit ?? this.strokeMiterLimit,
-      elevation: elevation ?? this.elevation,
-      shadowColor: shadowColor ?? this.shadowColor,
       dash: dash ?? this.dash,
       dashOffset: dashOffset ?? this.dashOffset,
     );
@@ -125,7 +125,9 @@ class PaintStyle extends Equatable {
   late final Paint? _strokePaint;
 
   Paint? getFillPaint({Rect? gradientBounds}) {
-    if (gradientBounds == null || fillGradient == null) {
+    if (gradientBounds == null ||
+        gradientBounds == this.gradientBounds ||
+        fillGradient == null) {
       return _fillPaint; // return cached paint
     }
     return _createFillPaint(gradientBounds: gradientBounds);
@@ -139,7 +141,7 @@ class PaintStyle extends Equatable {
         fillPaint.shader = fillShader;
       } else if (fillGradient != null) {
         fillPaint.shader = fillGradient!.createShader(
-          gradientBounds ?? (this.gradientBounds!),
+          gradientBounds ?? this.gradientBounds ?? Rect.zero,
         );
       } else {
         fillPaint.color = fillColor!;
@@ -153,7 +155,9 @@ class PaintStyle extends Equatable {
   }
 
   Paint? getStrokePaint({Rect? gradientBounds}) {
-    if (gradientBounds == null || strokeGradient == null) {
+    if (gradientBounds == null ||
+        gradientBounds == this.gradientBounds ||
+        strokeGradient == null) {
       return _strokePaint; // return cached paint
     }
     return _createStrokePaint(gradientBounds: gradientBounds);
@@ -168,7 +172,7 @@ class PaintStyle extends Equatable {
         strokePaint.shader = strokeShader;
       } else if (strokeGradient != null) {
         strokePaint.shader = strokeGradient!.createShader(
-          gradientBounds ?? (this.gradientBounds!),
+          gradientBounds ?? this.gradientBounds ?? Rect.zero,
         );
       } else {
         strokePaint.color = strokeColor!;
@@ -193,6 +197,15 @@ class PaintStyle extends Equatable {
     }
     return null;
   }
+
+  late final bool isEmpty;
+
+  bool get isNotEmpty => !isEmpty;
+
+  /// Whether the style is simple with only pure colors and strokeWidth.
+  ///
+  /// If true, the style would be used for optimization by apply batch drawing.
+  late final bool isSimple;
 
   /// The color to fill the shape.
   ///
@@ -258,15 +271,6 @@ class PaintStyle extends Equatable {
   /// is not null.
   final double? strokeMiterLimit;
 
-  /// The elevation of the shape's shadow.
-  final double? elevation;
-
-  /// The color of the shape's shadow.
-  ///
-  /// It can only be set when [elevation] is not null. If null, it will be same
-  /// as [fillColor] (if fillColor is set) or Color(0xFF000000).
-  final Color? shadowColor;
-
   /// The dash list of the shape's outlines.
   final List<double>? dash;
 
@@ -287,8 +291,6 @@ class PaintStyle extends Equatable {
     strokeCap,
     strokeJoin,
     strokeMiterLimit,
-    elevation,
-    shadowColor,
     dash,
     dashOffset,
   ];

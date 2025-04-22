@@ -127,9 +127,11 @@ class GChartInteractionHandler {
         panel.graphs[g].highlight = false;
       }
     }
-    final hit = hitTestGraph(position: position);
-    if (hit != null) {
-      hit.$2.highlight = true;
+    if (!(_chart.pointViewPort.isScaling || _chart.pointViewPort.isAnimating)) {
+      final hit = hitTestGraph(position: position);
+      if (hit != null) {
+        hit.$2.highlight = true;
+      }
     }
     _notify();
   }
@@ -153,11 +155,13 @@ class GChartInteractionHandler {
             pointViewPort.startPoint - distance,
             pointViewPort.endPoint - distance,
           );
+          pointViewPort.autoScaleFlg = false;
           pointViewPort.animateToRange(_chart, newRange, true, false);
         } else if (_chart.pointerScrollMode == GPointerScrollMode.zoom) {
           final centerPoint =
               pointViewPort.positionToPoint(area, position.dx).toDouble();
           final scaleRatio = 1 + scrollDelta.dy / area.height;
+          pointViewPort.autoScaleFlg = false;
           pointViewPort.zoomUpdate(
             pointViewPort.range,
             area,
@@ -231,7 +235,6 @@ class GChartInteractionHandler {
       _hookScaleEnd!(velocity);
       _hookScaleUpdate = null;
       _hookScaleEnd = null;
-      _notify();
     }
     _notify();
   }
@@ -383,6 +386,7 @@ class GChartInteractionHandler {
           //print("scaling: panel=$panel, hAxis=$a");
           GPointViewPort pointViewPort = _chart.pointViewPort;
           pointViewPort.interactionStart();
+          pointViewPort.autoScaleFlg = false;
           double lastX = start.dx;
           _hookScaleUpdate = ({
             required Offset position,
@@ -516,6 +520,7 @@ class GChartInteractionHandler {
     );
     pointViewPort.interactionStart();
     pointViewPort.stopAnimation();
+    pointViewPort.autoScaleFlg = false;
     bool scaleValue = !valueViewPort.autoScaleFlg;
     if (scaleValue) {
       valueViewPort.interactionStart();

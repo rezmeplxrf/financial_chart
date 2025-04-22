@@ -1,9 +1,8 @@
-import '../../components/graph/graph.dart';
+import '../../components/components.dart';
 import 'line_render.dart';
-import 'line_theme.dart';
 
 /// Line graph
-class GGraphLine extends GGraph<GGraphLineTheme> {
+class GGraphLine<T extends GGraphTheme> extends GGraph<T> {
   static const String typeName = "line";
 
   /// The key of the series value in the data source.
@@ -17,9 +16,10 @@ class GGraphLine extends GGraph<GGraphLineTheme> {
     super.hitTestMode,
     super.crosshairHighlightValueKeys,
     super.overlayMarkers,
-    super.theme,
+    T? theme,
     super.render,
   }) {
+    super.theme = theme;
     super.render = render ?? GGraphLineRender();
   }
 

@@ -72,8 +72,18 @@ abstract class GRender<C extends GComponent, T extends GComponentTheme> {
     required Canvas canvas,
     required Path path,
     required PaintStyle style,
+    bool ignoreDash = false,
+    bool fillOnly = false,
+    bool strokeOnly = false,
   }) {
-    GRenderUtil.drawPath(canvas: canvas, path: path, style: style);
+    GRenderUtil.drawPath(
+      canvas: canvas,
+      path: path,
+      style: style,
+      ignoreDash: ignoreDash,
+      fillOnly: fillOnly,
+      strokeOnly: strokeOnly,
+    );
   }
 
   Rect drawText({

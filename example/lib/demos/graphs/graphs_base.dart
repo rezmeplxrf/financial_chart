@@ -14,6 +14,9 @@ class DemoGraphBasePage extends DemoBasePage {
 }
 
 class DemoGraphBasePageState extends DemoBasePageState {
+  final Stopwatch _stopwatch = Stopwatch();
+  final ValueNotifier<double> _renderTime = ValueNotifier(0);
+
   @override
   GChart buildChart(GDataSource dataSource) {
     final chartTheme = themes.first;
@@ -76,6 +79,17 @@ class DemoGraphBasePageState extends DemoBasePageState {
       pointViewPort: GPointViewPort(),
       panels: panels,
       theme: chartTheme,
+      preRender: (_, _, _) {
+        _stopwatch
+          ..reset()
+          ..start();
+      },
+      postRender: (_, _, _) {
+        _stopwatch.stop();
+        WidgetsBinding.instance.addPostFrameCallback((f) {
+          _renderTime.value = _stopwatch.elapsedMicroseconds / 1000.0;
+        });
+      },
     );
   }
 
@@ -93,6 +107,18 @@ class DemoGraphBasePageState extends DemoBasePageState {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        AppLabelWidget(
+          label: "Render time",
+          child: ValueListenableBuilder<double>(
+            valueListenable: _renderTime,
+            builder: (context, value, child) {
+              return Text(
+                "${value.toStringAsFixed(2)} ms",
+                style: const TextStyle(fontSize: 12),
+              );
+            },
+          ),
+        ),
         buildThemeSelectWidget(context),
         AppLabelWidget(
           label: "GGraph.visible",

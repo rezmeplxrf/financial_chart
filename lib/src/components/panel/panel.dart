@@ -102,6 +102,7 @@ class GPanel extends GComponent {
   GGraph get activeGraph => graphs.last;
 
   GPanel({
+    super.id,
     required this.pointAxes,
     required this.valueAxes,
     required this.valueViewPorts,

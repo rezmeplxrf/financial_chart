@@ -1,10 +1,9 @@
-import '../../components/graph/graph.dart';
+import '../../components/components.dart';
 import '../../values/value.dart';
 import 'ohlc_render.dart';
-import 'ohlc_theme.dart';
 
 /// OHLC (and Candle) graph
-class GGraphOhlc extends GGraph<GGraphOhlcTheme> {
+class GGraphOhlc<T extends GGraphTheme> extends GGraph<T> {
   static const String typeName = "ohlc";
 
   /// The four keys of the OHLC values in the data source.
@@ -28,10 +27,11 @@ class GGraphOhlc extends GGraph<GGraphOhlcTheme> {
     super.hitTestMode,
     super.crosshairHighlightValueKeys,
     super.overlayMarkers,
-    super.theme,
+    T? theme,
     super.render,
   }) : _drawAsCandle = GValue(drawAsCandle) {
     assert(ohlcValueKeys.length == 4, "The length of ohlcValueKeys must be 4.");
+    super.theme = theme;
     super.render = render ?? GGraphOhlcRender();
   }
 }

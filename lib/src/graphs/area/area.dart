@@ -1,13 +1,12 @@
-import '../../components/graph/graph.dart';
+import '../../components/components.dart';
 import '../../values/value.dart';
 import 'area_render.dart';
-import 'area_theme.dart';
 
 /// Area graph.
 ///
 /// if [baseValueKey] or [baseValue] is not null, the area will be the space between the value and the base value.
 /// else the area will be the space between the value and bottom of the viewport.
-class GGraphArea extends GGraph<GGraphAreaTheme> {
+class GGraphArea<T extends GGraphTheme> extends GGraph<T> {
   static const String typeName = "area";
 
   /// The key of the series value in the data source.
@@ -34,10 +33,11 @@ class GGraphArea extends GGraph<GGraphAreaTheme> {
     super.hitTestMode,
     super.crosshairHighlightValueKeys,
     super.overlayMarkers,
-    super.theme,
+    T? theme,
     super.render,
   }) {
-    super.render = render ?? GGraphAreaRender();
+    super.theme = theme;
+    super.render = super.render ?? GGraphAreaRender();
     _baseValueKey.value = baseValueKey;
     _baseValue.value = baseValue;
   }

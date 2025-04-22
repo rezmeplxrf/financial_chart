@@ -44,31 +44,38 @@ class GRenderUtil {
     required Path path,
     required PaintStyle style,
     Rect? gradientBounds,
+    bool ignoreDash = false,
+    bool fillOnly = false,
+    bool strokeOnly = false,
   }) {
-    final fillBounds =
-        (style.fillGradient == null)
-            ? null
-            : (gradientBounds ?? style.gradientBounds ?? path.getBounds());
-    final fillPaint = style.getFillPaint(gradientBounds: fillBounds);
-    if (fillPaint != null) {
-      canvas.drawPath(path, fillPaint);
+    if (!strokeOnly) {
+      final fillBounds =
+          (style.fillGradient == null)
+              ? null
+              : (gradientBounds ?? style.gradientBounds ?? path.getBounds());
+      final fillPaint = style.getFillPaint(gradientBounds: fillBounds);
+      if (fillPaint != null) {
+        canvas.drawPath(path, fillPaint);
+      }
     }
 
-    final strokeBounds =
-        (style.strokeGradient == null)
-            ? null
-            : (gradientBounds ?? style.gradientBounds ?? path.getBounds());
-    final strokePaint = style.getStrokePaint(gradientBounds: strokeBounds);
-    if (strokePaint != null) {
-      Path? theDashPath;
-      if (style.dash != null) {
-        theDashPath = dashPath(
-          path,
-          dashArray: CircularIntervalList(style.dash!),
-          dashOffset: style.dashOffset,
-        );
+    if (!fillOnly) {
+      final strokeBounds =
+          (style.strokeGradient == null)
+              ? null
+              : (gradientBounds ?? style.gradientBounds ?? path.getBounds());
+      final strokePaint = style.getStrokePaint(gradientBounds: strokeBounds);
+      if (strokePaint != null) {
+        Path? theDashPath;
+        if (!ignoreDash && style.dash != null) {
+          theDashPath = dashPath(
+            path,
+            dashArray: CircularIntervalList(style.dash!),
+            dashOffset: style.dashOffset,
+          );
+        }
+        canvas.drawPath(theDashPath ?? path, strokePaint);
       }
-      canvas.drawPath(theDashPath ?? path, strokePaint);
     }
   }
 

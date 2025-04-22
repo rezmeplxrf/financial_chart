@@ -2,8 +2,7 @@ import 'dart:ui';
 
 import '../../values/value.dart';
 import '../../values/pair.dart';
-import '../component.dart';
-import 'crosshair_render.dart';
+import '../components.dart';
 
 /// Crosshair with vertical and horizontal lines over the chart when pointer is moving over it.
 class GCrosshair extends GComponent {
@@ -40,7 +39,7 @@ class GCrosshair extends GComponent {
     super.id,
     super.visible,
     super.theme,
-    super.render = const GCrosshairRender(),
+    GRender? render,
     bool snapToPoint = true,
     bool pointLinesVisible = true,
     bool valueLinesVisible = true,
@@ -50,7 +49,9 @@ class GCrosshair extends GComponent {
        _pointLinesVisible = GValue<bool>(pointLinesVisible),
        _valueLinesVisible = GValue<bool>(valueLinesVisible),
        _pointAxisLabelsVisible = GValue<bool>(pointLabelsVisible),
-       _valueAxisLabelsVisible = GValue<bool>(valueLabelsVisible);
+       _valueAxisLabelsVisible = GValue<bool>(valueLabelsVisible) {
+    this.render = render ?? const GCrosshairRender();
+  }
 
   setCrossPosition(double x, double y) {
     crossPosition.update(x, y);

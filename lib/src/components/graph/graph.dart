@@ -1,4 +1,3 @@
-import '../../values/value.dart';
 import '../marker/overlay_marker.dart';
 import '../render.dart';
 import 'graph_render.dart';
@@ -13,32 +12,11 @@ import '../viewport_v.dart';
 class GGraph<T extends GGraphTheme> extends GComponent {
   static const String typeName = 'graph';
 
-  static const int kDefaultLayer = 1000;
-
-  /// The layer of the graph. highest layer will be on the top.
-  final GValue<int> _layer;
-  int get layer => _layer.value;
-  set layer(int value) => _layer.value = value;
-
-  /// Whether the graph is highlighted (or selected).
-  final GValue<bool> _highlight = GValue<bool>(false);
-  bool get highlight => _highlight.value;
-  set highlight(bool value) => _highlight.value = value;
-
   /// The value viewport id of the graph.
   ///
   /// see [GValueViewPort] for more details.
   /// point viewport is shared for the whole panel. see [GPanel.pointViewPortId]
   final String valueViewPortId;
-
-  /// The hit test mode of the graph.
-  ///
-  /// see [GHitTestMode] for more details.
-  final GValue<GHitTestMode> _hitTestMode = GValue<GHitTestMode>(
-    GHitTestMode.border,
-  );
-  GHitTestMode get hitTestMode => _hitTestMode.value;
-  set hitTestMode(GHitTestMode value) => _hitTestMode.value = value;
 
   final List<String> crosshairHighlightValueKeys = [];
 
@@ -47,18 +25,16 @@ class GGraph<T extends GGraphTheme> extends GComponent {
   final List<GOverlayMarker> _overlayMarkers = [];
 
   GGraph({
-    String? id,
+    super.id,
     this.valueViewPortId = "", // empty means the default view port id
-    int layer = kDefaultLayer,
+    super.layer,
     super.visible,
-    GHitTestMode hitTestMode = GHitTestMode.border,
-    T? theme,
-    GGraphRender? render,
+    super.hitTestMode,
+    T? super.theme,
+    GGraphRender? super.render,
     List<String>? crosshairHighlightValueKeys,
     List<GOverlayMarker> overlayMarkers = const [],
-  }) : _layer = GValue<int>(layer),
-       super(id: id, render: render, theme: theme) {
-    _hitTestMode.value = hitTestMode;
+  }) {
     if (overlayMarkers.isNotEmpty) {
       _overlayMarkers.addAll(overlayMarkers);
     }

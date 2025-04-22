@@ -1,11 +1,8 @@
-import '../../components/component.dart';
-import '../../components/graph/graph.dart';
-import '../../components/ticker.dart';
+import '../../components/components.dart';
 import 'grids_render.dart';
-import 'grids_theme.dart';
 
 /// Grid lines
-class GGraphGrids extends GGraph<GGraphGridsTheme> {
+class GGraphGrids<T extends GGraphTheme> extends GGraph<T> {
   static const String typeName = "grids";
 
   /// The value ticker strategy to decide the grid lines along value axis.
@@ -23,9 +20,12 @@ class GGraphGrids extends GGraph<GGraphGridsTheme> {
     this.pointTickerStrategy = const GPointTickerStrategyDefault(),
     super.hitTestMode = GHitTestMode.none,
     super.overlayMarkers,
-    super.theme,
-    super.render = const GGraphGridsRender(),
-  });
+    T? theme,
+    super.render,
+  }) {
+    super.theme = theme;
+    super.render = super.render ?? const GGraphGridsRender();
+  }
 
   @override
   String get type => typeName;

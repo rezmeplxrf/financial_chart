@@ -27,10 +27,16 @@ class DemoGraphOhlcPageState extends DemoGraphBasePageState {
     final t = chart!.theme.graphThemes[GGraphOhlc.typeName]! as GGraphOhlcTheme;
     return t.copyWith(
       barWidthRatio: 0.8,
-      barStylePlus: PaintStyle(fillColor: Colors.blue),
-      barStyleMinus: PaintStyle(fillColor: Colors.red),
-      lineStylePlus: PaintStyle(strokeColor: Colors.blue),
-      lineStyleMinus: PaintStyle(strokeColor: Colors.red),
+      barStylePlus: PaintStyle(
+        fillColor: Colors.blue,
+        strokeColor: Colors.orange,
+        strokeWidth: 1,
+      ),
+      barStyleMinus: PaintStyle(
+        fillColor: Colors.red,
+        strokeColor: Colors.teal,
+        strokeWidth: 1,
+      ),
     );
   }
 
@@ -75,8 +81,16 @@ class DemoGraphBarPageState extends DemoGraphBasePageState {
     final t = chart!.theme.graphThemes[GGraphBar.typeName]! as GGraphBarTheme;
     return t.copyWith(
       barWidthRatio: 0.4,
-      barStyleAboveBase: PaintStyle(fillColor: Colors.blue),
-      barStyleBelowBase: PaintStyle(fillColor: Colors.purple),
+      barStyleAboveBase: PaintStyle(
+        fillColor: Colors.blue,
+        strokeColor: Colors.orange,
+        strokeWidth: 1,
+      ),
+      barStyleBelowBase: PaintStyle(
+        fillColor: Colors.purple,
+        strokeColor: Colors.blueGrey,
+        strokeWidth: 1,
+      ),
     );
   }
 
@@ -156,10 +170,22 @@ class DemoGraphAreaPageState extends DemoGraphBasePageState {
   GGraph getGraph() => graph;
   @override
   GGraphTheme getGraphTheme() {
-    final t = chart!.theme.graphThemes[GGraphArea.typeName]! as GGraphAreaTheme;
-    return t.copyWith(
-      styleAboveArea: PaintStyle(fillColor: Colors.teal.withAlpha(100)),
-      styleBelowArea: PaintStyle(fillColor: Colors.purple.withAlpha(100)),
+    return GGraphAreaTheme(
+      styleBaseLine: PaintStyle(
+        strokeColor: Colors.orange,
+        strokeWidth: 1,
+        dash: const [3, 3],
+      ),
+      styleAboveBase: PaintStyle(
+        fillColor: Colors.teal.withAlpha(100),
+        strokeWidth: 1,
+        strokeColor: Colors.teal,
+      ),
+      styleBelowBase: PaintStyle(
+        fillColor: Colors.purple.withAlpha(100),
+        strokeWidth: 1,
+        strokeColor: Colors.purple,
+      ),
     );
   }
 

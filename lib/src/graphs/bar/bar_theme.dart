@@ -5,9 +5,11 @@ import '../../style/paint_style.dart';
 
 /// Theme for grid lines
 class GGraphBarTheme extends GGraphTheme {
+  final double barWidthRatio;
+
   final PaintStyle barStyleAboveBase;
   final PaintStyle barStyleBelowBase;
-  final double barWidthRatio;
+
   const GGraphBarTheme({
     required this.barStyleAboveBase,
     required this.barStyleBelowBase,
@@ -15,7 +17,7 @@ class GGraphBarTheme extends GGraphTheme {
     super.axisMarkerTheme,
     super.overlayMarkerTheme,
     super.highlightMarkerTheme,
-  });
+  }) : assert(barWidthRatio > 0 && barWidthRatio <= 1);
 
   GGraphBarTheme copyWith({
     PaintStyle? barStyleAboveBase,

@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:vector_math/vector_math.dart';
+import 'package:flutter/material.dart';
 
 import '../../chart.dart';
 import '../../components/component.dart';
@@ -8,6 +8,7 @@ import '../../components/graph/graph_render.dart';
 import '../../components/panel/panel.dart';
 import '../../components/viewport_h.dart';
 import '../../components/viewport_v.dart';
+import '../../vector/vectors.dart';
 import 'area.dart';
 import 'area_theme.dart';
 
@@ -30,8 +31,8 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
     // else the base line will be the bottom of the valueViewPort
     final List<Offset> valuePoints = [];
     final List<Offset> basePoints = [];
-    _hitTestLinePoints1.clear();
-    _hitTestLinePoints2.clear();
+    _hitTestLinePoints1.clear(); // value lines for hit test
+    _hitTestLinePoints2.clear(); // base lines for hit test
 
     final List<Vector2> highlightMarks = <Vector2>[];
     double highlightInterval = theme.highlightMarkerTheme?.interval ?? 1000.0;
@@ -53,11 +54,13 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
       double valuePosition = valueViewPort.valueToPosition(area, value);
       double? baseValue;
       if (graph.baseValueKey != null) {
+        // if baseValueKey is specified, use it to get the base value
         baseValue = dataSource.getSeriesValue(
           point: point,
           key: graph.baseValueKey!,
         );
       } else {
+        // if baseValue is specified use that value or use the bottom of the valueViewPort as base value
         baseValue = graph.baseValue ?? valueViewPort.startValue;
       }
       double basePosition = valueViewPort.valueToPosition(area, baseValue!);
@@ -79,54 +82,82 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
       }
     }
 
+    // add intersection points between value line and base line
+    if (valuePoints.isEmpty) {
+      return;
+    }
+    _drawGraph(canvas, theme, valuePoints, basePoints);
+    drawHighlightMarks(
+      canvas: canvas,
+      graph: graph,
+      theme: theme,
+      highlightMarks: highlightMarks,
+    );
+  }
+
+  void _drawGraph(
+    Canvas canvas,
+    GGraphAreaTheme theme,
+    List<Offset> valuePoints,
+    List<Offset> basePoints,
+  ) {
     final List<Offset> valueLinePoints = [];
     final List<Offset> baseLinePoints = [];
     final List<Offset> areaPoints = [];
-    if (valuePoints.isNotEmpty) {
-      areaPoints.add(valuePoints.first);
-      areaPoints.add(basePoints.first);
-      valueLinePoints.add(valuePoints.first);
-      baseLinePoints.add(basePoints.first);
-      for (int i = 0; i < valuePoints.length - 1; i++) {
-        // find cross point of value line and base line so we can apply different style for above and below
-        final Offset p1 = valuePoints[i];
-        final Offset p2 = valuePoints[i + 1];
-        final Offset p3 = basePoints[i];
-        final Offset p4 = basePoints[i + 1];
-        final intersection = findIntersectionPointOfTwoLineSegments(
+    areaPoints.add(valuePoints.first);
+    areaPoints.add(basePoints.first);
+    valueLinePoints.add(valuePoints.first);
+    baseLinePoints.add(basePoints.first);
+    for (int i = 0; i < valuePoints.length; i++) {
+      // find cross point of value line and base line so we can apply different style for above and below
+      final Offset p1 = valuePoints[i];
+      final Offset p3 = basePoints[i];
+      final isAbove = p1.dy < p3.dy;
+
+      Offset? intersection;
+      Offset? p2, p4;
+      if (i < valuePoints.length - 1) {
+        p2 = valuePoints[i + 1];
+        p4 = basePoints[i + 1];
+        intersection = LineUtil.findIntersectionPointOfTwoLineSegments(
           p1,
           p2,
           p3,
           p4,
         );
-        if (intersection == null) {
+      }
+      if (intersection == null) {
+        // no intersection, just add the next points
+        if (p2 != null && p4 != null) {
           areaPoints.insert(0, p2);
           areaPoints.add(p4);
           valueLinePoints.add(p2);
           baseLinePoints.add(p4);
-        } else {
-          final isAbove = p1.dy < p3.dy;
-          areaPoints.insert(0, intersection);
-          areaPoints.add(intersection);
-          valueLinePoints.add(intersection);
-          baseLinePoints.add(intersection);
+        }
+      } else {
+        areaPoints.insert(0, intersection);
+        areaPoints.add(intersection);
+        valueLinePoints.add(intersection);
+        baseLinePoints.add(intersection);
+      }
 
-          Path areaPath = addPolygonPath(points: areaPoints, close: true);
-          drawPath(
-            canvas: canvas,
-            path: areaPath,
-            style: isAbove ? theme.styleAboveArea : theme.styleBelowArea,
-          );
-          Path valueLinesPath = addPolygonPath(
-            points: valueLinePoints,
-            close: false,
-          );
-          drawPath(
-            canvas: canvas,
-            path: valueLinesPath,
-            style:
-                isAbove ? theme.styleValueAboveLine : theme.styleValueBelowLine,
-          );
+      if (intersection != null || i == valuePoints.length - 1) {
+        final style = isAbove ? theme.styleAboveBase : theme.styleBelowBase;
+
+        Path areaPath = addPolygonPath(points: areaPoints, close: true);
+        drawPath(canvas: canvas, path: areaPath, style: style, fillOnly: true);
+
+        Path valueLinesPath = addPolygonPath(
+          points: valueLinePoints,
+          close: false,
+        );
+        drawPath(
+          canvas: canvas,
+          path: valueLinesPath,
+          style: style,
+          strokeOnly: true,
+        );
+        if (theme.styleBaseLine != null) {
           Path baseLinesPath = addPolygonPath(
             points: baseLinePoints,
             close: false,
@@ -134,9 +165,22 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
           drawPath(
             canvas: canvas,
             path: baseLinesPath,
-            style: theme.styleBaseLine,
+            style: theme.styleBaseLine ?? style,
+            strokeOnly: true,
           );
-
+        } else if (style.getStrokePaint() != null) {
+          Path baseLinesPath = addPolygonPath(
+            points: baseLinePoints,
+            close: false,
+          );
+          drawPath(
+            canvas: canvas,
+            path: baseLinesPath,
+            style: style,
+            strokeOnly: true,
+          );
+        }
+        if (intersection != null && p2 != null && p4 != null) {
           areaPoints
             ..clear()
             ..addAll([p2, intersection, p4]);
@@ -148,86 +192,7 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
             ..addAll([intersection, p4]);
         }
       }
-      if (areaPoints.isNotEmpty) {
-        Path areaPath = addPolygonPath(points: areaPoints, close: true);
-        drawPath(
-          canvas: canvas,
-          path: areaPath,
-          style:
-              valuePoints.last.dy < basePoints.last.dy
-                  ? theme.styleAboveArea
-                  : theme.styleBelowArea,
-        );
-        areaPoints.clear();
-      }
-      if (valueLinePoints.isNotEmpty) {
-        Path valueLinesPath = addPolygonPath(
-          points: valueLinePoints,
-          close: false,
-        );
-        drawPath(
-          canvas: canvas,
-          path: valueLinesPath,
-          style:
-              valuePoints.last.dy < basePoints.last.dy
-                  ? theme.styleValueAboveLine
-                  : theme.styleValueBelowLine,
-        );
-        valueLinePoints.clear();
-      }
-      if (baseLinePoints.isNotEmpty) {
-        Path baseLinesPath = addPolygonPath(
-          points: baseLinePoints,
-          close: false,
-        );
-        drawPath(
-          canvas: canvas,
-          path: baseLinesPath,
-          style: theme.styleBaseLine,
-        );
-        baseLinePoints.clear();
-      }
-
-      drawHighlightMarks(
-        canvas: canvas,
-        graph: graph,
-        theme: theme,
-        highlightMarks: highlightMarks,
-      );
     }
-  }
-
-  Offset? findIntersectionPointOfTwoLineSegments(
-    Offset p1,
-    Offset p2,
-    Offset p3,
-    Offset p4,
-  ) {
-    final double x1 = p1.dx;
-    final double y1 = p1.dy;
-    final double x2 = p2.dx;
-    final double y2 = p2.dy;
-    final double x3 = p3.dx;
-    final double y3 = p3.dy;
-    final double x4 = p4.dx;
-    final double y4 = p4.dy;
-
-    final double denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-    if (denominator == 0) {
-      return null;
-    }
-    final double x =
-        ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) /
-        denominator;
-    final double y =
-        ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) /
-        denominator;
-
-    final intersection = Offset(x, y);
-    if (x < p1.dx || x > p2.dx || x < p3.dx || x > p4.dx) {
-      return null;
-    }
-    return intersection;
   }
 
   final List<Vector2> _hitTestLinePoints1 = [];

@@ -143,6 +143,13 @@ class GThemeLight extends GTheme {
       strokeColor: Colors.grey,
       strokeWidth: 1,
     ),
+    pointStyle: LabelStyle(
+      textStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 12.0,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
     labelStyle: LabelStyle(
       textStyle: const TextStyle(
         color: Colors.black,
@@ -169,10 +176,16 @@ class GThemeLight extends GTheme {
   );
 
   static final GGraphOhlcTheme ohlcGraphTheme = GGraphOhlcTheme(
-    lineStylePlus: PaintStyle(strokeColor: Colors.redAccent, strokeWidth: 1),
-    barStylePlus: PaintStyle(fillColor: Colors.redAccent),
-    lineStyleMinus: PaintStyle(strokeColor: Colors.teal, strokeWidth: 1),
-    barStyleMinus: PaintStyle(fillColor: Colors.teal),
+    barStylePlus: PaintStyle(
+      fillColor: Colors.redAccent,
+      strokeWidth: 1,
+      strokeColor: Colors.redAccent,
+    ),
+    barStyleMinus: PaintStyle(
+      fillColor: Colors.teal,
+      strokeWidth: 1,
+      strokeColor: Colors.teal,
+    ),
     axisMarkerTheme: axisMarkerThemeDefault,
     highlightMarkerTheme: graphHighlightMarkThemeDefault,
   );
@@ -203,24 +216,15 @@ class GThemeLight extends GTheme {
   );
 
   static final GGraphAreaTheme areaGraphTheme = GGraphAreaTheme(
-    styleValueAboveLine: PaintStyle(strokeColor: Colors.blue, strokeWidth: 1),
-    styleValueBelowLine: PaintStyle(strokeColor: Colors.red, strokeWidth: 1),
-    styleBaseLine: PaintStyle(strokeColor: Colors.blue, strokeWidth: 1),
-    styleAboveArea: PaintStyle(
-      fillGradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [Colors.blue.withAlpha(200), Colors.blue.withAlpha(100)],
-      ),
-      gradientBounds: const Rect.fromLTRB(0, 0, 1000, 1000),
+    styleAboveBase: PaintStyle(
+      strokeColor: Colors.blue,
+      strokeWidth: 1,
+      fillColor: Colors.blue.withAlpha(100),
     ),
-    styleBelowArea: PaintStyle(
-      fillGradient: LinearGradient(
-        begin: Alignment.bottomCenter,
-        end: Alignment.topCenter,
-        colors: [Colors.red.withAlpha(200), Colors.red.withAlpha(100)],
-      ),
-      gradientBounds: const Rect.fromLTRB(0, 0, 1000, 1000),
+    styleBelowBase: PaintStyle(
+      strokeColor: Colors.red,
+      strokeWidth: 1,
+      fillColor: Colors.red.withAlpha(100),
     ),
     axisMarkerTheme: axisMarkerThemeDefault,
     overlayMarkerTheme: overlayMarkerThemeDefault,

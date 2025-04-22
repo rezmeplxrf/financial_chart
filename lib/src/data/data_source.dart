@@ -262,7 +262,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
           return;
         }
         _isLoading.value = true;
-        notifyListeners();
+        _notify();
         final expectedCount = toPoint - fromPoint + 1;
         await initialDataLoader!(pointCount: expectedCount).then((data) {
           if (data.isNotEmpty) {
@@ -276,14 +276,14 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
             _minPoint.value = 1;
             _maxPoint.value = -1;
           }
-          notifyListeners();
+          _notify();
         });
       } else {
         if (priorDataLoader != null &&
             fromPoint < firstPoint &&
             fromPoint >= _minPoint.value) {
           _isLoading.value = true;
-          notifyListeners();
+          _notify();
           final expectedCount = firstPoint - fromPoint;
           await priorDataLoader!(
                 pointCount: expectedCount,
@@ -299,14 +299,14 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
                   // no more data before this point
                   _minPoint.value = firstPoint;
                 }
-                notifyListeners();
+                _notify();
               });
         }
         if (afterDataLoader != null &&
             toPoint > lastPoint &&
             toPoint <= _maxPoint.value) {
           _isLoading.value = true;
-          notifyListeners();
+          _notify();
           final expectedCount = toPoint - lastPoint;
           await afterDataLoader!(
                 fromPointExclusive: lastPoint,
@@ -321,12 +321,18 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
                   // no more data after this point
                   _maxPoint.value = lastPoint;
                 }
-                notifyListeners();
+                _notify();
               });
         }
       }
     } finally {
       _isLoading.value = false;
+      _notify();
+    }
+  }
+
+  _notify() {
+    if (super.hasListeners) {
       notifyListeners();
     }
   }
