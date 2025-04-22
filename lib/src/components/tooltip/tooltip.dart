@@ -35,6 +35,11 @@ class GTooltip extends GComponent {
   /// the data keys which will be displayed in the tooltip.
   final List<String> dataKeys;
 
+  /// Whether to show the point value in the tooltip.
+  final GValue<bool> _showPointValue;
+  bool get showPointValue => _showPointValue.value;
+  set showPointValue(bool value) => _showPointValue.value = value;
+
   /// when [position] is [GTooltipPosition.followPointer], the tooltip will follow to the value position of this key.
   /// [followValueViewPortId] must be set also
   final GValue<String?> _followValueKey;
@@ -64,6 +69,7 @@ class GTooltip extends GComponent {
 
   GTooltip({
     GTooltipPosition position = GTooltipPosition.followPointer,
+    bool showPointValue = true,
     this.dataKeys = const [],
     String? followValueKey,
     String? followValueViewPortId,
@@ -72,6 +78,7 @@ class GTooltip extends GComponent {
     super.render = const GTooltipRender(),
     super.theme,
   }) : _position = GValue<GTooltipPosition>(position),
+       _showPointValue = GValue<bool>(showPointValue),
        _followValueKey = GValue<String?>(followValueKey),
        _followValueViewPortId = GValue<String?>(followValueViewPortId),
        _pointLineHighlightVisible = GValue<bool>(pointLineHighlightVisible),

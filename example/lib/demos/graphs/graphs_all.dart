@@ -17,6 +17,8 @@ class DemoGraphsPage extends DemoBasePage {
 }
 
 class DemoGraphsPageState extends DemoBasePageState {
+  final Stopwatch _stopwatch = Stopwatch();
+  final ValueNotifier<double> _renderTime = ValueNotifier(0);
   DemoGraphsPageState() {
     for (final theme in themes) {
       theme.graphThemes[GGraphStepLine.typeName] = GGraphStepLineTheme(
@@ -120,6 +122,17 @@ class DemoGraphsPageState extends DemoBasePageState {
       pointViewPort: GPointViewPort(),
       panels: panels,
       theme: chartTheme,
+      preRender: (_, _, _) {
+        _stopwatch
+          ..reset()
+          ..start();
+      },
+      postRender: (_, _, _) {
+        _stopwatch.stop();
+        WidgetsBinding.instance.addPostFrameCallback((f) {
+          _renderTime.value = _stopwatch.elapsedMicroseconds / 1000.0;
+        });
+      },
     );
   }
 
@@ -130,6 +143,18 @@ class DemoGraphsPageState extends DemoBasePageState {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        AppLabelWidget(
+          label: "Render time",
+          child: ValueListenableBuilder<double>(
+            valueListenable: _renderTime,
+            builder: (context, value, child) {
+              return Text(
+                "${value.toStringAsFixed(2)} ms",
+                style: const TextStyle(fontSize: 12),
+              );
+            },
+          ),
+        ),
         buildThemeSelectWidget(context),
         AppLabelWidget(
           label: "GGraphArea.layer",
@@ -141,13 +166,13 @@ class DemoGraphsPageState extends DemoBasePageState {
             onSelected: (String selected) {
               chart!.panels[0].findGraphById("area")!.layer =
                   (selected == "top")
-                      ? (GGraph.kDefaultLayer + 1)
-                      : (GGraph.kDefaultLayer - 1);
+                      ? (GComponent.kDefaultLayer + 1)
+                      : (GComponent.kDefaultLayer - 1);
               repaintChart();
             },
             selected:
                 (chart!.panels[0].findGraphById("area")!.layer <
-                        GGraph.kDefaultLayer)
+                        GComponent.kDefaultLayer)
                     ? "bottom"
                     : "top",
             labelResolver: (item) => item,

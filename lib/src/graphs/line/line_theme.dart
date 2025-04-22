@@ -5,9 +5,11 @@ import '../../components/graph/graph_theme.dart';
 
 /// Theme for line graph
 class GGraphLineTheme extends GGraphTheme {
-  final PaintStyle lineStyle;
   final double pointRadius;
+
+  final PaintStyle lineStyle;
   final PaintStyle pointStyle;
+
   const GGraphLineTheme({
     required this.lineStyle,
     this.pointRadius = 0,
@@ -15,7 +17,7 @@ class GGraphLineTheme extends GGraphTheme {
     super.axisMarkerTheme,
     super.overlayMarkerTheme,
     super.highlightMarkerTheme,
-  });
+  }) : assert(pointRadius >= 0);
 
   GGraphLineTheme copyWith({
     PaintStyle? lineStyle,

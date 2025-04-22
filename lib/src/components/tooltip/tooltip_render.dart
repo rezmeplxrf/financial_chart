@@ -33,6 +33,12 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
     if (area.left > crossPosition.dx || area.right < crossPosition.dx) {
       return;
     }
+    if (!chart.pointViewPort.isValid ||
+        chart.pointViewPort.isAnimating ||
+        chart.pointViewPort.isScaling) {
+      // skip rendering if point view port is animating or scaling
+      return;
+    }
     if (component.pointLineHighlightVisible ||
         component.valueLineHighlightVisible) {
       doRenderHighlight(
@@ -223,6 +229,14 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
     double valuesWidth = 0;
     double labelsHeight = 0;
     double valuesHeight = 0;
+    TextPainter? pointValuePainter;
+    if (tooltip.showPointValue) {
+      final (pointValueTextPainter, _, _) = GRenderUtil.createTextPainter(
+        text: dataSource.pointValueFormater(point, pointValue),
+        style: theme.pointStyle,
+      );
+      pointValuePainter = pointValueTextPainter;
+    }
     List<GPair<TextPainter>> textPainters = [];
     for (var key in tooltip.dataKeys) {
       final prop = dataSource.getSeriesProperty(key);
@@ -250,13 +264,15 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
     valuesHeight = valuesHeight - theme.rowSpacing;
 
     double frameWidth =
-        labelsWidth +
-        valuesWidth +
+        max(labelsWidth + valuesWidth, pointValuePainter?.size.width ?? 0) +
         theme.labelValueSpacing +
         theme.framePadding * 2 +
         theme.frameMargin * 2;
     double frameHeight =
         max(labelsHeight, valuesHeight) +
+        (pointValuePainter != null
+            ? (pointValuePainter.size.height + theme.pointRowSpacing)
+            : 0) +
         theme.framePadding * 2 +
         theme.frameMargin * 2;
 
@@ -288,6 +304,13 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
       theme.framePadding + theme.frameMargin,
       theme.framePadding + theme.frameMargin,
     );
+    if (pointValuePainter != null) {
+      pointValuePainter.paint(canvas, anchor);
+      anchor = anchor.translate(
+        0,
+        pointValuePainter.size.height + theme.pointRowSpacing,
+      );
+    }
     for (var labelValuePair in textPainters) {
       labelValuePair.first!.paint(canvas, anchor);
       labelValuePair.last!.paint(

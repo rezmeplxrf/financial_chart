@@ -23,10 +23,16 @@ class GTooltipTheme extends GComponentTheme {
   /// Spacing between label & value rows.
   final double rowSpacing;
 
-  /// Style of the tooltip label.
+  /// Style of the point value.
+  final LabelStyle pointStyle;
+
+  /// Spacing between point row and the first value row.
+  final double pointRowSpacing;
+
+  /// Style of the value label.
   final LabelStyle labelStyle;
 
-  /// Style of the tooltip value.
+  /// Style of the value.
   final LabelStyle valueStyle;
 
   /// Style of the highlighted point line/area.
@@ -37,6 +43,7 @@ class GTooltipTheme extends GComponentTheme {
 
   const GTooltipTheme({
     required this.frameStyle,
+    required this.pointStyle,
     required this.labelStyle,
     required this.valueStyle,
     this.pointHighlightStyle,
@@ -46,10 +53,12 @@ class GTooltipTheme extends GComponentTheme {
     this.frameMargin = 6,
     this.labelValueSpacing = 16,
     this.rowSpacing = 2,
+    this.pointRowSpacing = 6,
   });
 
   GTooltipTheme copyWith({
     PaintStyle? frameStyle,
+    LabelStyle? pointStyle,
     LabelStyle? labelStyle,
     LabelStyle? valueStyle,
     PaintStyle? pointHighlightStyle,
@@ -59,9 +68,11 @@ class GTooltipTheme extends GComponentTheme {
     double? frameMargin,
     double? labelValueSpacing,
     double? rowSpacing,
+    double? pointRowSpacing,
   }) {
     return GTooltipTheme(
       frameStyle: frameStyle ?? this.frameStyle,
+      pointStyle: pointStyle ?? this.pointStyle,
       labelStyle: labelStyle ?? this.labelStyle,
       valueStyle: valueStyle ?? this.valueStyle,
       pointHighlightStyle: pointHighlightStyle ?? this.pointHighlightStyle,
@@ -71,6 +82,7 @@ class GTooltipTheme extends GComponentTheme {
       frameMargin: frameMargin ?? this.frameMargin,
       labelValueSpacing: labelValueSpacing ?? this.labelValueSpacing,
       rowSpacing: rowSpacing ?? this.rowSpacing,
+      pointRowSpacing: pointRowSpacing ?? this.pointRowSpacing,
     );
   }
 }

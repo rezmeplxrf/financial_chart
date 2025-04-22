@@ -88,6 +88,11 @@ class GPointViewPort extends ChangeNotifier {
   final GRange _pointRangeScaling = GRange.empty();
   bool get isScaling => _pointRangeScaling.isNotEmpty;
 
+  /// Whether the viewport is auto scaling mode.
+  bool get autoScaleFlg => _autoScale.value;
+  set autoScaleFlg(bool value) => _autoScale.value = value;
+  final GValue<bool> _autoScale = GValue<bool>(true);
+
   /// The range when selecting. will be cleared when selection finished.
   GRange get selectedRange => _selectedRange;
   final GRange _selectedRange = GRange.empty();
@@ -158,6 +163,7 @@ class GPointViewPort extends ChangeNotifier {
         finished: true,
         notify: false,
       );
+      _autoScale.value = false;
     }
     _animationMilliseconds.value = animationMilliseconds;
     if (resizeMode != null) {
@@ -455,7 +461,9 @@ class GPointViewPort extends ChangeNotifier {
     required GPanel panel,
     required bool finished,
     bool animation = true,
+    bool autoScaleFlg = true,
   }) {
+    _autoScale.value = autoScaleFlg;
     if (autoScaleStrategy == null) {
       return;
     }
@@ -474,7 +482,9 @@ class GPointViewPort extends ChangeNotifier {
   }
 
   void _notify({required bool finished}) {
-    notifyListeners();
+    if (super.hasListeners) {
+      notifyListeners();
+    }
   }
 
   @override

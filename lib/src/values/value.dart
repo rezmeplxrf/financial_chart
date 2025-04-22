@@ -11,6 +11,9 @@ class GValue<T> extends ValueNotifier<T> {
   set value(T newValue) {
     assert(validator(newValue), 'Invalid value');
     super.value = newValue;
+    if (super.hasListeners) {
+      notifyListeners();
+    }
   }
 
   GValue(T initialValue, {this.validator = _defaultValidator})

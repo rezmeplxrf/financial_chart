@@ -60,9 +60,15 @@ class GValueTickerStrategyDefault implements GValueTickerStrategy {
   const GValueTickerStrategyDefault({this.tickerMinSize = 60});
 
   double _defaultTickerValueInterval(double valueRange) {
+    if (valueRange <= 0) {
+      return 0;
+    }
+    if (valueRange >= 1) {
+      return pow(10, valueRange.toStringAsFixed(0).length - 1).toDouble();
+    }
     return pow(
       10,
-      (valueRange * 10000).toStringAsFixed(0).length - 5,
+      (valueRange * 10000000).toStringAsFixed(0).length - 9,
     ).toDouble();
   }
 
@@ -80,6 +86,9 @@ class GValueTickerStrategyDefault implements GValueTickerStrategy {
     }
 
     double tickInterval = _defaultTickerValueInterval(viewPort.valueRange);
+    if (tickInterval <= 0) {
+      return [];
+    }
     double tickSize = viewPort.valueToSize(viewSize, tickInterval);
     while (tickSize < tickerMinSize) {
       tickInterval *= 2;

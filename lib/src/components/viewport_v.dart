@@ -136,7 +136,9 @@ class GValueViewPort extends ChangeNotifier {
   }
 
   void _notifyRangeUpdated({required bool finished}) {
-    notifyListeners();
+    if (super.hasListeners) {
+      notifyListeners();
+    }
     if (onRangeUpdate != null) {
       _range.copy(
         onRangeUpdate!.call(updatedRange: _range, finished: finished),
@@ -386,7 +388,7 @@ class GValueViewPort extends ChangeNotifier {
   void autoScaleReset({
     required GChart chart,
     required GPanel panel,
-    autoScaleFlg = true,
+    bool autoScaleFlg = true,
     bool finished = true,
     bool animation = true,
     VoidCallback? onFinished,

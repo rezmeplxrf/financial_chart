@@ -71,107 +71,100 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
 
       linesPath.reset();
       barsPath.reset();
-      if (o < c) {
+      if (op >= cp) {
         if (graph.drawAsCandle) {
-          addLinePath(
-            toPath: linesPath,
-            x1: barPosition,
-            y1: hp,
-            x2: barPosition,
-            y2: min(op, cp),
+          Path fillPath =
+              Path()
+                ..moveTo(barPosition - barRenderWidth / 2, cp)
+                ..lineTo(barPosition - barRenderWidth / 2, op)
+                ..lineTo(barPosition + barRenderWidth / 2, op)
+                ..lineTo(barPosition + barRenderWidth / 2, cp)
+                ..close();
+          drawPath(
+            canvas: canvas,
+            path: fillPath,
+            style: theme.barStylePlus,
+            fillOnly: true,
           );
-          addLinePath(
-            toPath: linesPath,
-            x1: barPosition,
-            y1: max(op, cp),
-            x2: barPosition,
-            y2: lp,
+          Path strokePath =
+              Path()
+                ..moveTo(barPosition, hp)
+                ..lineTo(barPosition, cp)
+                ..lineTo(barPosition - barRenderWidth / 2, cp)
+                ..lineTo(barPosition - barRenderWidth / 2, op)
+                ..lineTo(barPosition + barRenderWidth / 2, op)
+                ..lineTo(barPosition + barRenderWidth / 2, cp)
+                ..lineTo(barPosition, cp)
+                ..moveTo(barPosition, op)
+                ..lineTo(barPosition, lp);
+          drawPath(
+            canvas: canvas,
+            path: strokePath,
+            style: theme.barStylePlus,
+            strokeOnly: true,
           );
-          drawPath(canvas: canvas, path: linesPath, style: theme.lineStylePlus);
-          addRectPath(
-            toPath: barsPath,
-            rect: Rect.fromLTRB(
-              barPosition - barRenderWidth / 2,
-              cp,
-              barPosition + barRenderWidth / 2,
-              op,
-            ),
-          );
-          drawPath(canvas: canvas, path: barsPath, style: theme.barStylePlus);
         } else {
-          addLinePath(
-            toPath: linesPath,
-            x1: barPosition - barRenderWidth / 2,
-            y1: op,
-            x2: barPosition,
-            y2: op,
+          Path strokePath =
+              Path()
+                ..moveTo(barPosition - barRenderWidth / 2, op)
+                ..lineTo(barPosition, op)
+                ..moveTo(barPosition, hp)
+                ..lineTo(barPosition, lp)
+                ..moveTo(barPosition, cp)
+                ..lineTo(barPosition + barRenderWidth / 2, cp);
+          drawPath(
+            canvas: canvas,
+            path: strokePath,
+            style: theme.barStylePlus,
+            strokeOnly: true,
           );
-          addLinePath(
-            toPath: linesPath,
-            x1: barPosition,
-            y1: hp,
-            x2: barPosition,
-            y2: lp,
-          );
-          addLinePath(
-            toPath: linesPath,
-            x1: barPosition,
-            y1: cp,
-            x2: barPosition + barRenderWidth / 2,
-            y2: cp,
-          );
-          drawPath(canvas: canvas, path: linesPath, style: theme.lineStylePlus);
         }
       } else {
         if (graph.drawAsCandle) {
-          addLinePath(
-            toPath: linesPath,
-            x1: barPosition,
-            y1: hp,
-            x2: barPosition,
-            y2: lp,
-          );
+          Path fillPath =
+              Path()
+                ..moveTo(barPosition - barRenderWidth / 2, op)
+                ..lineTo(barPosition - barRenderWidth / 2, cp)
+                ..lineTo(barPosition + barRenderWidth / 2, cp)
+                ..lineTo(barPosition + barRenderWidth / 2, op)
+                ..close();
           drawPath(
             canvas: canvas,
-            path: linesPath,
-            style: theme.lineStyleMinus,
+            path: fillPath,
+            style: theme.barStyleMinus,
+            fillOnly: true,
           );
-          addRectPath(
-            toPath: barsPath,
-            rect: Rect.fromLTRB(
-              barPosition - barRenderWidth / 2,
-              op,
-              barPosition + barRenderWidth / 2,
-              cp,
-            ),
+          Path strokePath =
+              Path()
+                ..moveTo(barPosition, hp)
+                ..lineTo(barPosition, op)
+                ..lineTo(barPosition - barRenderWidth / 2, op)
+                ..lineTo(barPosition - barRenderWidth / 2, cp)
+                ..lineTo(barPosition + barRenderWidth / 2, cp)
+                ..lineTo(barPosition + barRenderWidth / 2, op)
+                ..lineTo(barPosition, op)
+                ..moveTo(barPosition, cp)
+                ..lineTo(barPosition, lp);
+          drawPath(
+            canvas: canvas,
+            path: strokePath,
+            style: theme.barStyleMinus,
+            strokeOnly: true,
           );
-          drawPath(canvas: canvas, path: barsPath, style: theme.barStyleMinus);
         } else {
-          addLinePath(
-            toPath: linesPath,
-            x1: barPosition - barRenderWidth / 2,
-            y1: cp,
-            x2: barPosition,
-            y2: cp,
-          );
-          addLinePath(
-            toPath: linesPath,
-            x1: barPosition,
-            y1: hp,
-            x2: barPosition,
-            y2: lp,
-          );
-          addLinePath(
-            toPath: linesPath,
-            x1: barPosition,
-            y1: op,
-            x2: barPosition + barRenderWidth / 2,
-            y2: op,
-          );
+          Path strokePath =
+              Path()
+                ..moveTo(barPosition - barRenderWidth / 2, op)
+                ..lineTo(barPosition, op)
+                ..moveTo(barPosition, hp)
+                ..lineTo(barPosition, lp)
+                ..moveTo(barPosition, cp)
+                ..lineTo(barPosition + barRenderWidth / 2, cp);
           drawPath(
             canvas: canvas,
-            path: linesPath,
-            style: theme.lineStyleMinus,
+            path: strokePath,
+            style: theme.barStyleMinus,
+            strokeOnly: true,
           );
         }
       }

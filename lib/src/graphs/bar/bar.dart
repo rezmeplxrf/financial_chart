@@ -1,10 +1,9 @@
-import '../../components/graph/graph.dart';
+import '../../components/components.dart';
 import '../../values/value.dart';
 import 'bar_render.dart';
-import 'bar_theme.dart';
 
 /// Bar graph.
-class GGraphBar extends GGraph<GGraphBarTheme> {
+class GGraphBar<T extends GGraphTheme> extends GGraph<T> {
   static const String typeName = "bar";
 
   /// The key of the series value in the data source.
@@ -28,11 +27,12 @@ class GGraphBar extends GGraph<GGraphBarTheme> {
     super.hitTestMode,
     super.crosshairHighlightValueKeys,
     super.overlayMarkers,
-    super.theme,
+    T? theme,
     super.render,
   }) {
     _baseValue.value = baseValue;
-    super.render = render ?? GGraphBarRender();
+    super.theme = theme;
+    super.render = super.render ?? GGraphBarRender();
   }
 
   @override

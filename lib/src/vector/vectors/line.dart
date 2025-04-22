@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:vector_math/vector_math.dart';
 import 'extensions.dart';
@@ -55,7 +56,7 @@ class LineUtil {
     return Vector2(px, py).distanceTo(nearestPoint);
   }
 
-  bool hitTest({
+  static bool hitTest({
     required double x1,
     required double y1,
     required double x2,
@@ -73,5 +74,38 @@ class LineUtil {
       py: py,
     );
     return distance <= epsilon;
+  }
+
+  static Offset? findIntersectionPointOfTwoLineSegments(
+    Offset p1,
+    Offset p2,
+    Offset p3,
+    Offset p4,
+  ) {
+    final double x1 = p1.dx;
+    final double y1 = p1.dy;
+    final double x2 = p2.dx;
+    final double y2 = p2.dy;
+    final double x3 = p3.dx;
+    final double y3 = p3.dy;
+    final double x4 = p4.dx;
+    final double y4 = p4.dy;
+
+    final double denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    if (denominator == 0) {
+      return null;
+    }
+    final double x =
+        ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) /
+        denominator;
+    final double y =
+        ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) /
+        denominator;
+
+    final intersection = Offset(x, y);
+    if (x < p1.dx || x > p2.dx || x < p3.dx || x > p4.dx) {
+      return null;
+    }
+    return intersection;
   }
 }

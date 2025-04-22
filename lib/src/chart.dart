@@ -341,7 +341,9 @@ class GChart extends ChangeNotifier {
     bool resetValueViewPort = true,
     bool animation = true,
   }) {
-    if (resetPointViewPort && pointViewPort.autoScaleStrategy != null) {
+    if (resetPointViewPort &&
+        pointViewPort.autoScaleStrategy != null &&
+        pointViewPort.autoScaleFlg) {
       pointViewPort.autoScaleReset(
         chart: this,
         panel: panels[0],

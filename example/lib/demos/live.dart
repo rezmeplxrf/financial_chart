@@ -90,16 +90,8 @@ class DemoLiveUpdatePageState extends DemoBasePageState {
         .copyWith(y: latestPrice);
     valueAxisMarker!.labelValue = latestPrice;
     pointAxisMarker!.labelPoint = dataSource.lastPoint;
-    // redraw chart
-    final autoScalePointViewPort =
-        (chart!.pointViewPort.endPoint - dataSource.lastPoint - 10)
-            .round()
-            .abs() <
-        2;
-    chart?.autoScaleViewports(
-      resetPointViewPort: autoScalePointViewPort,
-      resetValueViewPort: true,
-    );
+    // reset viewport if allowed and redraw chart
+    chart?.autoScaleViewports();
     repaintChart();
   }
 

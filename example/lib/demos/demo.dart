@@ -23,8 +23,6 @@ abstract class DemoBasePageState extends State<DemoBasePage>
 
   final themes = [GThemeDark(), GThemeLight()];
 
-  void repaint() {}
-
   int get simulateDataLatencyMillis => 0;
   bool get simulateEmptyData => false;
 
