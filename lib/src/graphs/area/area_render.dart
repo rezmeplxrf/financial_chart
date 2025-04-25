@@ -1,7 +1,5 @@
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
-
 import '../../chart.dart';
 import '../../components/component.dart';
 import '../../components/graph/graph_render.dart';
@@ -75,7 +73,7 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
       }
     }
 
-    if (graph.hitTestMode != GHitTestMode.none) {
+    if (chart.hitTestEnable && graph.hitTestMode != GHitTestMode.none) {
       _hitTestLinePoints1.addAll(valuePoints.map((e) => Vector2(e.dx, e.dy)));
       if (graph.baseValueKey != null || graph.baseValue != null) {
         _hitTestLinePoints2.addAll(basePoints.map((e) => Vector2(e.dx, e.dy)));
@@ -90,6 +88,7 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
     drawHighlightMarks(
       canvas: canvas,
       graph: graph,
+      area: area,
       theme: theme,
       highlightMarks: highlightMarks,
     );

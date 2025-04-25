@@ -24,7 +24,7 @@ class GSplitterRender extends GRender<GSplitter, GSplitterTheme> {
     for (int p = 0; p < chart.panels.length - 1; p++) {
       final panel = chart.panels[p];
       if (panel.splitterArea().contains(crossPosition) ||
-          p == chart.controller.resizingPanelIndex) {
+          p == component.resizingPanelIndex) {
         if (panel.resizable && chart.panels[p + 1].resizable) {
           renderClipped(
             canvas: canvas,

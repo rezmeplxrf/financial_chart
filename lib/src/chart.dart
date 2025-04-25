@@ -5,7 +5,6 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
-import 'chart_interaction.dart';
 import 'chart_render.dart';
 import 'components/components.dart';
 import 'data/data_source.dart';
@@ -99,10 +98,6 @@ class GChart extends ChangeNotifier {
   /// The minimum view size of the chart.
   final Size minSize;
 
-  /// The controller for user interaction.
-  late final GChartInteractionHandler _controller;
-  GChartInteractionHandler get controller => _controller;
-
   /// The pre-render callback which is called right before rendering.
   ///
   /// It is able to update something to the chart here before rendering.
@@ -120,7 +115,16 @@ class GChart extends ChangeNotifier {
     SystemMouseCursors.basic,
   );
 
+  final GValue<bool> _hitTestEnable = GValue(true);
+  bool get hitTestEnable => _hitTestEnable.value;
+  set hitTestEnable(bool value) {
+    _hitTestEnable.value = value;
+    _notify();
+  }
+
   final _debounceHelper = DebounceHelper(milliseconds: 500);
+
+  bool _initialized = false;
 
   GChart({
     required this.dataSource,
@@ -136,8 +140,8 @@ class GChart extends ChangeNotifier {
     this.minSize = const Size(200, 200),
     this.preRender,
     this.postRender,
-  }) : _controller = GChartInteractionHandler(),
-       background = (background ?? GBackground()),
+    bool hitTestEnable = true,
+  }) : background = (background ?? GBackground()),
        crosshair = (crosshair ?? GCrosshair()),
        splitter = (splitter ?? GSplitter()),
        _pointerScrollMode = GValue(pointerScrollMode),
@@ -148,11 +152,13 @@ class GChart extends ChangeNotifier {
            ),
        _theme = GValue(theme),
        _area = GValue(area) {
-    controller.attach(this);
+    _hitTestEnable.value = hitTestEnable;
   }
 
   /// Internal initialization of the chart.
   void initialize({TickerProvider? vsync}) {
+    assert(!_initialized, 'Chart is already initialized');
+    _initialized = true;
     dataSource.addListener(_notify);
     if (vsync != null) {
       pointViewPort.initializeAnimation(vsync);
@@ -370,8 +376,33 @@ class GChart extends ChangeNotifier {
     }
   }
 
+  GGraph? hitTestPanelGraphs({
+    required GPanel panel,
+    required Offset position,
+  }) {
+    for (int g = panel.graphs.length - 1; g > 0; g--) {
+      GGraph graph = panel.graphs[g];
+      if (graph.visible && graph.getRender().hitTest(position: position)) {
+        return graph;
+      }
+    }
+    return null;
+  }
+
   (GPanel, GGraph)? hitTestGraph({required Offset position}) {
-    return controller.hitTestGraph(position: position);
+    if (dataSource.isLoading || dataSource.isEmpty) {
+      return null;
+    }
+    for (int p = 0; p < panels.length; p++) {
+      GPanel panel = panels[p];
+      if (panel.panelArea().contains(position)) {
+        GGraph? graph = hitTestPanelGraphs(panel: panel, position: position);
+        if (graph != null) {
+          return (panel, graph);
+        }
+      }
+    }
+    return null;
   }
 
   void _pointViewPortChanged() {

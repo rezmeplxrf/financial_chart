@@ -1,11 +1,19 @@
+## 0.2.3
+2025-04-25
+- use batch drawing when possible to improve performance.
+- add `GToolTip`.`tooltipWidgetBuilder` property to allow use custom widget as tooltip.
+- add `GChart`.`hitTestEnable` property to allow disable hit testing globally.
+- fix issue of highlight markers drawn outside the graph area.
+- code refactoring.
+
 ## 0.2.2
 2025-04-22
 - **[breaking change]** code refactoring.
-  - remove `GGraphAreaTheme`.`styleValueAboveLine` and `styleValueBelowLine`.
-  - rename `GGraphAreaTheme`.`styleAboveArea`, `styleAboveArea` to `styleAboveBase`, `styleBelowBase`.
-  - move `GGraph`.`layer`, `hitTestMode`, `highlight` to parent `GComponent` class.
-  - remove `GGraphOhlcTheme`.`lineStyleMinus` and `lineStylePlus`.
-  - remove `PaintStyle`.`elevation` and `PaintStyle`.
+  + remove `GGraphAreaTheme`.`styleValueAboveLine` and `styleValueBelowLine`.
+  + rename `GGraphAreaTheme`.`styleAboveArea`, `styleAboveArea` to `styleAboveBase`, `styleBelowBase`.
+  + move `GGraph`.`layer`, `hitTestMode`, `highlight` to parent `GComponent` class.
+  + remove `GGraphOhlcTheme`.`lineStyleMinus` and `lineStylePlus`.
+  + remove `PaintStyle`.`elevation` and `shadowColor`.
 - draw point value label (time string) to tooltip.
 - fix notifyListeners error after disposed.
 - add `autoScaleFlg` to `GPointViewPort` (fix issue [#34](https://github.com/cjjapan/financial_chart/issues/34)).
@@ -13,11 +21,12 @@
 
 ## 0.2.1
 2025-04-16
-- **[breaking change]** rename `HitTestMode` to `GHitTestMode`.
-- **[breaking change]** rename `GChartController` to `GChartInteractionHandler`.
-- **[breaking change]** rename `ViewSizeConvertor` to `GViewSizeConvertor`.
-- **[breaking change]** rename `GPointAxisMarker`.`point` to `labelPoint`.
-- **[breaking change]** remove `GValue`.`call()`.
+- **[breaking change]** code refactoring.
+  + rename `HitTestMode` to `GHitTestMode`.
+  + rename `GChartController` to `GChartInteractionHandler`.
+  + rename `ViewSizeConvertor` to `GViewSizeConvertor`.
+  + rename `GPointAxisMarker`.`point` to `labelPoint`.
+  + remove `GValue`.`call()`.
 - add `resizeMode` to `GPointViewPort` and `GValueViewPort` to allow config the behavior when resizing.
 - allow update graph properties (added setters).
 - fix notifyListeners error after disposed.

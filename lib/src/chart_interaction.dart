@@ -18,9 +18,6 @@ import 'values/value.dart';
 // ignore: must_be_immutable
 class GChartInteractionHandler {
   late final GChart _chart;
-  // The panel index that currently being resizing interactively
-  final GValue<int?> _resizingPanelIndex = GValue(null);
-  get resizingPanelIndex => _resizingPanelIndex.value;
 
   final GValue<bool> _isTouchEvent = GValue(false);
   final GValue<bool> _isTouchCrossMode = GValue(false);
@@ -47,22 +44,6 @@ class GChartInteractionHandler {
   void mouseExit() {
     _chart.crosshair.clearCrossPosition();
     _notify();
-  }
-
-  (GPanel, GGraph)? hitTestGraph({required Offset position}) {
-    if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
-      return null;
-    }
-    for (int p = 0; p < _chart.panels.length; p++) {
-      GPanel panel = _chart.panels[p];
-      if (panel.panelArea().contains(position)) {
-        GGraph? graph = _hitTestPanelGraphs(panel: panel, position: position);
-        if (graph != null) {
-          return (panel, graph);
-        }
-      }
-    }
-    return null;
   }
 
   MouseCursor _mouseCursor({required Offset position}) {
@@ -128,7 +109,7 @@ class GChartInteractionHandler {
       }
     }
     if (!(_chart.pointViewPort.isScaling || _chart.pointViewPort.isAnimating)) {
-      final hit = hitTestGraph(position: position);
+      final hit = _chart.hitTestGraph(position: position);
       if (hit != null) {
         hit.$2.highlight = true;
       }
@@ -226,6 +207,8 @@ class GChartInteractionHandler {
         scale: scale,
         verticalScale: verticalScale,
       );
+    } else {
+      _chart.crosshair.setCrossPosition(position.dx, position.dy);
     }
     _notify();
   }
@@ -276,7 +259,10 @@ class GChartInteractionHandler {
     for (int p = 0; p < _chart.panels.length; p++) {
       GPanel panel = _chart.panels[p];
       if (panel.panelArea().contains(position)) {
-        GGraph? graph = _hitTestPanelGraphs(panel: panel, position: position);
+        GGraph? graph = _chart.hitTestPanelGraphs(
+          panel: panel,
+          position: position,
+        );
         if (graph != null) {
           break;
         }
@@ -325,19 +311,6 @@ class GChartInteractionHandler {
     _notify();
   }
 
-  GGraph? _hitTestPanelGraphs({
-    required GPanel panel,
-    required Offset position,
-  }) {
-    for (int g = panel.graphs.length - 1; g > 0; g--) {
-      GGraph graph = panel.graphs[g];
-      if (graph.visible && graph.getRender().hitTest(position: position)) {
-        return graph;
-      }
-    }
-    return null;
-  }
-
   GPanel? _tryScalingSplitter(
     int panel1Index,
     GPanel panel1,
@@ -353,7 +326,7 @@ class GChartInteractionHandler {
       double moveToleranceMin = -panel1.graphArea().height + 50;
       double moveToleranceMax = panel2.graphArea().height - 50;
       double weightUnit = panel1.heightWeight / (h1 / _chart.size.height);
-      _resizingPanelIndex.value = panel1Index;
+      _chart.splitter.resizingPanelIndex = panel1Index;
       _hookScaleUpdate = ({
         required Offset position,
         required double scale,
@@ -370,7 +343,7 @@ class GChartInteractionHandler {
         _chart.layout(_chart.area);
       };
       _hookScaleEnd = (Velocity? velocity) {
-        _resizingPanelIndex.value = null;
+        _chart.splitter.resizingPanelIndex = null;
       };
       return panel1;
     }
@@ -500,7 +473,8 @@ class GChartInteractionHandler {
       return null;
     }
     final graph =
-        _hitTestPanelGraphs(panel: panel, position: start) ?? panel.graphs.last;
+        _chart.hitTestPanelGraphs(panel: panel, position: start) ??
+        panel.graphs.last;
     if (_isTouchCrossMode.value || panel.graphPanMode == GGraphPanMode.none) {
       // move crosshair only
       _hookScaleUpdate = ({

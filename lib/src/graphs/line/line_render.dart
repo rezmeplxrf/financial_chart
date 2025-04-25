@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math.dart' hide Colors;
 
 import '../../../financial_chart.dart';
 
@@ -53,13 +54,14 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
       linePoints: linePoints,
     );
 
-    if (graph.hitTestMode != GHitTestMode.none) {
+    if (chart.hitTestEnable && graph.hitTestMode != GHitTestMode.none) {
       _hitTestLinePoints.addAll(linePoints);
     }
 
     drawHighlightMarks(
       canvas: canvas,
       graph: graph,
+      area: area,
       theme: theme,
       highlightMarks: highlightMarks,
     );
