@@ -208,6 +208,7 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
   void drawHighlightMarks({
     required Canvas canvas,
     required GGraph graph,
+    required Rect area,
     required T theme,
     required List<Vector2> highlightMarks,
   }) {
@@ -216,20 +217,26 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
         graph.highlight &&
         theme.highlightMarkerTheme != null &&
         theme.highlightMarkerTheme!.size > 0) {
-      for (int i = 0; i < highlightMarks.length; i++) {
-        final point = highlightMarks[i];
-        final p = addOvalPath(
-          rect: Rect.fromCircle(
-            center: Offset(point.x, point.y),
-            radius: theme.highlightMarkerTheme!.size,
-          ),
-        );
-        drawPath(
-          canvas: canvas,
-          path: p,
-          style: theme.highlightMarkerTheme!.style,
-        );
-      }
+      renderClipped(
+        canvas: canvas,
+        clipRect: area,
+        render: () {
+          for (int i = 0; i < highlightMarks.length; i++) {
+            final point = highlightMarks[i];
+            final p = addOvalPath(
+              rect: Rect.fromCircle(
+                center: Offset(point.x, point.y),
+                radius: theme.highlightMarkerTheme!.size,
+              ),
+            );
+            drawPath(
+              canvas: canvas,
+              path: p,
+              style: theme.highlightMarkerTheme!.style,
+            );
+          }
+        },
+      );
     }
   }
 

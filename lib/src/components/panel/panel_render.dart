@@ -102,7 +102,10 @@ class GPanelRender extends GRender<GPanel, GPanelTheme> {
     required GChart chart,
     required GPanel panel,
   }) {
-    if (panel.tooltip != null && chart.dataSource.isNotEmpty) {
+    if (chart.dataSource.isEmpty) {
+      return;
+    }
+    if (panel.tooltip != null) {
       panel.tooltip!.getRender().render(
         canvas: canvas,
         chart: chart,

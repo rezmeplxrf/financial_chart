@@ -1,9 +1,12 @@
+import 'dart:math';
 import 'dart:ui';
 
+import 'package:financial_chart/financial_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'chart.dart';
+import 'chart_interaction.dart';
 
 Widget _defaultLoadingWidgetBuilder(BuildContext context, GChart chart) {
   return Container(
@@ -61,8 +64,11 @@ class GChartWidgetState extends State<GChartWidget> {
   GChartWidgetState();
   bool printEvents = false;
   MouseCursor cursor = SystemMouseCursors.basic;
+  late GChartInteractionHandler _interactionHandler;
 
   void initializeChart() {
+    _interactionHandler = GChartInteractionHandler();
+    _interactionHandler.attach(widget.chart);
     widget.chart.initialize(vsync: widget.tickerProvider);
     widget.chart.mouseCursor.addListener(cursorChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -104,7 +110,7 @@ class GChartWidgetState extends State<GChartWidget> {
   @override
   Widget build(BuildContext context) {
     final chart = widget.chart;
-    final controller = chart.controller;
+    final controller = _interactionHandler;
     return LayoutBuilder(
       builder: (context, constraints) {
         Size viewSize = MediaQuery.of(context).size;
@@ -261,6 +267,7 @@ class GChartWidgetState extends State<GChartWidget> {
                 controller.scaleEnd(details.velocity);
               },
             ),
+            // loading indicator & no data indicator widget
             ListenableBuilder(
               listenable: widget.chart.dataSource,
               builder: (context, child) {
@@ -273,11 +280,102 @@ class GChartWidgetState extends State<GChartWidget> {
                 return const SizedBox.shrink();
               },
             ),
+            // tooltip widgets
+            ...widget.chart.panels.asMap().entries.map(
+              (panelEntry) =>
+                  panelEntry.value.tooltip?.tooltipNotifier != null
+                      ? RepaintBoundary(
+                        child: ListenableBuilder(
+                          listenable:
+                              (panelEntry.value.tooltip?.tooltipNotifier)!,
+                          builder: (context, child) {
+                            final ctx =
+                                panelEntry
+                                    .value
+                                    .tooltip
+                                    ?.tooltipNotifier
+                                    ?.value;
+                            if (ctx == null) {
+                              return const SizedBox.shrink();
+                            }
+                            final tooltipWidget = panelEntry
+                                .value
+                                .tooltip
+                                ?.tooltipWidgetBuilder
+                                ?.call(
+                                  context,
+                                  ctx.area.size,
+                                  ctx.tooltip,
+                                  ctx.point,
+                                );
+                            if (tooltipWidget == null) {
+                              return const SizedBox.shrink();
+                            }
+                            return SizedBox(
+                              width: ctx.area.width,
+                              height: ctx.area.height,
+                              child: CustomSingleChildLayout(
+                                delegate: _TooltipSingleChildLayoutDelegate(
+                                  offset: ctx.anchorPosition,
+                                  area: ctx.area,
+                                ),
+                                child: IgnorePointer(child: tooltipWidget),
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                      : const SizedBox.shrink(),
+            ),
           ],
         );
       },
     );
   }
+}
+
+class _TooltipSingleChildLayoutDelegate extends SingleChildLayoutDelegate {
+  _TooltipSingleChildLayoutDelegate({required this.offset, required this.area});
+
+  final Offset? offset;
+  final Rect? area;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
+      constraints.loosen();
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) {
+    if (offset == null) {
+      return Offset(
+        size.width / 2 - childSize.width / 2,
+        size.height / 2 - childSize.height / 2,
+      );
+    }
+
+    final offsetX = clampDouble(
+      offset!.dx,
+      area?.left ?? 0,
+      max(
+        area?.left ?? 0,
+        (area?.left ?? 0) + (area?.width ?? size.width) - childSize.width,
+      ),
+    );
+    final offsetY = clampDouble(
+      offset!.dy,
+      area?.top ?? 0,
+      max(
+        area?.top ?? 0,
+        (area?.top ?? 0) + (area?.height ?? size.height) - childSize.height,
+      ),
+    );
+    return Offset(offsetX, offsetY);
+  }
+
+  @override
+  bool shouldRelayout(
+    covariant _TooltipSingleChildLayoutDelegate oldDelegate,
+  ) => oldDelegate.offset != offset;
 }
 
 class GChartPainter extends CustomPainter {

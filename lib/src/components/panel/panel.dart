@@ -189,5 +189,6 @@ class GPanel extends GComponent {
     for (var valueViewPort in valueViewPorts) {
       valueViewPort.dispose();
     }
+    tooltip?.dispose();
   }
 }

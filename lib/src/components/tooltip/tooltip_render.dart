@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../chart.dart';
 import '../../values/pair.dart';
@@ -24,19 +24,23 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
   }) {
     final tooltip = component;
     if (tooltip.position == GTooltipPosition.none) {
+      _removeWidget(chart);
       return;
     }
     final crossPosition = chart.crosshair.getCrossPosition();
     if (crossPosition == null) {
+      _removeWidget(chart);
       return;
     }
     if (area.left > crossPosition.dx || area.right < crossPosition.dx) {
+      _removeWidget(chart);
       return;
     }
     if (!chart.pointViewPort.isValid ||
         chart.pointViewPort.isAnimating ||
         chart.pointViewPort.isScaling) {
       // skip rendering if point view port is animating or scaling
+      _removeWidget(chart);
       return;
     }
     if (component.pointLineHighlightVisible ||
@@ -165,21 +169,25 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
     required GTooltipTheme theme,
   }) {
     if (tooltip.dataKeys.isEmpty) {
+      _removeWidget(chart, tooltip);
       return;
     }
     final tooltipPosition = tooltip.position;
     if (tooltipPosition == GTooltipPosition.none) {
+      _removeWidget(chart, tooltip);
       return;
     }
     final area = panel.graphArea();
     final dataSource = chart.dataSource;
     final pointViewPort = chart.pointViewPort;
     if (!pointViewPort.isValid) {
+      _removeWidget(chart, tooltip);
       return;
     }
     final point = pointViewPort.nearestPoint(area, crossPosition);
     final pointValue = dataSource.getPointValue(point);
     if (pointValue == null) {
+      _removeWidget(chart, tooltip);
       return;
     }
     Offset anchorPosition = Offset.zero;
@@ -217,6 +225,18 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
       } else {
         anchorPosition = crossPosition;
       }
+    }
+    if (tooltip.tooltipNotifier != null) {
+      WidgetsBinding.instance.addPostFrameCallback((f) {
+        tooltip.tooltipNotifier?.value = GToolTipWidgetContext(
+          panel: panel,
+          area: area,
+          tooltip: tooltip,
+          point: point,
+          anchorPosition: anchorPosition,
+        );
+      });
+      return;
     }
     final dataKeyValues = dataSource.getSeriesValueAsMap(
       point: point,
@@ -328,5 +348,24 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
         labelValuePair.first!.size.height + theme.rowSpacing,
       );
     }
+  }
+
+  void _removeWidget(GChart chart, [GTooltip? tooltip]) {
+    if (tooltip != null && tooltip.tooltipNotifier == null) {
+      return;
+    }
+    final panels = chart.panels.where(
+      (p) => p.tooltip?.tooltipNotifier != null,
+    );
+    if (panels.isEmpty) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((f) {
+      for (var panel in panels) {
+        if (panel.tooltip?.tooltipNotifier != null) {
+          panel.tooltip!.tooltipNotifier?.value = null;
+        }
+      }
+    });
   }
 }

@@ -1,7 +1,9 @@
 import 'dart:math';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import '../../../financial_chart.dart';
+import '../../vector/vectors.dart';
 
 class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
   @override
@@ -25,13 +27,13 @@ class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
       valueViewPort.endValue,
     );
     double barBottom = valueViewPort.valueToPosition(area, baseValue);
-    final Path barsAbovePath = Path();
-    final Path barsBelowPath = Path();
     _hitTestRectangles.clear();
     final List<Vector2> highlightMarks = <Vector2>[];
     double highlightInterval = theme.highlightMarkerTheme?.interval ?? 1000.0;
     int highlightIntervalPoints =
         (highlightInterval / pointViewPort.pointSize(area.width)).round();
+    List<Rect> graphValuesAbove = [];
+    List<Rect> graphValuesBelow = [];
     for (
       var point = pointViewPort.startPoint.floor();
       point <= pointViewPort.endPoint.ceil();
@@ -53,23 +55,11 @@ class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
         barBottom,
       );
       if (barTop <= barBottom) {
-        barsAbovePath.reset();
-        barsAbovePath.addRect(rect);
-        drawPath(
-          canvas: canvas,
-          path: barsAbovePath,
-          style: theme.barStyleAboveBase,
-        );
+        graphValuesAbove.add(rect);
       } else {
-        barsBelowPath.reset();
-        barsBelowPath.addRect(rect);
-        drawPath(
-          canvas: canvas,
-          path: barsBelowPath,
-          style: theme.barStyleBelowBase,
-        );
+        graphValuesBelow.add(rect);
       }
-      if (graph.hitTestMode != GHitTestMode.none) {
+      if (chart.hitTestEnable && graph.hitTestMode != GHitTestMode.none) {
         _hitTestRectangles.add(rect);
         _hitTestArea = graph.hitTestMode == GHitTestMode.area;
       }
@@ -77,12 +67,121 @@ class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
         highlightMarks.add(Vector2(x, barTop));
       }
     }
+    if (theme.barStyleAboveBase.isSimple) {
+      _drawGraphSimple(
+        canvas,
+        graph,
+        theme.barStyleAboveBase,
+        graphValuesAbove,
+        barWidth,
+      );
+    } else {
+      _drawGraph(
+        canvas,
+        graph,
+        theme.barStyleAboveBase,
+        graphValuesAbove,
+        barWidth,
+      );
+    }
+    if (theme.barStyleBelowBase.isSimple) {
+      _drawGraphSimple(
+        canvas,
+        graph,
+        theme.barStyleBelowBase,
+        graphValuesBelow,
+        barWidth,
+      );
+    } else {
+      _drawGraph(
+        canvas,
+        graph,
+        theme.barStyleBelowBase,
+        graphValuesBelow,
+        barWidth,
+      );
+    }
     drawHighlightMarks(
       canvas: canvas,
       graph: graph,
+      area: area,
       theme: theme,
       highlightMarks: highlightMarks,
     );
+  }
+
+  void _drawGraph(
+    Canvas canvas,
+    GGraphBar graph,
+    PaintStyle barStyle,
+    List<Rect> graphValues,
+    double barWidth,
+  ) {
+    for (var i = 0; i < graphValues.length; i++) {
+      final Path barsAbovePath = Path()..addRect(graphValues[i]);
+      drawPath(canvas: canvas, path: barsAbovePath, style: barStyle);
+    }
+  }
+
+  void _drawGraphSimple(
+    Canvas canvas,
+    GGraphBar graph,
+    PaintStyle barStyle,
+    List<Rect> graphValues,
+    double barWidth,
+  ) {
+    final bool drawBorder = barStyle.getStrokePaint() != null;
+    final bool drawBars = barStyle.getFillPaint() != null;
+    List<double> borderPoints = [];
+    List<double> fillPoints = [];
+    for (var i = 0; i < graphValues.length; i++) {
+      final bar = graphValues[i];
+      if (drawBorder) {
+        borderPoints.addAll([
+          ...[bar.left, bar.top, bar.left, bar.bottom],
+          ...[bar.right, bar.top, bar.right, bar.bottom],
+          ...[bar.left, bar.top, bar.right, bar.top],
+          ...[bar.left, bar.bottom, bar.right, bar.bottom],
+        ]);
+      }
+      if (drawBars) {
+        fillPoints.addAll([
+          bar.topCenter.dx,
+          bar.topCenter.dy,
+          bar.bottomCenter.dx,
+          bar.bottomCenter.dy,
+        ]);
+      }
+    }
+    // draw the rectangles
+    if (fillPoints.isNotEmpty) {
+      Paint fillAbovePaint =
+          Paint()
+            ..color = barStyle.fillColor ?? const Color.fromARGB(0, 0, 0, 0)
+            ..style = PaintingStyle.fill
+            ..strokeWidth = barWidth;
+      canvas.drawRawPoints(
+        PointMode.lines,
+        Float32List.fromList(fillPoints),
+        fillAbovePaint,
+      );
+    }
+    // draw the rectangle borders
+    if (borderPoints.isNotEmpty) {
+      Paint borderAbovePaint =
+          Paint()
+            ..color =
+                (barStyle.strokeColor ??
+                    barStyle.fillColor ??
+                    const Color.fromARGB(0, 0, 0, 0))
+            ..strokeWidth = min(max(1.0, barStyle.strokeWidth ?? 0), barWidth)
+            ..strokeCap = barStyle.strokeCap ?? StrokeCap.round;
+      canvas.drawRawPoints(
+        PointMode.lines,
+        Float32List.fromList(borderPoints),
+        borderAbovePaint,
+      );
+    }
   }
 
   final List<Rect> _hitTestRectangles = [];

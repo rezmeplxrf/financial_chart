@@ -1,6 +1,8 @@
+import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
+
 import '../../values/value.dart';
-import '../component.dart';
-import 'tooltip_render.dart';
+import '../components.dart';
 
 /// Position of the tooltip.
 enum GTooltipPosition {
@@ -21,6 +23,32 @@ enum GTooltipPosition {
 
   /// Tooltip will be displayed follow the position of the pointer.
   followPointer,
+}
+
+class GToolTipWidgetContext extends Equatable {
+  final GPanel panel;
+  final Rect area;
+  final GTooltip tooltip;
+  final int point;
+  final Offset anchorPosition;
+
+  const GToolTipWidgetContext({
+    required this.panel,
+    required this.area,
+    required this.tooltip,
+    required this.point,
+    required this.anchorPosition,
+  });
+
+  @override
+  List<Object?> get props => [
+    area,
+    point,
+    Offset(
+      anchorPosition.dx.round().toDouble(),
+      anchorPosition.dy.round().toDouble(),
+    ),
+  ];
 }
 
 /// Tooltip component.
@@ -67,6 +95,18 @@ class GTooltip extends GComponent {
   set valueLineHighlightVisible(bool value) =>
       _valueLineHighlightVisible.value = value;
 
+  /// The notifier to notify the tooltip widget to rebuild when the tooltip data changes.
+  late final ValueNotifier<GToolTipWidgetContext?>? _tooltipNotifier;
+  ValueNotifier<GToolTipWidgetContext?>? get tooltipNotifier =>
+      _tooltipNotifier;
+  Widget Function(
+    BuildContext context,
+    Size maxSize,
+    GTooltip tooltip,
+    int point,
+  )?
+  tooltipWidgetBuilder;
+
   GTooltip({
     GTooltipPosition position = GTooltipPosition.followPointer,
     bool showPointValue = true,
@@ -77,10 +117,21 @@ class GTooltip extends GComponent {
     bool valueLineHighlightVisible = true,
     super.render = const GTooltipRender(),
     super.theme,
+    this.tooltipWidgetBuilder,
   }) : _position = GValue<GTooltipPosition>(position),
        _showPointValue = GValue<bool>(showPointValue),
        _followValueKey = GValue<String?>(followValueKey),
        _followValueViewPortId = GValue<String?>(followValueViewPortId),
        _pointLineHighlightVisible = GValue<bool>(pointLineHighlightVisible),
-       _valueLineHighlightVisible = GValue<bool>(valueLineHighlightVisible);
+       _valueLineHighlightVisible = GValue<bool>(valueLineHighlightVisible) {
+    if (tooltipWidgetBuilder != null) {
+      _tooltipNotifier = GValue<GToolTipWidgetContext?>(null);
+    } else {
+      _tooltipNotifier = null;
+    }
+  }
+
+  void dispose() {
+    _tooltipNotifier?.dispose();
+  }
 }
