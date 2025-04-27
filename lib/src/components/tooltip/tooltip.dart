@@ -25,6 +25,15 @@ enum GTooltipPosition {
   followPointer,
 }
 
+/// The builder function to create the tooltip widget.
+typedef GToolTipWidgetBuilder =
+    Widget Function(
+      BuildContext context,
+      Size maxSize,
+      GTooltip tooltip,
+      int point,
+    );
+
 class GToolTipWidgetContext extends Equatable {
   final GPanel panel;
   final Rect area;
@@ -96,16 +105,22 @@ class GTooltip extends GComponent {
       _valueLineHighlightVisible.value = value;
 
   /// The notifier to notify the tooltip widget to rebuild when the tooltip data changes.
-  late final ValueNotifier<GToolTipWidgetContext?>? _tooltipNotifier;
+  ValueNotifier<GToolTipWidgetContext?>? _tooltipNotifier;
   ValueNotifier<GToolTipWidgetContext?>? get tooltipNotifier =>
       _tooltipNotifier;
-  Widget Function(
-    BuildContext context,
-    Size maxSize,
-    GTooltip tooltip,
-    int point,
-  )?
-  tooltipWidgetBuilder;
+
+  /// The builder function to create the tooltip widget.
+  final GValue<GToolTipWidgetBuilder?> _tooltipWidgetBuilder;
+  GToolTipWidgetBuilder? get tooltipWidgetBuilder =>
+      _tooltipWidgetBuilder.value;
+  set tooltipWidgetBuilder(GToolTipWidgetBuilder? value) {
+    _tooltipWidgetBuilder.value = value;
+    if (value != null) {
+      _tooltipNotifier ??= ValueNotifier<GToolTipWidgetContext?>(null);
+    } else {
+      _tooltipNotifier = null;
+    }
+  }
 
   GTooltip({
     GTooltipPosition position = GTooltipPosition.followPointer,
@@ -117,15 +132,18 @@ class GTooltip extends GComponent {
     bool valueLineHighlightVisible = true,
     super.render = const GTooltipRender(),
     super.theme,
-    this.tooltipWidgetBuilder,
+    GToolTipWidgetBuilder? tooltipWidgetBuilder,
   }) : _position = GValue<GTooltipPosition>(position),
        _showPointValue = GValue<bool>(showPointValue),
        _followValueKey = GValue<String?>(followValueKey),
        _followValueViewPortId = GValue<String?>(followValueViewPortId),
        _pointLineHighlightVisible = GValue<bool>(pointLineHighlightVisible),
-       _valueLineHighlightVisible = GValue<bool>(valueLineHighlightVisible) {
+       _valueLineHighlightVisible = GValue<bool>(valueLineHighlightVisible),
+       _tooltipWidgetBuilder = GValue<GToolTipWidgetBuilder?>(
+         tooltipWidgetBuilder,
+       ) {
     if (tooltipWidgetBuilder != null) {
-      _tooltipNotifier = GValue<GToolTipWidgetContext?>(null);
+      _tooltipNotifier = ValueNotifier<GToolTipWidgetContext?>(null);
     } else {
       _tooltipNotifier = null;
     }

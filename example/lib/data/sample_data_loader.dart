@@ -6,14 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:yahoo_finance_data_reader/yahoo_finance_data_reader.dart';
 import 'package:path_provider/path_provider.dart';
 
-Future<String> get _localPath async {
-  final directory = await getApplicationDocumentsDirectory();
-  return directory.path;
-}
-
 Future<File> _getLocalFile(String name) async {
-  final path = await _localPath;
-  return File('$path/$name');
+  final directory = await getApplicationDocumentsDirectory();
+  return File('${directory.path}/$name');
 }
 
 Future<File> _writeFile(String name, String content) async {
@@ -64,6 +59,7 @@ Future<YahooFinanceResponse> loadYahooFinanceData(
 }
 
 Future<YahooFinanceResponse> _webLoadYahooFinanceData(String ticker) async {
+  // there is cors issue when deploy to online so we just load from asset
   return loadYahooFinanceData(ticker, fromAsset: true);
 
   // uncomment and run locally

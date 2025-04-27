@@ -1,4 +1,5 @@
 import '../../components/components.dart';
+import '../../values/value.dart';
 import 'line_render.dart';
 
 /// Line graph
@@ -7,12 +8,21 @@ class GGraphLine<T extends GGraphTheme> extends GGraph<T> {
 
   /// The key of the series value in the data source.
   final String valueKey;
+
+  /// Whether to smooth the line.
+  final GValue<bool> _smoothing = GValue<bool>(false);
+  bool get smoothing => _smoothing.value;
+  set smoothing(bool value) {
+    _smoothing.value = value;
+  }
+
   GGraphLine({
     super.id,
     super.layer,
     super.visible,
     super.valueViewPortId,
     required this.valueKey,
+    bool smoothing = false,
     super.hitTestMode,
     super.crosshairHighlightValueKeys,
     super.overlayMarkers,
@@ -21,6 +31,7 @@ class GGraphLine<T extends GGraphTheme> extends GGraph<T> {
   }) {
     super.theme = theme;
     super.render = render ?? GGraphLineRender();
+    _smoothing.value = smoothing;
   }
 
   @override

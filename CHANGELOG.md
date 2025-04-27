@@ -1,3 +1,9 @@
+## 0.2.4
+2025-04-27
+- add `GGraphLine`.`smoothing`.
+- update example for `GToolTip`.`tooltipWidgetBuilder`.
+- minor fix.
+
 ## 0.2.3
 2025-04-25
 - use batch drawing when possible to improve performance.
