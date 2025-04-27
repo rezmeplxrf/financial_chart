@@ -418,7 +418,7 @@ class GChart extends ChangeNotifier {
             autoScaleViewports(
               resetPointViewPort: false,
               resetValueViewPort: true,
-              animation: false,
+              animation: true,
             );
           });
     } else {

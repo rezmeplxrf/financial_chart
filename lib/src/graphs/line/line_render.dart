@@ -1,11 +1,10 @@
 import 'dart:typed_data';
 import 'dart:ui';
-import 'dart:ui' as ui;
 
-import 'package:flutter/material.dart';
-import 'package:vector_math/vector_math.dart' hide Colors;
-
-import '../../../financial_chart.dart';
+import '../../chart.dart';
+import '../../components/components.dart';
+import '../../vector/vectors.dart';
+import '../graphs.dart';
 
 class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
   @override
@@ -47,15 +46,16 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
       }
     }
 
-    _drawGraph(
+    final hitTestLinePoints = _drawGraph(
       canvas: canvas,
       area: area,
       theme: theme,
       linePoints: linePoints,
+      smoothing: graph.smoothing,
     );
 
     if (chart.hitTestEnable && graph.hitTestMode != GHitTestMode.none) {
-      _hitTestLinePoints.addAll(linePoints);
+      _hitTestLinePoints.addAll(hitTestLinePoints);
     }
 
     drawHighlightMarks(
@@ -68,32 +68,19 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
   }
 
   // draw graph use raw styles in the theme (optimized batch draw)
-  void _drawGraph({
+  List<Vector2> _drawGraph({
     required Canvas canvas,
     required Rect area,
     required GGraphLineTheme theme,
     required List<Vector2> linePoints,
+    required bool smoothing,
   }) {
+    List<Vector2> resultLinePoints = [];
     Paint? linePaint = theme.lineStyle.getStrokePaint(
       gradientBounds: theme.lineStyle.gradientBounds ?? area,
     );
     Paint? pointStrokePaint = theme.pointStyle.getStrokePaint(
       gradientBounds: theme.pointStyle.gradientBounds ?? area,
-    );
-    pointStrokePaint?.shader = ui.Gradient.linear(
-      area.topCenter,
-      //the line interval is 20
-      area.bottomCenter,
-      [
-        //give transparent to start color, give actual line color to the end color
-        Colors.transparent,
-        Colors.red,
-      ],
-      //The interval [0.0,0.9] is transparent, and the interval [0.9,1.0] is red. So it looks like drawing red lines
-      [0.90, 1.0],
-      //just repeat the gradient
-      TileMode.repeated,
-      null,
     );
     Paint? pointFillPaint = theme.pointStyle.getFillPaint(
       gradientBounds: theme.pointStyle.gradientBounds ?? area,
@@ -103,13 +90,37 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
       pointFillPaint.style = PaintingStyle.fill;
       pointFillPaint.strokeCap = pointStrokePaint?.strokeCap ?? StrokeCap.round;
     }
+
+    // batch draw line segments
     List<double> linesToDraw = [];
-    List<double> pointsToDraw = [];
-    for (int i = 0; i < linePoints.length; i++) {
-      if (linePaint != null) {
-        linesToDraw.add(linePoints[i].x);
-        linesToDraw.add(linePoints[i].y);
+    if (smoothing) {
+      final spline = SplineUtil.catmullRomSpline(linePoints, false);
+      final splinePoints = SplineUtil.sampleSplines(spline, 10, false);
+      for (int i = 0; i < splinePoints.length; i++) {
+        linesToDraw.add(splinePoints[i].x);
+        linesToDraw.add(splinePoints[i].y);
       }
+      resultLinePoints.addAll(splinePoints);
+    } else {
+      for (int i = 0; i < linePoints.length; i++) {
+        if (linePaint != null) {
+          linesToDraw.add(linePoints[i].x);
+          linesToDraw.add(linePoints[i].y);
+        }
+      }
+      resultLinePoints.addAll(linePoints);
+    }
+    if (linePaint != null) {
+      canvas.drawRawPoints(
+        PointMode.polygon,
+        Float32List.fromList(linesToDraw),
+        linePaint,
+      );
+    }
+
+    List<double> pointsToDraw = [];
+    // batch draw points fill
+    for (int i = 0; i < linePoints.length; i++) {
       if (theme.pointRadius > 0 &&
           theme.pointStyle.isNotEmpty &&
           i < linePoints.length - 1) {
@@ -121,15 +132,6 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
         ]);
       }
     }
-    // draw line segments
-    if (linePaint != null) {
-      canvas.drawRawPoints(
-        PointMode.polygon,
-        Float32List.fromList(linesToDraw),
-        linePaint,
-      );
-    }
-    // draw points fill
     if (pointFillPaint != null) {
       canvas.drawRawPoints(
         PointMode.points,
@@ -148,6 +150,8 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
         );
       }
     }
+
+    return resultLinePoints;
   }
 
   final List<Vector2> _hitTestLinePoints = [];

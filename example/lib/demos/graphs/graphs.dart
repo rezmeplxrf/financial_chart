@@ -149,7 +149,21 @@ class DemoGraphLinePageState extends DemoGraphBasePageState {
   String tooltipFollowValueViewPortId() => graph.valueViewPortId;
 
   @override
-  List<Widget> buildControlActions(BuildContext context) => [];
+  List<Widget> buildControlActions(BuildContext context) => [
+    AppLabelWidget(
+      label: "GGraphLine.smoothing",
+      description: "Whether to smooth the line or not.",
+      child: AppPopupMenu<bool>(
+        items: const [true, false],
+        onSelected: (bool selected) {
+          graph.smoothing = selected;
+          repaintChart();
+        },
+        selected: graph.smoothing,
+        labelResolver: (item) => item.toString(),
+      ),
+    ),
+  ];
 }
 
 class DemoGraphAreaPage extends DemoGraphBasePage {
