@@ -77,7 +77,7 @@ class GThemeDark extends GTheme {
       strokeWidth: 1.0,
     ),
     selectionStyle: PaintStyle(
-      fillColor: const Color(0x88BBBBFF),
+      fillColor: const Color(0x55BBBBFF),
       strokeColor: const Color(0xAABBBBFF),
       strokeWidth: 1.0,
     ),
@@ -102,7 +102,7 @@ class GThemeDark extends GTheme {
       strokeWidth: 1.0,
     ),
     selectionStyle: PaintStyle(
-      fillColor: const Color(0x88BBBBFF),
+      fillColor: const Color(0x55BBBBFF),
       strokeColor: const Color(0xAABBBBFF),
     ),
     labelTheme: GAxisLabelTheme(
@@ -199,6 +199,10 @@ class GThemeDark extends GTheme {
     lineStyle: PaintStyle(
       strokeColor: const Color(0xFF333333),
       strokeWidth: 0.5,
+    ),
+    selectionStyle: PaintStyle(
+      fillColor: const Color(0x33BBBBFF),
+      strokeColor: const Color(0xAABBBBFF),
     ),
     axisMarkerTheme: axisMarkerThemeDefault,
     overlayMarkerTheme: overlayMarkerThemeDefault,

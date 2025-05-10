@@ -6,8 +6,10 @@ import '../../components/graph/graph_theme.dart';
 /// Theme for grid lines
 class GGraphGridsTheme extends GGraphTheme {
   final PaintStyle lineStyle;
+  final PaintStyle? selectionStyle;
   const GGraphGridsTheme({
     required this.lineStyle,
+    this.selectionStyle,
     super.axisMarkerTheme,
     super.overlayMarkerTheme,
     super.highlightMarkerTheme,
@@ -15,12 +17,14 @@ class GGraphGridsTheme extends GGraphTheme {
 
   GGraphGridsTheme copyWith({
     PaintStyle? lineStyle,
+    PaintStyle? selectionStyle,
     GAxisMarkerTheme? axisMarkerTheme,
     GOverlayMarkerTheme? overlayMarkerTheme,
     GGraphHighlightMarkerTheme? highlightMarkerTheme,
   }) {
     return GGraphGridsTheme(
       lineStyle: lineStyle ?? this.lineStyle,
+      selectionStyle: selectionStyle ?? this.selectionStyle,
       axisMarkerTheme: axisMarkerTheme ?? this.axisMarkerTheme,
       overlayMarkerTheme: overlayMarkerTheme ?? this.overlayMarkerTheme,
       highlightMarkerTheme: highlightMarkerTheme ?? this.highlightMarkerTheme,

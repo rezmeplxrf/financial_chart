@@ -1,0 +1,175 @@
+part of 'chart_interaction.dart';
+
+/// Custom gesture recognizers for handling touch events on the chart.
+extension GChartInteractionGestures on GChartInteractionHandler {
+  Map<Type, GestureRecognizerFactory> createGestureRecognizers(
+    BuildContext context, {
+    Set<PointerDeviceKind>? supportedDevices,
+  }) {
+    final controller = this;
+    final team = GestureArenaTeam();
+    final gestureSettings = MediaQuery.maybeOf(context)?.gestureSettings;
+    return {
+      // ----- ScaleGestureRecognizer -----
+      GChartScaleGestureRecognizer:
+          GestureRecognizerFactoryWithHandlers<GChartScaleGestureRecognizer>(
+            () =>
+                GChartScaleGestureRecognizer(
+                    supportedDevices: supportedDevices,
+                    chart: _chart,
+                  )
+                  ..team = team
+                  ..gestureSettings = gestureSettings,
+            (GChartScaleGestureRecognizer instance) {
+              team.captain = instance;
+              instance.onStart = (details) {
+                controller.scaleStart(
+                  start: details.localFocalPoint,
+                  pointerCount: details.pointerCount,
+                );
+              };
+              instance.onUpdate = (details) {
+                controller.scaleUpdate(
+                  position: details.localFocalPoint,
+                  scale: details.scale,
+                  verticalScale: details.verticalScale,
+                );
+              };
+              instance.onEnd = (details) {
+                controller.scaleEnd(details.velocity);
+              };
+            },
+          ),
+      // ----- VerticalDragGestureRecognizer -----
+      GChartVerticalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<
+        GChartVerticalDragGestureRecognizer
+      >(
+        () =>
+            GChartVerticalDragGestureRecognizer(
+                supportedDevices: supportedDevices,
+                chart: _chart,
+              )
+              ..team = team
+              ..dragStartBehavior = DragStartBehavior.down
+              ..gestureSettings = gestureSettings,
+        (GChartVerticalDragGestureRecognizer instance) {
+          instance.onStart = (details) {
+            controller.scaleStart(
+              start: details.localPosition,
+              pointerCount: 1,
+            );
+          };
+          instance.onUpdate = (details) {
+            controller.scaleUpdate(
+              position: details.localPosition,
+              scale: 1,
+              verticalScale: 1,
+            );
+          };
+          instance.onEnd = (details) {
+            controller.scaleEnd(details.velocity);
+          };
+          instance.gestureSettings =
+              MediaQuery.maybeOf(context)?.gestureSettings;
+        },
+      ),
+      // ----- HorizontalDragGestureRecognizer -----
+      GChartHorizontalDragGestureRecognizer:
+          GestureRecognizerFactoryWithHandlers<
+            GChartHorizontalDragGestureRecognizer
+          >(
+            () =>
+                GChartHorizontalDragGestureRecognizer(
+                    supportedDevices: supportedDevices,
+                    chart: _chart,
+                  )
+                  ..team = team
+                  ..dragStartBehavior = DragStartBehavior.down,
+            (GChartHorizontalDragGestureRecognizer instance) {
+              instance.onStart = (details) {
+                controller.scaleStart(
+                  start: details.localPosition,
+                  pointerCount: 1,
+                );
+              };
+              instance.onUpdate = (details) {
+                controller.scaleUpdate(
+                  position: details.localPosition,
+                  scale: 1,
+                  verticalScale: 1,
+                );
+              };
+              instance.onEnd = (details) {
+                controller.scaleEnd(details.velocity);
+              };
+              instance.gestureSettings =
+                  MediaQuery.maybeOf(context)?.gestureSettings;
+            },
+          ),
+      // ----- TapGestureRecognizer -----
+      GChartDoubleTapGestureRecognizer: GestureRecognizerFactoryWithHandlers<
+        GChartDoubleTapGestureRecognizer
+      >(
+        () => GChartDoubleTapGestureRecognizer(
+          supportedDevices: supportedDevices,
+        ),
+        (GChartDoubleTapGestureRecognizer instance) {
+          instance.onDoubleTapDown = (details) {
+            controller.doubleTap(position: details.localPosition);
+            //widget.onDoubleTapDown?.call(details);
+          };
+          instance.gestureSettings =
+              MediaQuery.maybeOf(context)?.gestureSettings;
+        },
+      ),
+      // ----- LongPressGestureRecognizer -----
+      GChartLongPressGestureRecognizer: GestureRecognizerFactoryWithHandlers<
+        GChartLongPressGestureRecognizer
+      >(
+        () => GChartLongPressGestureRecognizer(
+          supportedDevices: supportedDevices,
+          chart: _chart,
+        ),
+        (GChartLongPressGestureRecognizer instance) {
+          instance.onLongPressStart = (details) {
+            controller.longPressStart(position: details.localPosition);
+          };
+          instance.onLongPressMoveUpdate = (details) {
+            controller.longPressMove(position: details.localPosition);
+          };
+          instance.onLongPressEnd = (details) {
+            controller.longPressEnd(position: details.localPosition);
+          };
+          instance.gestureSettings =
+              MediaQuery.maybeOf(context)?.gestureSettings;
+        },
+      ),
+      // ----- TapGestureRecognizer -----
+      GChartTapGestureRecognizer:
+          GestureRecognizerFactoryWithHandlers<GChartTapGestureRecognizer>(
+            () => GChartTapGestureRecognizer(
+              supportedDevices: supportedDevices,
+              chart: _chart,
+            ),
+            (GChartTapGestureRecognizer instance) {
+              instance.onTapDown = (details) {
+                controller.tapDown(
+                  position: details.localPosition,
+                  isTouch: details.kind == PointerDeviceKind.touch,
+                );
+                //widget.onTapDown?.call(details);
+              };
+              instance.onTapUp = (details) {
+                controller.tapUp(
+                  position: details.localPosition,
+                  isTouch: details.kind == PointerDeviceKind.touch,
+                );
+                //widget.onTapUp?.call(details);
+              };
+              instance.gestureSettings =
+                  MediaQuery.maybeOf(context)?.gestureSettings;
+            },
+          ),
+    };
+  }
+}

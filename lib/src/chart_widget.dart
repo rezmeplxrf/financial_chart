@@ -1,8 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:financial_chart/financial_chart.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'chart.dart';
@@ -38,22 +36,18 @@ class GChartWidget extends StatefulWidget {
   final Widget Function(BuildContext context, GChart chart)
   loadingWidgetBuilder;
   final Widget Function(BuildContext context, GChart chart) noDataWidgetBuilder;
-  final GestureTapDownCallback? onTapDown;
-  final GestureTapUpCallback? onTapUp;
-  final GestureTapDownCallback? onDoubleTapDown;
   final PointerDownEventListener? onPointerDown;
   final PointerUpEventListener? onPointerUp;
+  final Set<PointerDeviceKind>? supportedDevices;
   const GChartWidget({
     super.key,
     required this.chart,
     required this.tickerProvider,
     this.noDataWidgetBuilder = _defaultNoDataWidgetBuilder,
     this.loadingWidgetBuilder = _defaultLoadingWidgetBuilder,
-    this.onTapDown,
-    this.onTapUp,
-    this.onDoubleTapDown,
     this.onPointerDown,
     this.onPointerUp,
+    this.supportedDevices,
   });
 
   @override
@@ -62,14 +56,19 @@ class GChartWidget extends StatefulWidget {
 
 class GChartWidgetState extends State<GChartWidget> {
   GChartWidgetState();
-  bool printEvents = false;
   MouseCursor cursor = SystemMouseCursors.basic;
   late GChartInteractionHandler _interactionHandler;
 
   void initializeChart() {
     _interactionHandler = GChartInteractionHandler();
     _interactionHandler.attach(widget.chart);
-    widget.chart.initialize(vsync: widget.tickerProvider);
+    if (widget.chart.initialized) {
+      return;
+    }
+    widget.chart.internalInitialize(
+      vsync: widget.tickerProvider,
+      interactionHandler: _interactionHandler,
+    );
     widget.chart.mouseCursor.addListener(cursorChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.chart.ensureInitialData();
@@ -127,44 +126,32 @@ class GChartWidgetState extends State<GChartWidget> {
         chart.resize(newArea: rect);
         return Stack(
           children: [
-            GestureDetector(
-              excludeFromSemantics: true,
-              behavior: HitTestBehavior.deferToChild,
+            RawGestureDetector(
+              gestures: controller.createGestureRecognizers(
+                context,
+                supportedDevices: widget.supportedDevices,
+              ),
               child: Listener(
                 onPointerSignal: (PointerSignalEvent event) {
-                  if (event is PointerScrollEvent) {
-                    if (kDebugMode && printEvents) {
-                      print(
-                        "PointerScrollEvent: ${event.position} delta= ${event.scrollDelta} ",
-                      );
-                    }
-                    controller.pointerScroll(
-                      position: event.localPosition,
-                      scrollDelta: event.scrollDelta,
-                    );
-                  }
+                  GestureBinding.instance.pointerSignalResolver.register(
+                    event,
+                    (PointerSignalEvent event) {
+                      if (event is PointerScrollEvent) {
+                        controller.pointerScroll(
+                          position: event.localPosition,
+                          scrollDelta: event.scrollDelta,
+                        );
+                      }
+                    },
+                  );
                 },
                 child: MouseRegion(
                   cursor: chart.mouseCursor.value,
-                  child: Listener(
-                    child: RepaintBoundary(
-                      child: CustomPaint(
-                        size: chart.size,
-                        painter: GChartPainter(chart: chart),
-                      ),
+                  child: RepaintBoundary(
+                    child: CustomPaint(
+                      size: chart.size,
+                      painter: GChartPainter(chart: chart),
                     ),
-                    onPointerDown: (PointerDownEvent details) {
-                      if (kDebugMode && printEvents) {
-                        print("onPointerDown: ${details.localPosition}");
-                      }
-                      widget.onPointerDown?.call(details);
-                    },
-                    onPointerUp: (PointerUpEvent details) {
-                      if (kDebugMode && printEvents) {
-                        print("onPointerUp: ${details.localPosition}");
-                      }
-                      widget.onPointerUp?.call(details);
-                    },
                   ),
                   onEnter: (PointerEvent details) {
                     controller.mouseEnter(position: details.localPosition);
@@ -176,96 +163,13 @@ class GChartWidgetState extends State<GChartWidget> {
                     controller.mouseHover(position: details.localPosition);
                   },
                 ),
+                onPointerDown: (PointerDownEvent details) {
+                  widget.onPointerDown?.call(details);
+                },
+                onPointerUp: (PointerUpEvent details) {
+                  widget.onPointerUp?.call(details);
+                },
               ),
-              onScaleStart: (details) {
-                if (kDebugMode && printEvents) {
-                  print("onScaleStart offset: ${details.localFocalPoint}");
-                }
-                controller.scaleStart(
-                  start: details.localFocalPoint,
-                  pointerCount: details.pointerCount,
-                );
-              },
-              onScaleUpdate: (details) {
-                if (kDebugMode && printEvents) {
-                  print("onScaleUpdate offset: ${details.localFocalPoint}");
-                }
-                controller.scaleUpdate(
-                  position: details.localFocalPoint,
-                  scale: details.scale,
-                  verticalScale: details.verticalScale,
-                );
-              },
-              onScaleEnd: (details) {
-                if (kDebugMode && printEvents) {
-                  print("onScaleEnd offset: ${details.velocity}");
-                }
-                controller.scaleEnd(details.velocity);
-              },
-              onTapDown: (TapDownDetails details) {
-                if (kDebugMode && printEvents) {
-                  print("onTapDown kind: ${details.kind}");
-                }
-                controller.tapDown(
-                  position: details.localPosition,
-                  isTouch: details.kind == PointerDeviceKind.touch,
-                );
-                widget.onTapDown?.call(details);
-              },
-              onTapUp: (TapUpDetails details) {
-                if (kDebugMode && printEvents) {
-                  print("onTapUp kind: ${details.kind}");
-                }
-                controller.tapUp(
-                  position: details.localPosition,
-                  isTouch: details.kind == PointerDeviceKind.touch,
-                );
-                widget.onTapUp?.call(details);
-              },
-              onDoubleTapDown: (TapDownDetails details) {
-                if (kDebugMode && printEvents) {
-                  print("onDoubleTapDown kind: ${details.kind}");
-                }
-                controller.doubleTap(position: details.localPosition);
-                widget.onDoubleTapDown?.call(details);
-              },
-              onVerticalDragStart: (DragStartDetails details) {
-                controller.scaleStart(
-                  start: details.localPosition,
-                  pointerCount: 1,
-                );
-              },
-              onLongPressStart: (LongPressStartDetails details) {
-                if (kDebugMode && printEvents) {
-                  print("onLongPressStart: ${details.localPosition}");
-                }
-                controller.longPressStart(position: details.localPosition);
-              },
-              onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) {
-                if (kDebugMode && printEvents) {
-                  print("onLongPressMoveUpdate: ${details.localPosition}");
-                }
-                controller.longPressMove(position: details.localPosition);
-              },
-              onLongPressEnd: (LongPressEndDetails details) {
-                if (kDebugMode && printEvents) {
-                  print("onLongPressEnd kind: ${details.localPosition}");
-                }
-                controller.longPressEnd(position: details.localPosition);
-              },
-              onVerticalDragUpdate: (DragUpdateDetails details) {
-                if (kDebugMode && printEvents) {
-                  print("onVerticalDragUpdate kind: ${details.localPosition}");
-                }
-                controller.scaleUpdate(
-                  position: details.localPosition,
-                  scale: 1,
-                  verticalScale: 1,
-                );
-              },
-              onVerticalDragEnd: (DragEndDetails details) {
-                controller.scaleEnd(details.velocity);
-              },
             ),
             // loading indicator & no data indicator widget
             ListenableBuilder(

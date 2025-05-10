@@ -118,6 +118,7 @@ class GTooltip extends GComponent {
     if (value != null) {
       _tooltipNotifier ??= ValueNotifier<GToolTipWidgetContext?>(null);
     } else {
+      _tooltipNotifier?.dispose();
       _tooltipNotifier = null;
     }
   }

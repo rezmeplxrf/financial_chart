@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 
@@ -20,6 +18,7 @@ class GValueViewPort extends ChangeNotifier {
 
   /// Current value range (top and bottom) of the viewport.
   final GRange _range = GRange.empty();
+  GRange get range => _range;
   bool get isValid => _range.isNotEmpty;
 
   /// The end (top) value of the viewport.
@@ -33,9 +32,6 @@ class GValueViewPort extends ChangeNotifier {
 
   /// The value range of the viewport ([endValue]-[startValue]).
   double get valueRange => endValue - startValue;
-
-  /// The range when scaling started. will be cleared when scaling finished.
-  final GRange _rangeScaling = GRange.empty();
 
   /// The range when selecting. will be cleared when selection finished.
   GRange get selectedRange => _selectedRange;
@@ -71,7 +67,21 @@ class GValueViewPort extends ChangeNotifier {
   /// set to 0 to disable animation.
   final GValue<int> _animationMilliseconds = GValue<int>(2000);
   int get animationMilliseconds => _animationMilliseconds.value;
-  set animationMilliseconds(int value) => _animationMilliseconds.value = value;
+  set animationMilliseconds(int value) {
+    assert(
+      value >= 0,
+      'animationMilliseconds should be greater than or equal to 0.',
+    );
+    if (_animationMilliseconds.value == value) {
+      return;
+    }
+    _animationMilliseconds.value = value;
+    if (_rangeAnimationController != null) {
+      _rangeAnimationController!.duration = Duration(
+        milliseconds: animationMilliseconds,
+      );
+    }
+  }
 
   AnimationController? _rangeAnimationController;
   Animation<double>? _rangeAnimation;
@@ -136,7 +146,7 @@ class GValueViewPort extends ChangeNotifier {
   }
 
   void _notifyRangeUpdated({required bool finished}) {
-    if (super.hasListeners) {
+    if (!_disposed && super.hasListeners) {
       notifyListeners();
     }
     if (onRangeUpdate != null) {
@@ -147,6 +157,9 @@ class GValueViewPort extends ChangeNotifier {
   }
 
   void stopAnimation() {
+    if (_disposed) {
+      return;
+    }
     _rangeAnimationController?.stop();
     _animationStartRange.clear();
     _animationTargetRange.clear();
@@ -169,7 +182,6 @@ class GValueViewPort extends ChangeNotifier {
   }
 
   void animateToRange(
-    GChart chart,
     GRange targetRange,
     bool finished,
     bool animation, {
@@ -290,16 +302,6 @@ class GValueViewPort extends ChangeNotifier {
     return size * (endValue - startValue) / viewSize;
   }
 
-  void interactionStart() {
-    _rangeScaling.copy(_range);
-  }
-
-  void interactionEnd() {
-    _rangeScaling.clear();
-    _selectedRange.clear();
-    _notifyRangeUpdated(finished: true);
-  }
-
   (double startValueClamped, double endValueClamped) clampScaleRange(
     double startValue,
     double endValue,
@@ -325,64 +327,49 @@ class GValueViewPort extends ChangeNotifier {
     return (startValueClamped, endValueClamped);
   }
 
-  void interactionZoomUpdate(Rect area, double zoomRatio) {
-    if (_rangeScaling.isEmpty) {
-      return;
-    }
-    double centerValue = (_rangeScaling.first! + _rangeScaling.last!) / 2;
-    double endValueNew =
-        centerValue + (_rangeScaling.last! - centerValue) / zoomRatio;
-    double startValueNew =
-        centerValue + (_rangeScaling.first! - centerValue) / zoomRatio;
-    (startValueNew, endValueNew) = clampScaleRange(startValueNew, endValueNew);
-    setRange(startValue: startValueNew, endValue: endValueNew);
-  }
-
-  void interactionMoveUpdate(Rect area, double movedDistance) {
-    if (_rangeScaling.isEmpty) {
-      return;
-    }
-    double valueMoved =
-        (movedDistance / area.height) *
-        (_rangeScaling.last! - _rangeScaling.first!);
-    double endValueNew = _rangeScaling.last! + valueMoved;
-    double startValueNew = _rangeScaling.first! + valueMoved;
-    setRange(startValue: startValueNew, endValue: endValueNew);
-  }
-
-  void interactionSelectUpdate(
-    GChart chart,
+  /// zoom in/out the viewport range.
+  void _zoom(
+    GRange startRange,
     Rect area,
-    double startPosition,
-    double position, {
-    bool finished = false,
+    double zoomRatio, {
+    bool animate = false,
+    bool finished = true,
+    bool notify = true,
   }) {
-    if (_rangeScaling.isEmpty) {
+    if (startRange.isEmpty) {
       return;
     }
-    final value1 = positionToValue(
-      area,
-      max(area.top, min(area.bottom, startPosition)),
+    autoScaleFlg = false;
+    double centerValue = (startRange.first! + startRange.last!) / 2;
+    double endValueNew =
+        centerValue + (startRange.last! - centerValue) / zoomRatio;
+    double startValueNew =
+        centerValue + (startRange.first! - centerValue) / zoomRatio;
+    (startValueNew, endValueNew) = clampScaleRange(startValueNew, endValueNew);
+    animateToRange(
+      GRange.range(startValueNew, endValueNew),
+      true,
+      animate,
+      notify: notify,
     );
-    final value2 = positionToValue(
+  }
+
+  void zoom(
+    Rect area,
+    double zoomRatio, {
+    GRange? startRange,
+    bool animate = true,
+    bool finished = true,
+    bool notify = true,
+  }) {
+    _zoom(
+      startRange ?? _range,
       area,
-      max(area.top, min(area.bottom, position)),
+      zoomRatio,
+      animate: animate,
+      finished: finished,
+      notify: notify,
     );
-    _selectedRange.update(min(value1, value2), max(value1, value2));
-    if (finished) {
-      double endValueNew = min(_selectedRange.last!, _rangeScaling.last!);
-      double startValueNew = max(_selectedRange.first!, _rangeScaling.first!);
-      (startValueNew, endValueNew) = clampScaleRange(
-        startValueNew,
-        endValueNew,
-      );
-      animateToRange(
-        chart,
-        GRange.range(startValueNew, endValueNew),
-        finished,
-        true,
-      );
-    }
   }
 
   void autoScaleReset({
@@ -411,7 +398,6 @@ class GValueViewPort extends ChangeNotifier {
       newRange.end!,
     );
     animateToRange(
-      chart,
       GRange.range(startValueClamped, endValueClamped),
       finished,
       animation,
@@ -420,12 +406,15 @@ class GValueViewPort extends ChangeNotifier {
     );
   }
 
+  bool _disposed = false;
+
   @override
   void dispose() {
     _rangeAnimation?.removeListener(_rangeAnimationListener);
     _rangeAnimationController
       ?..stop()
       ..dispose();
+    _disposed = true;
     super.dispose();
   }
 }

@@ -48,7 +48,7 @@ class GPanel extends GComponent {
   ///
   /// A resize handle will be shown at the middle of two panels when both are resizable.
   final GValue<bool> _resizable = GValue(true);
-  bool get resizable => _resizable.value;
+  bool get resizable => _resizable.value && visible;
   set resizable(bool value) => _resizable.value = value;
 
   /// The height weight of the panel. height will be chart.height * [_heightWeight].
@@ -85,9 +85,12 @@ class GPanel extends GComponent {
 
   /// The render area of the point axis at [index] of [pointAxes].
   Rect pointAxisArea(int index) => _areas[index];
+  Rect pointAxisAreaOf(GPointAxis axis) => _areas[pointAxes.indexOf(axis)];
 
   /// The render area of the value axis at [index] of [valueAxes].
   Rect valueAxisArea(int index) => _areas[pointAxes.length + index];
+  Rect valueAxisAreaOf(GValueAxis axis) =>
+      _areas[pointAxes.length + valueAxes.indexOf(axis)];
 
   /// The render area of graphs.
   Rect graphArea() => _areas[pointAxes.length + valueAxes.length];
@@ -111,7 +114,7 @@ class GPanel extends GComponent {
     double heightWeight = 1.0,
     bool resizable = true,
     GGraphPanMode graphPanMode = GGraphPanMode.auto,
-    this.splitterHeight = 12,
+    this.splitterHeight = 16.0,
     double momentumScrollSpeed = 0.5,
     GPanelTheme? theme,
     GPanelRender? render,
@@ -131,17 +134,20 @@ class GPanel extends GComponent {
     // only one value viewport with empty id is allowed
   }
 
-  void layout(Rect panelArea) {
+  void layout(Rect panelArea, bool hasSplitter) {
     _areas.clear();
     final (axesAreas, graphArea) = GAxis.placeAxes(panelArea, [
       ...pointAxes,
       ...valueAxes,
     ]);
-    final splitterArea = Rect.fromCenter(
-      center: panelArea.bottomCenter,
-      width: panelArea.width,
-      height: splitterHeight,
-    );
+    final splitterArea =
+        hasSplitter
+            ? Rect.fromCenter(
+              center: panelArea.bottomCenter,
+              width: panelArea.width,
+              height: splitterHeight,
+            )
+            : Rect.zero;
     _areas
       ..addAll(axesAreas)
       ..add(graphArea)

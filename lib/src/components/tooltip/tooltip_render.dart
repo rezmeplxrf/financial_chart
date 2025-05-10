@@ -38,7 +38,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
     }
     if (!chart.pointViewPort.isValid ||
         chart.pointViewPort.isAnimating ||
-        chart.pointViewPort.isScaling) {
+        chart.isScaling) {
       // skip rendering if point view port is animating or scaling
       _removeWidget(chart);
       return;
@@ -363,7 +363,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
     WidgetsBinding.instance.addPostFrameCallback((f) {
       for (var panel in panels) {
         if (panel.tooltip?.tooltipNotifier != null) {
-          panel.tooltip!.tooltipNotifier?.value = null;
+          panel.tooltip!.tooltipNotifier!.value = null;
         }
       }
     });
