@@ -2,13 +2,17 @@ import 'package:financial_chart/financial_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../data/sample_data.dart';
-import '../main.dart';
 
 const kVpVolume = 'vp-volume';
 const kVpPrice = 'vp-price';
 const kVpMacd = 'vp-macd';
 
 class WorkshopState extends ChangeNotifier {
+  final ValueNotifier<ThemeMode> themeMode;
+  final GlobalKey<State<StatefulWidget>> workshopViewKey =
+      GlobalKey<State<StatefulWidget>>();
+  WorkshopState({required this.themeMode});
+
   String ticker = 'AAPL';
 
   void toggleMode() {

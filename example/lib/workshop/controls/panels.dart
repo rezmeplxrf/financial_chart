@@ -118,7 +118,7 @@ class _PanelControlViewState extends State<PanelControlView> {
           onSelected: (enable) {
             if (enable) {
               state.chart?.panels[0].onTapGraphArea = (position) {
-                _notifyTap("Tap", context, state.chart, position);
+                _notifyTap("Tap", state, position);
               };
             } else {
               state.chart?.panels[0].onTapGraphArea = null;
@@ -137,7 +137,7 @@ class _PanelControlViewState extends State<PanelControlView> {
           onSelected: (enable) {
             if (enable) {
               state.chart?.panels[0].onDoubleTapGraphArea = (position) {
-                _notifyTap("DoubleTap", context, state.chart, position);
+                _notifyTap("DoubleTap", state, position);
               };
             } else {
               state.chart?.panels[0].onDoubleTapGraphArea = null;
@@ -149,13 +149,10 @@ class _PanelControlViewState extends State<PanelControlView> {
     );
   }
 
-  void _notifyTap(
-    String prefix,
-    BuildContext context,
-    GChart? chart,
-    Offset position,
-  ) {
+  void _notifyTap(String prefix, WorkshopState state, Offset position) {
+    final chart = state.chart;
     if (chart == null) return;
+    final rootContext = state.workshopViewKey.currentContext!;
     final panel = chart.panels[0];
     final coord = panel.positionToViewPortCoord(
       position: position,
@@ -171,7 +168,7 @@ class _PanelControlViewState extends State<PanelControlView> {
       final value = coord.value;
       final props = chart.dataSource.getSeriesProperty(keyClose);
       showDialog(
-        context: context,
+        context: rootContext,
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(

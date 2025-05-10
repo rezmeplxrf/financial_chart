@@ -14,7 +14,7 @@ final routes = {
   '/demo':
       (context) => const MenuPage(pathPrefix: '/demo', title: "Chart demos"),
   '/demo/basic': (context) => const BasicDemoPage(),
-  '/demo/workshop': (context) => const WorkshopApp(),
+  '/demo/workshop': (context) => WorkshopApp(themeMode: themeMode),
   // '/demo/axes': (context) => const DemoAxesPage(),
   // '/demo/crosshair': (context) => const DemoCrosshairPage(),
   // '/demo/tooltip': (context) => const DemoTooltipPage(),
