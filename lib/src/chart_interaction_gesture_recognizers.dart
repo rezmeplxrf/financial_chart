@@ -15,14 +15,14 @@ class GChartScaleGestureRecognizer extends ScaleGestureRecognizer {
       // get back as captain
       team?.captain = this;
     }
-    for (final panel in (chart?.panels ?? [])) {
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
       if (panel.resizable &&
           panel.splitterArea().contains(event.localPosition)) {
         super.addAllowedPointer(event);
         return;
       }
     }
-    for (final panel in (chart?.panels ?? [])) {
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
       // point axes which can not scale do not allow scale
       for (final axis in panel.pointAxes) {
         if (panel.pointAxisAreaOf(axis).contains(event.localPosition)) {
@@ -79,7 +79,7 @@ class GChartVerticalDragGestureRecognizer
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
-    for (final panel in (chart?.panels ?? [])) {
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
       // splitters allows vertical drag
       if (panel.splitterArea().contains(event.localPosition)) {
         if (panel.resizable) {
@@ -89,7 +89,7 @@ class GChartVerticalDragGestureRecognizer
         return;
       }
     }
-    for (final panel in (chart?.panels ?? [])) {
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
       // point axes do not allow vertical drag
       for (final axis in panel.pointAxes) {
         if (panel.pointAxisAreaOf(axis).contains(event.localPosition)) {
@@ -114,7 +114,7 @@ class GChartVerticalDragGestureRecognizer
               panel: panel,
               position: event.localPosition,
             ) ??
-            panel.graphs.last;
+            panel.graphs.lastOrNull;
         if (graph != null &&
             panel.findValueViewPortById(graph.valueViewPortId).autoScaleFlg) {
           return;
@@ -165,7 +165,7 @@ class GChartHorizontalDragGestureRecognizer
         return;
       }
     }
-    for (final panel in (chart?.panels ?? [])) {
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
       // value axes do not allow horizontal drag
       for (final axis in panel.valueAxes) {
         if (panel.valueAxisAreaOf(axis).contains(event.localPosition)) {
@@ -201,14 +201,14 @@ class GChartLongPressGestureRecognizer extends LongPressGestureRecognizer {
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
-    for (final panel in (chart?.panels ?? [])) {
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
       if (panel.resizable &&
           panel.splitterArea().contains(event.localPosition)) {
         // splitters do not allow long press
         return;
       }
     }
-    for (final panel in (chart?.panels ?? [])) {
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
       // only allow long press on the graph area
       if (panel.graphArea().contains(event.localPosition)) {
         super.addAllowedPointer(event);
@@ -225,14 +225,23 @@ class GChartTapGestureRecognizer extends TapGestureRecognizer {
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
-    for (final panel in (chart?.panels ?? [])) {
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
       if (panel.resizable &&
           panel.splitterArea().contains(event.localPosition)) {
         // splitters do not allow tap
         return;
       }
     }
-    super.addAllowedPointer(event);
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
+      if ((panel.onTapGraphArea != null ||
+              panel.onDoubleTapGraphArea != null) &&
+          panel.graphArea().contains(event.localPosition)) {
+        // only allow tap on the graph area when there is any callback
+        super.addAllowedPointer(event);
+        return;
+      }
+    }
+    // super.addAllowedPointer(event);
   }
 }
 
@@ -243,16 +252,17 @@ class GChartDoubleTapGestureRecognizer extends DoubleTapGestureRecognizer {
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
-    for (final panel in (chart?.panels ?? [])) {
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
       if (panel.resizable &&
           panel.splitterArea().contains(event.localPosition)) {
         // splitters do not allow double tap
         return;
       }
     }
-    for (final panel in (chart?.panels ?? [])) {
-      if (panel.graphArea().contains(event.localPosition)) {
-        // graph area does not allow double tap
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
+      if (panel.graphArea().contains(event.localPosition) &&
+          panel.onDoubleTapGraphArea == null) {
+        // double tap graph area is only allowed when onDoubleTapGraphArea is not null
         return;
       }
     }

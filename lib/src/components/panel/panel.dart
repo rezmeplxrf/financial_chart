@@ -104,6 +104,21 @@ class GPanel extends GComponent {
   /// The active graph.
   GGraph get activeGraph => graphs.last;
 
+  /// The callback function when tap the graph area.
+  ///
+  /// NOTICE that when [onDoubleTapGraphArea] also being set there is a delay cause by distinguishing single from double taps
+  final GValue<Function(Offset)?> _onTapGraphArea = GValue(null);
+  Function(Offset)? get onTapGraphArea => _onTapGraphArea.value;
+  set onTapGraphArea(Function(Offset)? value) => _onTapGraphArea.value = value;
+
+  /// The callback function when double tap the graph area.
+  ///
+  /// NOTICE that when this being set it will cause a delay on [onTapGraphArea] for distinguishing single from double taps
+  final GValue<Function(Offset)?> _onDoubleTapGraphArea = GValue(null);
+  Function(Offset)? get onDoubleTapGraphArea => _onDoubleTapGraphArea.value;
+  set onDoubleTapGraphArea(Function(Offset)? value) =>
+      _onDoubleTapGraphArea.value = value;
+
   GPanel({
     super.id,
     required this.pointAxes,
@@ -116,6 +131,8 @@ class GPanel extends GComponent {
     GGraphPanMode graphPanMode = GGraphPanMode.auto,
     this.splitterHeight = 16.0,
     double momentumScrollSpeed = 0.5,
+    Function(Offset)? onTapGraphArea,
+    Function(Offset)? onDoubleTapGraphArea,
     GPanelTheme? theme,
     GPanelRender? render,
   }) : super(render: render ?? const GPanelRender(), theme: theme) {
@@ -124,6 +141,8 @@ class GPanel extends GComponent {
     _resizable.value = resizable;
     _momentumScrollSpeed.value = min(max(momentumScrollSpeed, 0), 1.0);
     _graphPanMode.value = graphPanMode;
+    _onTapGraphArea.value = onTapGraphArea;
+    _onDoubleTapGraphArea.value = onDoubleTapGraphArea;
     // at least one value viewport is required
     assert(valueViewPorts.isNotEmpty);
     // no duplicate id for value viewport

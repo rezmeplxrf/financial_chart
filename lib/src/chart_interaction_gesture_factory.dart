@@ -112,10 +112,18 @@ extension GChartInteractionGestures on GChartInteractionHandler {
       >(
         () => GChartDoubleTapGestureRecognizer(
           supportedDevices: supportedDevices,
+          chart: _chart,
         ),
         (GChartDoubleTapGestureRecognizer instance) {
           instance.onDoubleTapDown = (details) {
             controller.doubleTap(position: details.localPosition);
+            for (final panel in _chart.panels) {
+              if (panel.onDoubleTapGraphArea != null &&
+                  panel.graphArea().contains(details.localPosition)) {
+                panel.onDoubleTapGraphArea?.call(details.localPosition);
+                break;
+              }
+            }
             //widget.onDoubleTapDown?.call(details);
           };
           instance.gestureSettings =
@@ -160,10 +168,14 @@ extension GChartInteractionGestures on GChartInteractionHandler {
                 //widget.onTapDown?.call(details);
               };
               instance.onTapUp = (details) {
-                controller.tapUp(
-                  position: details.localPosition,
-                  isTouch: details.kind == PointerDeviceKind.touch,
-                );
+                controller.tapUp();
+                for (final panel in _chart.panels) {
+                  if (panel.onTapGraphArea != null &&
+                      panel.graphArea().contains(details.localPosition)) {
+                    panel.onTapGraphArea?.call(details.localPosition);
+                    break;
+                  }
+                }
                 //widget.onTapUp?.call(details);
               };
               instance.gestureSettings =
