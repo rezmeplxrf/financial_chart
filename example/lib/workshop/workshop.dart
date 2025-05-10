@@ -6,15 +6,16 @@ import 'package:provider/provider.dart';
 import 'workshop_state.dart';
 
 class WorkshopApp extends StatelessWidget {
-  const WorkshopApp({super.key});
+  final ValueNotifier<ThemeMode> themeMode;
+  const WorkshopApp({super.key, required this.themeMode});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<WorkshopState>(
-      create: (_) => WorkshopState(),
+      create: (_) => WorkshopState(themeMode: themeMode),
       child: Consumer<WorkshopState>(
         builder: (_, state, __) {
-          return const SafeArea(child: ChartWorkshopPage());
+          return SafeArea(child: ChartWorkshopPage(key: state.workshopViewKey));
         },
       ),
     );
