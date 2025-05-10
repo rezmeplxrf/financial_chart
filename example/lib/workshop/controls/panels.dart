@@ -1,3 +1,4 @@
+import 'package:example/data/sample_data.dart';
 import 'package:example/widgets/toggle_buttons.dart';
 import 'package:example/widgets/control_label.dart';
 import 'package:financial_chart/financial_chart.dart';
@@ -105,7 +106,89 @@ class _PanelControlViewState extends State<PanelControlView> {
           divisions: 10,
           label: "${state.chart!.panels[0].momentumScrollSpeed}",
         ),
+        const ControlLabel(
+          label: "onTapGraphArea",
+          description:
+              "trigger a callback when tap the graph area. "
+              "\nhere it apply to the top panel."
+              "\nNOTICE that when onDoubleTapGraphArea also being set there is a delay cause by distinguishing single from double taps.",
+        ),
+        AppToggleButtonsBoolean(
+          selected: state.chart!.panels[0].onTapGraphArea != null,
+          onSelected: (enable) {
+            if (enable) {
+              state.chart?.panels[0].onTapGraphArea = (position) {
+                _notifyTap("Tap", context, state.chart, position);
+              };
+            } else {
+              state.chart?.panels[0].onTapGraphArea = null;
+            }
+            state.notify();
+          },
+        ),
+        const ControlLabel(
+          label: "onDoubleTapGraphArea",
+          description:
+              "trigger a callback when double tap the graph area. "
+              "\nhere it apply to the top panel.",
+        ),
+        AppToggleButtonsBoolean(
+          selected: state.chart!.panels[0].onDoubleTapGraphArea != null,
+          onSelected: (enable) {
+            if (enable) {
+              state.chart?.panels[0].onDoubleTapGraphArea = (position) {
+                _notifyTap("DoubleTap", context, state.chart, position);
+              };
+            } else {
+              state.chart?.panels[0].onDoubleTapGraphArea = null;
+            }
+            state.notify();
+          },
+        ),
       ],
     );
+  }
+
+  void _notifyTap(
+    String prefix,
+    BuildContext context,
+    GChart? chart,
+    Offset position,
+  ) {
+    if (chart == null) return;
+    final panel = chart.panels[0];
+    final coord = panel.positionToViewPortCoord(
+      position: position,
+      pointViewPort: chart.pointViewPort,
+      valueViewPortId: kVpPrice,
+    );
+    if (coord != null) {
+      final point = coord.point.round();
+      final pointValue = chart.dataSource.pointValueFormater.call(
+        point,
+        chart.dataSource.getPointValue(point),
+      );
+      final value = coord.value;
+      final props = chart.dataSource.getSeriesProperty(keyClose);
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(prefix),
+            content: Text(
+              "point: $pointValue (#$point)\n"
+              "value: ${value.toStringAsFixed(props.precision)}\n",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }

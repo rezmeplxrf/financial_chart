@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/widgets.dart';
@@ -272,10 +271,11 @@ class GChartInteractionHandler {
     }
   }
 
-  void tapUp({required Offset position, required bool isTouch}) {
-    if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
-      return;
-    }
+  void tapUp() {
+    _clearTouchCross();
+  }
+
+  void _clearTouchCross() {
     if (_isTouchCrossMode.value) {
       _isTouchCrossMode.value = false;
       _isTouchEvent.value = false;

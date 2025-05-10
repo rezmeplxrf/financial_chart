@@ -2,12 +2,13 @@
 2025-05-10
 - refactor interactions.
   + **[breaking change]** remove `GChartWidget`.`onTapXX` callbacks. use `onPointerDown`, `onPointerUp` instead.
-  + gesture handling improvement and fix gesture conflicts with other scrollable widget (issue [#41](https://github.com/cjjapan/financial_chart/issues/41).
+  + gesture handling improvement and fix gesture conflicts with other scrollable widget (issue [#41](https://github.com/cjjapan/financial_chart/issues/41)).
   + hide interaction methods for internal use only.
 - refactor examples to add workshop example.
 - draw selection area on `GGridGraph` when selecting on axes.
 - draw selected range labels on axes when selecting on axes.
-- fix ohlc graph render issue when open has same value as close (issue [#42](https://github.com/cjjapan/financial_chart/issues/42).
+- fix ohlc graph render issue when open has same value as close (issue [#42](https://github.com/cjjapan/financial_chart/issues/42)).
+- [0.2.5+1] add `GPanel`.`onTapGraphArea` and `GPanel`.`onDoubleTapGraphArea` callbacks.
 
 ## 0.2.4
 2025-04-27
