@@ -27,8 +27,9 @@ class BasicDemoPageState extends State<BasicDemoPage>
   }
 
   Future<void> initializeChart() async {
-    const String ticker = 'AAPL';
-    loadYahooFinanceData(ticker).then((response) {
+    // load data
+    loadYahooFinanceData('AAPL').then((response) {
+      // build data source
       final dataSource = GDataSource<int, GData<int>>(
         dataList:
             response.candlesData.map((candle) {
@@ -58,6 +59,7 @@ class BasicDemoPageState extends State<BasicDemoPage>
   }
 
   GChart buildChart(GDataSource dataSource) {
+    // build the chart
     return GChart(
       dataSource: dataSource,
       theme: GThemeDark(),

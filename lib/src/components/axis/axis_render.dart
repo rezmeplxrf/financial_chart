@@ -3,6 +3,7 @@ import 'package:flutter/painting.dart';
 import '../../chart.dart';
 import '../marker/axis_marker.dart';
 import '../panel/panel.dart';
+import '../crosshair/crosshair_theme.dart';
 import 'axis_theme.dart';
 import 'axis.dart';
 import '../render.dart';
@@ -134,6 +135,30 @@ class GValueAxisRender extends GAxisRender<GValueAxis> {
         path: selectedRangePath,
         style: theme.selectionStyle,
       );
+
+      for (final rangeValue in [
+        valueViewPort.selectedRange.first,
+        valueViewPort.selectedRange.last,
+      ]) {
+        final value = rangeValue!;
+        double valuePosition = valueViewPort.valueToPosition(area, value);
+        final labelText = (axis.valueFormatter ??
+                chart.dataSource.seriesValueFormater)
+            .call(value, valueViewPort.valuePrecision);
+        if (labelText.isNotEmpty) {
+          drawValueAxisLabel(
+            canvas: canvas,
+            text: labelText,
+            axis: axis,
+            position: valuePosition,
+            axisArea: area,
+            labelTheme:
+                ((chart.crosshair.theme ?? chart.theme.crosshairTheme)
+                        as GCrosshairTheme)
+                    .valueLabelTheme,
+          );
+        }
+      }
     }
   }
 }
@@ -274,6 +299,36 @@ class GPointAxisRender extends GAxisRender<GPointAxis> {
         path: selectedRangePath,
         style: theme.selectionStyle,
       );
+      // draw selected range label
+      for (final rangePoint in [
+        pointViewPort.selectedRange.first,
+        pointViewPort.selectedRange.last,
+      ]) {
+        final point = rangePoint!.round();
+        final pointValue = dataSource.getPointValue(point);
+        if (pointValue != null) {
+          double pointPosition = pointViewPort.pointToPosition(
+            area,
+            point.toDouble(),
+          );
+          final labelText = (component.pointFormatter ??
+                  chart.dataSource.pointValueFormater)
+              .call(point, pointValue);
+          if (labelText.isNotEmpty) {
+            drawPointAxisLabel(
+              canvas: canvas,
+              text: labelText,
+              axis: axis,
+              position: pointPosition,
+              axisArea: area,
+              labelTheme:
+                  ((chart.crosshair.theme ?? chart.theme.crosshairTheme)
+                          as GCrosshairTheme)
+                      .pointLabelTheme,
+            );
+          }
+        }
+      }
     }
   }
 }

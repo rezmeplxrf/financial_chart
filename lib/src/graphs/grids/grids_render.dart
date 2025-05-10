@@ -41,5 +41,53 @@ class GGraphGridsRender extends GGraphRender<GGraphGrids, GGraphGridsTheme> {
           );
         });
     drawPath(canvas: canvas, path: tickLinesPath, style: theme.lineStyle);
+
+    // draw selected range for value axis selection
+    if (valueViewPort.selectedRange.isNotEmpty &&
+        theme.selectionStyle != null) {
+      Path selectedRangePath = addRectPath(
+        rect: Rect.fromLTRB(
+          area.left,
+          valueViewPort.valueToPosition(
+            area,
+            valueViewPort.selectedRange.first!,
+          ),
+          area.right,
+          valueViewPort.valueToPosition(
+            area,
+            valueViewPort.selectedRange.last!,
+          ),
+        ),
+      );
+      drawPath(
+        canvas: canvas,
+        path: selectedRangePath,
+        style: theme.selectionStyle!,
+      );
+    }
+
+    // draw selected range for point axis selection
+    if (pointViewPort.selectedRange.isNotEmpty &&
+        theme.selectionStyle != null) {
+      Path selectedRangePath = addRectPath(
+        rect: Rect.fromLTRB(
+          pointViewPort.pointToPosition(
+            area,
+            pointViewPort.selectedRange.first!.toDouble(),
+          ),
+          area.top,
+          pointViewPort.pointToPosition(
+            area,
+            pointViewPort.selectedRange.last!.toDouble(),
+          ),
+          area.bottom,
+        ),
+      );
+      drawPath(
+        canvas: canvas,
+        path: selectedRangePath,
+        style: theme.selectionStyle!,
+      );
+    }
   }
 }

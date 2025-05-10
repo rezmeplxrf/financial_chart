@@ -1,40 +1,38 @@
-import 'dart:ui';
-
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'demos/basic.dart';
 import 'demos/dynamic_data.dart';
-import 'demos/graphs/graphs.dart';
 import 'demos/live.dart';
-import 'demos/panels.dart';
-import 'demos/axes.dart';
-import 'demos/crosshair.dart';
-import 'demos/graphs/graphs_all.dart';
-import 'demos/graphs/group.dart';
 import 'demos/markers.dart';
-import 'demos/tooltip.dart';
+import 'workshop/workshop.dart';
+
+final ValueNotifier<ThemeMode> themeMode = ValueNotifier(ThemeMode.light);
 
 final routes = {
   '/demo':
       (context) => const MenuPage(pathPrefix: '/demo', title: "Chart demos"),
   '/demo/basic': (context) => const BasicDemoPage(),
-  '/demo/axes': (context) => const DemoAxesPage(),
-  '/demo/crosshair': (context) => const DemoCrosshairPage(),
-  '/demo/tooltip': (context) => const DemoTooltipPage(),
-  '/demo/panels': (context) => const DemoPanelsPage(),
-  '/demo/graphs':
-      (context) =>
-          const MenuPage(pathPrefix: '/demo/graphs', title: "Graph demos"),
-  '/demo/graphs/ohlc': (context) => const DemoGraphOhlcPage(),
-  '/demo/graphs/bar': (context) => const DemoGraphBarPage(),
-  '/demo/graphs/line': (context) => const DemoGraphLinePage(),
-  '/demo/graphs/area': (context) => const DemoGraphAreaPage(),
-  '/demo/graphs/custom': (context) => const DemoGraphStepPage(),
-  '/demo/graphs/group': (context) => const DemoGraphGroupPage(),
-  '/demo/graphs/all': (context) => const DemoGraphsPage(),
+  '/demo/workshop': (context) => const WorkshopApp(),
+  // '/demo/axes': (context) => const DemoAxesPage(),
+  // '/demo/crosshair': (context) => const DemoCrosshairPage(),
+  // '/demo/tooltip': (context) => const DemoTooltipPage(),
+  // '/demo/panels': (context) => const DemoPanelsPage(),
+  //'/demo/graphs':
+  //   (context) =>
+  //       const MenuPage(pathPrefix: '/demo/graphs', title: "Graph demos"),
+  //'/demo/graphs/ohlc': (context) => const DemoGraphOhlcPage(),
+  // '/demo/graphs/bar': (context) => const DemoGraphBarPage(),
+  // '/demo/graphs/line': (context) => const DemoGraphLinePage(),
+  // '/demo/graphs/area': (context) => const DemoGraphAreaPage(),
+  // '/demo/graphs/custom': (context) => const DemoGraphStepPage(),
+  // '/demo/graphs/group': (context) => const DemoGraphGroupPage(),
+  // '/demo/graphs/all': (context) => const DemoGraphsPage(),
   '/demo/markers': (context) => const DemoMarkersPage(),
   '/demo/loading_data': (context) => const DemoDynamicDataPage(),
   '/demo/live_update': (context) => const DemoLiveUpdatePage(),
+  // '/demo/testing': (context) => const PlayApp(),
 };
 
 class CustomScrollBehavior extends MaterialScrollBehavior {
@@ -45,23 +43,41 @@ class CustomScrollBehavior extends MaterialScrollBehavior {
   };
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  _MyAppState();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: MaterialApp(
-        //showPerformanceOverlay: true,
-        scrollBehavior: CustomScrollBehavior(),
-        routes: routes,
-        initialRoute: '/demo',
+      child: ValueListenableBuilder(
+        valueListenable: themeMode,
+        builder: (context, mode, child) {
+          return MaterialApp(
+            //showPerformanceOverlay: true,
+            scrollBehavior: CustomScrollBehavior(),
+            routes: routes,
+            initialRoute: '/demo',
+            theme: ThemeData.light(),
+            darkTheme: ThemeData.dark(),
+            themeMode: mode,
+          );
+        },
       ),
     );
   }
 }
 
 void main() {
+  if (kDebugMode) {
+    debugPrintGestureArenaDiagnostics = true;
+  }
   runApp(const MyApp());
 }
 

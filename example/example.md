@@ -2,8 +2,9 @@
 [example/lib/demos/basic.dart](https://github.com/cjjapan/financial_chart/tree/main/example/lib/demos/basic.dart)
 
 ```dart
+
 import 'package:flutter/material.dart';
-import 'package:financial_chart/chart.dart';
+import 'package:financial_chart/financial_chart.dart';
 
 import '../data/sample_data_loader.dart';
 
@@ -14,7 +15,8 @@ class BasicDemoPage extends StatefulWidget {
   BasicDemoPageState createState() => BasicDemoPageState();
 }
 
-class BasicDemoPageState extends State<BasicDemoPage> {
+class BasicDemoPageState extends State<BasicDemoPage>
+    with TickerProviderStateMixin {
   GChart? chart;
 
   @override
@@ -30,10 +32,12 @@ class BasicDemoPageState extends State<BasicDemoPage> {
   }
 
   Future<void> initializeChart() async {
-    const String ticker = 'GOOGL';
-    loadYahooFinanceData(ticker).then((response) {
+    // load data
+    loadYahooFinanceData('AAPL').then((response) {
+      // build data source
       final dataSource = GDataSource<int, GData<int>>(
-        dataList: response.candlesData.map((candle) {
+        dataList:
+        response.candlesData.map((candle) {
           return GData<int>(
             pointValue: candle.date.millisecondsSinceEpoch,
             seriesValues: [
@@ -60,6 +64,7 @@ class BasicDemoPageState extends State<BasicDemoPage> {
   }
 
   GChart buildChart(GDataSource dataSource) {
+    // build the chart
     return GChart(
       dataSource: dataSource,
       theme: GThemeDark(),
@@ -68,14 +73,30 @@ class BasicDemoPageState extends State<BasicDemoPage> {
           valueViewPorts: [
             GValueViewPort(
               valuePrecision: 2,
-              autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(dataKeys: ["high", "low"]),
-            )
+              autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
+                dataKeys: ["high", "low"],
+                marginStart: GSize.viewHeightRatio(0.3),
+              ),
+            ),
+            GValueViewPort(
+              id: "volume",
+              valuePrecision: 0,
+              autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
+                dataKeys: ["volume"],
+                marginStart: GSize.viewSize(0),
+                marginEnd: GSize.viewHeightRatio(0.7),
+              ),
+            ),
           ],
-          valueAxes: [GValueAxis()],
+          valueAxes: [
+            GValueAxis(),
+            GValueAxis(viewPortId: "volume", position: GAxisPosition.start),
+          ],
           pointAxes: [GPointAxis()],
           graphs: [
             GGraphGrids(),
             GGraphOhlc(ohlcValueKeys: const ["open", "high", "low", "close"]),
+            GGraphBar(valueKey: "volume", valueViewPortId: "volume"),
           ],
         ),
       ],
@@ -85,14 +106,15 @@ class BasicDemoPageState extends State<BasicDemoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Basic demo"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Basic demo"), centerTitle: true),
       body: Container(
-        child: chart == null
+        child:
+        chart == null
             ? const Center(child: CircularProgressIndicator())
-            : Padding(padding: const EdgeInsets.all(10), child: GChartWidget(chart: chart!)),
+            : Padding(
+          padding: const EdgeInsets.all(10),
+          child: GChartWidget(chart: chart!, tickerProvider: this),
+        ),
       ),
     );
   }

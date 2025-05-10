@@ -5,6 +5,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
+import 'chart_interaction.dart';
 import 'chart_render.dart';
 import 'components/components.dart';
 import 'data/data_source.dart';
@@ -125,6 +126,13 @@ class GChart extends ChangeNotifier {
   final _debounceHelper = DebounceHelper(milliseconds: 500);
 
   bool _initialized = false;
+  bool get initialized => _initialized;
+
+  GChartInteractionHandler? _interactionHandler;
+  bool get isScaling =>
+      _interactionHandler?.pointViewPortInteractionHelper.isScaling == true;
+
+  bool get isScalingAny => _interactionHandler?.isScaling == true;
 
   GChart({
     required this.dataSource,
@@ -155,10 +163,14 @@ class GChart extends ChangeNotifier {
     _hitTestEnable.value = hitTestEnable;
   }
 
-  /// Internal initialization of the chart.
-  void initialize({TickerProvider? vsync}) {
+  /// Initialization of the chart. (should be called only once internally by [GChartWidget])
+  void internalInitialize({
+    TickerProvider? vsync,
+    required GChartInteractionHandler interactionHandler,
+  }) {
     assert(!_initialized, 'Chart is already initialized');
     _initialized = true;
+    _interactionHandler = interactionHandler;
     dataSource.addListener(_notify);
     if (vsync != null) {
       pointViewPort.initializeAnimation(vsync);
@@ -320,7 +332,8 @@ class GChart extends ChangeNotifier {
   /// - Decide the size of each panel in [panels] based on the height weight of each panel.
   /// - Decide the axis areas of each panel based on the position of the axes.
   /// - Decide the graph areas of each panel from panel area and axis areas.
-  void layout(Rect area) {
+  void layout([Rect? toArea]) {
+    final area = toArea ?? _area.value;
     double totalHeightWeight = panels.fold(
       0,
       (sum, panel) => sum + (panel.visible ? panel.heightWeight : 0),
@@ -337,7 +350,11 @@ class GChart extends ChangeNotifier {
           return panelArea;
         }).toList();
     for (int p = 0; p < panels.length; p++) {
-      panels[p].layout(panelAreas[p]);
+      bool hasSplitter =
+          (p < panels.length - 1) &&
+          panels[p].resizable &&
+          panels[p + 1].resizable;
+      panels[p].layout(panelAreas[p], hasSplitter);
     }
   }
 
@@ -407,7 +424,7 @@ class GChart extends ChangeNotifier {
 
   void _pointViewPortChanged() {
     final updatedViewPort = pointViewPort;
-    if (!updatedViewPort.isAnimating && !updatedViewPort.isScaling) {
+    if (!updatedViewPort.isAnimating && !isScaling) {
       // load data if necessary
       dataSource
           .ensureData(

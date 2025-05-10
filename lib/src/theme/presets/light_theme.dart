@@ -61,7 +61,7 @@ class GThemeLight extends GTheme {
 
   static final GPanelTheme panelThemeDefault = GPanelTheme(
     style: PaintStyle(
-      fillColor: const Color(0xFFF0F0F0),
+      fillColor: const Color(0xFFFCFCFC),
       strokeColor: const Color(0xFF222222),
       strokeWidth: 0.5,
     ),
@@ -78,7 +78,7 @@ class GThemeLight extends GTheme {
       strokeWidth: 1.0,
     ),
     selectionStyle: PaintStyle(
-      fillColor: const Color(0x882222FF),
+      fillColor: const Color(0x552222FF),
       strokeColor: const Color(0xAA2222FF),
       strokeWidth: 1.0,
     ),
@@ -102,7 +102,11 @@ class GThemeLight extends GTheme {
       strokeColor: const Color(0xFF000000),
       strokeWidth: 1.0,
     ),
-    selectionStyle: PaintStyle(fillColor: const Color(0x882222FF)),
+    selectionStyle: PaintStyle(
+      fillColor: const Color(0x552222FF),
+      strokeColor: const Color(0xAA2222FF),
+      strokeWidth: 1.0,
+    ),
     labelTheme: GAxisLabelTheme(
       labelStyle: LabelStyle(
         textStyle: const TextStyle(color: Color(0xFF000000), fontSize: 10.0),
@@ -201,6 +205,11 @@ class GThemeLight extends GTheme {
     lineStyle: PaintStyle(
       strokeColor: const Color(0xFFC0C0C0),
       strokeWidth: 0.5,
+    ),
+    selectionStyle: PaintStyle(
+      fillColor: const Color(0x332222FF),
+      strokeColor: const Color(0xAA2222FF),
+      strokeWidth: 1.0,
     ),
     axisMarkerTheme: axisMarkerThemeDefault,
     overlayMarkerTheme: overlayMarkerThemeDefault,

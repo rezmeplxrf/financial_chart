@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/physics.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 
 import 'chart.dart';
 import 'components/graph/graph.dart';
@@ -13,14 +13,24 @@ import 'components/viewport_h.dart';
 import 'values/range.dart';
 import 'values/value.dart';
 
+part 'chart_interaction_gesture_recognizers.dart';
+part 'chart_interaction_gesture_factory.dart';
+
 /// [GChartInteractionHandler] for handling user interactions for the attached chart.
-// ignore_for_file: avoid_print
 // ignore: must_be_immutable
 class GChartInteractionHandler {
   late final GChart _chart;
 
   final GValue<bool> _isTouchEvent = GValue(false);
   final GValue<bool> _isTouchCrossMode = GValue(false);
+
+  GPointViewPortInteractionHelper pointViewPortInteractionHelper =
+      GPointViewPortInteractionHelper();
+  GValueViewPortInteractionHelper valueViewPortInteractionHelper =
+      GValueViewPortInteractionHelper();
+  bool get isScaling =>
+      pointViewPortInteractionHelper.isScaling ||
+      valueViewPortInteractionHelper.isScaling;
 
   GChartInteractionHandler();
 
@@ -108,7 +118,8 @@ class GChartInteractionHandler {
         panel.graphs[g].highlight = false;
       }
     }
-    if (!(_chart.pointViewPort.isScaling || _chart.pointViewPort.isAnimating)) {
+    if (!(pointViewPortInteractionHelper.isScaling ||
+        _chart.pointViewPort.isAnimating)) {
       final hit = _chart.hitTestGraph(position: position);
       if (hit != null) {
         hit.$2.highlight = true;
@@ -137,18 +148,13 @@ class GChartInteractionHandler {
             pointViewPort.endPoint - distance,
           );
           pointViewPort.autoScaleFlg = false;
-          pointViewPort.animateToRange(_chart, newRange, true, false);
+          pointViewPort.animateToRange(newRange, true, false);
         } else if (_chart.pointerScrollMode == GPointerScrollMode.zoom) {
           final centerPoint =
               pointViewPort.positionToPoint(area, position.dx).toDouble();
           final scaleRatio = 1 + scrollDelta.dy / area.height;
           pointViewPort.autoScaleFlg = false;
-          pointViewPort.zoomUpdate(
-            pointViewPort.range,
-            area,
-            scaleRatio,
-            centerPoint,
-          );
+          pointViewPort.zoom(area, scaleRatio, centerPoint: centerPoint);
         }
         _notify();
         break;
@@ -160,9 +166,9 @@ class GChartInteractionHandler {
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
+    // hit test splitters
     for (int n = 0; n < _chart.panels.length; n++) {
       GPanel panel = _chart.panels[n];
-      // hit test splitter
       if (n < _chart.panels.length - 1 &&
           panel.splitterArea().contains(start)) {
         GPanel? splitterPanel = _tryScalingSplitter(
@@ -172,9 +178,13 @@ class GChartInteractionHandler {
           start,
         );
         if (splitterPanel != null) {
-          break;
+          _notify();
+          return;
         }
       }
+    }
+    for (int n = 0; n < _chart.panels.length; n++) {
+      GPanel panel = _chart.panels[n];
       if (panel.panelArea().contains(start)) {
         // hit test hAxis
         GPointAxis? pointAxis = _tryScalingPointAxis(panel, start);
@@ -238,13 +248,28 @@ class GChartInteractionHandler {
     _notify();
   }
 
-  void longPressEnd({required Offset position}) {}
+  void longPressEnd({required Offset position}) {
+    if (_isTouchCrossMode.value) {
+      _isTouchCrossMode.value = false;
+      _isTouchEvent.value = false;
+      _chart.crosshair.clearCrossPosition();
+      _notify();
+    }
+  }
 
   void tapDown({required Offset position, required bool isTouch}) {
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
-    _isTouchEvent.value = isTouch;
+    for (final panel in _chart.panels) {
+      if (panel.panelArea().contains(position) &&
+          (!panel.resizable || !panel.splitterArea().contains(position))) {
+        _chart.crosshair.setCrossPosition(position.dx, position.dy);
+        _isTouchEvent.value = isTouch;
+        _notify();
+        return;
+      }
+    }
   }
 
   void tapUp({required Offset position, required bool isTouch}) {
@@ -255,20 +280,8 @@ class GChartInteractionHandler {
       _isTouchCrossMode.value = false;
       _isTouchEvent.value = false;
       _chart.crosshair.clearCrossPosition();
+      _notify();
     }
-    for (int p = 0; p < _chart.panels.length; p++) {
-      GPanel panel = _chart.panels[p];
-      if (panel.panelArea().contains(position)) {
-        GGraph? graph = _chart.hitTestPanelGraphs(
-          panel: panel,
-          position: position,
-        );
-        if (graph != null) {
-          break;
-        }
-      }
-    }
-    _notify();
   }
 
   void doubleTap({required Offset position}) {
@@ -327,6 +340,7 @@ class GChartInteractionHandler {
       double moveToleranceMax = panel2.graphArea().height - 50;
       double weightUnit = panel1.heightWeight / (h1 / _chart.size.height);
       _chart.splitter.resizingPanelIndex = panel1Index;
+      _chart.crosshair.crossPosition.clear();
       _hookScaleUpdate = ({
         required Offset position,
         required double scale,
@@ -356,9 +370,8 @@ class GChartInteractionHandler {
       Rect axisArea = panel.pointAxisArea(a);
       if (axisArea.contains(start)) {
         if (axis.scaleMode != GAxisScaleMode.none) {
-          //print("scaling: panel=$panel, hAxis=$a");
           GPointViewPort pointViewPort = _chart.pointViewPort;
-          pointViewPort.interactionStart();
+          pointViewPortInteractionHelper.interactionStart(pointViewPort);
           pointViewPort.autoScaleFlg = false;
           double lastX = start.dx;
           _hookScaleUpdate = ({
@@ -370,13 +383,18 @@ class GChartInteractionHandler {
             if (axis.scaleMode == GAxisScaleMode.zoom) {
               double scaleRatio =
                   (axisArea.right - position.dx) / (axisArea.right - start.dx);
-              pointViewPort.interactionZoomUpdate(axisArea, scaleRatio);
+              pointViewPortInteractionHelper.interactionZoomUpdate(
+                axisArea,
+                scaleRatio,
+              );
             } else if (axis.scaleMode == GAxisScaleMode.move) {
               double moveDistance = (position.dx - start.dx);
-              pointViewPort.interactionMoveUpdate(axisArea, moveDistance);
+              pointViewPortInteractionHelper.interactionMoveUpdate(
+                axisArea,
+                moveDistance,
+              );
             } else if (axis.scaleMode == GAxisScaleMode.select) {
-              pointViewPort.interactionSelectUpdate(
-                _chart,
+              pointViewPortInteractionHelper.interactionSelectUpdate(
                 axisArea,
                 start.dx,
                 position.dx,
@@ -387,15 +405,14 @@ class GChartInteractionHandler {
           };
           _hookScaleEnd = (Velocity? velocity) {
             if (axis.scaleMode == GAxisScaleMode.select) {
-              pointViewPort.interactionSelectUpdate(
-                _chart,
+              pointViewPortInteractionHelper.interactionSelectUpdate(
                 axisArea,
                 start.dx,
                 lastX,
                 finished: true,
               );
             }
-            pointViewPort.interactionEnd();
+            pointViewPortInteractionHelper.interactionEnd();
           };
         }
         return axis;
@@ -411,12 +428,11 @@ class GChartInteractionHandler {
       Rect axisArea = panel.valueAxisArea(a);
       if (axisArea.contains(start)) {
         if (axis.scaleMode != GAxisScaleMode.none) {
-          //print("scaling: panel=$panel, vAxis=$a");
           GValueViewPort? viewPort = panel.findValueViewPortById(
             axis.viewPortId,
           );
           viewPort.autoScaleFlg = false;
-          viewPort.interactionStart();
+          valueViewPortInteractionHelper.interactionStart(viewPort);
           double lastY = start.dy;
           _hookScaleUpdate = ({
             required Offset position,
@@ -433,13 +449,18 @@ class GChartInteractionHandler {
                 ),
                 100,
               );
-              viewPort.interactionZoomUpdate(axisArea, scaleRatio);
+              valueViewPortInteractionHelper.interactionZoomUpdate(
+                axisArea,
+                scaleRatio,
+              );
             } else if (axis.scaleMode == GAxisScaleMode.move) {
               double moveDistance = (position.dy - start.dy);
-              viewPort.interactionMoveUpdate(axisArea, moveDistance);
+              valueViewPortInteractionHelper.interactionMoveUpdate(
+                axisArea,
+                moveDistance,
+              );
             } else if (axis.scaleMode == GAxisScaleMode.select) {
-              viewPort.interactionSelectUpdate(
-                _chart,
+              valueViewPortInteractionHelper.interactionSelectUpdate(
                 axisArea,
                 start.dy,
                 position.dy,
@@ -450,15 +471,14 @@ class GChartInteractionHandler {
           };
           _hookScaleEnd = (Velocity? velocity) {
             if (axis.scaleMode == GAxisScaleMode.select) {
-              viewPort.interactionSelectUpdate(
-                _chart,
+              valueViewPortInteractionHelper.interactionSelectUpdate(
                 axisArea,
                 start.dy,
                 lastY,
                 finished: true,
               );
             }
-            viewPort.interactionEnd();
+            valueViewPortInteractionHelper.interactionEnd();
           };
           return axis;
         }
@@ -492,12 +512,12 @@ class GChartInteractionHandler {
     GValueViewPort? valueViewPort = panel.findValueViewPortById(
       graph.valueViewPortId,
     );
-    pointViewPort.interactionStart();
+    pointViewPortInteractionHelper.interactionStart(pointViewPort);
     pointViewPort.stopAnimation();
     pointViewPort.autoScaleFlg = false;
     bool scaleValue = !valueViewPort.autoScaleFlg;
     if (scaleValue) {
-      valueViewPort.interactionStart();
+      valueViewPortInteractionHelper.interactionStart(valueViewPort);
     }
     _hookScaleUpdate = ({
       required Offset position,
@@ -510,24 +530,33 @@ class GChartInteractionHandler {
       if (scale != 1.0) {
         if (scale != 1.0 && scale > 0) {
           //pointViewPort.interactionMoveUpdate(graphArea, moveDistanceX);
-          pointViewPort.interactionZoomUpdate(graphArea, scale);
+          pointViewPortInteractionHelper.interactionZoomUpdate(
+            graphArea,
+            scale,
+          );
         }
         if (verticalScale != 1.0 && verticalScale > 0 && scaleValue) {
           //valueViewPort.interactionZoomUpdate(graphArea, verticalScale);
         }
         return;
       }
-      pointViewPort.interactionMoveUpdate(graphArea, moveDistanceX);
+      pointViewPortInteractionHelper.interactionMoveUpdate(
+        graphArea,
+        moveDistanceX,
+      );
       if (scaleValue) {
         double moveDistanceY = (position.dy - start.dy);
-        valueViewPort.interactionMoveUpdate(graphArea, moveDistanceY);
+        valueViewPortInteractionHelper.interactionMoveUpdate(
+          graphArea,
+          moveDistanceY,
+        );
       }
     };
     _hookScaleEnd = (Velocity? velocity) {
       _chart.mouseCursor.value = SystemMouseCursors.precise;
-      pointViewPort.interactionEnd();
+      pointViewPortInteractionHelper.interactionEnd();
       if (scaleValue) {
-        valueViewPort.interactionEnd();
+        valueViewPortInteractionHelper.interactionEnd();
       }
       if (velocity != null && panel.momentumScrollSpeed > 0) {
         // momentum scrolling
@@ -540,7 +569,6 @@ class GChartInteractionHandler {
         );
         final simulation = FrictionSimulation.through(0, 1, 1, 0.9);
         pointViewPort.animateToRange(
-          _chart,
           newRange,
           true,
           true,
@@ -553,5 +581,191 @@ class GChartInteractionHandler {
 
   void _notify() {
     _chart.repaint(layout: false);
+  }
+}
+
+/// Helper class for handling [GPointViewPort] interactions.
+class GPointViewPortInteractionHelper {
+  GPointViewPort? _pointViewPort;
+  final GRange _pointRangeScaling = GRange.empty();
+
+  bool get isScaling => _pointViewPort != null;
+
+  void interactionStart(GPointViewPort pointViewPort) {
+    _pointViewPort = pointViewPort;
+    _pointRangeScaling.copy(pointViewPort.range);
+  }
+
+  void interactionEnd() {
+    _pointRangeScaling.clear();
+    _pointViewPort?.selectedRange.clear();
+    _pointViewPort = null;
+    // _notify(finished: true);
+  }
+
+  void interactionZoomUpdate(Rect area, double zoomRatio) {
+    if (_pointViewPort == null || _pointRangeScaling.isEmpty) {
+      return;
+    }
+    _pointViewPort!.zoom(
+      area,
+      zoomRatio,
+      startRange: _pointRangeScaling,
+      centerPoint: _pointRangeScaling.last,
+      animate: false,
+      finished: false,
+    );
+  }
+
+  void interactionMoveUpdate(Rect area, double movedDistance) {
+    if (_pointViewPort == null || _pointRangeScaling.isEmpty) {
+      return;
+    }
+    double pointWidthStart = _pointViewPort!.pointSize(
+      area.width,
+      range: _pointRangeScaling,
+    );
+    double pointsMoved = movedDistance / pointWidthStart;
+    double startPointNew = _pointRangeScaling.begin! - pointsMoved;
+    double endPointNew = _pointRangeScaling.end! - pointsMoved;
+    _pointViewPort!.setRange(
+      startPoint: startPointNew,
+      endPoint: endPointNew,
+      finished: false,
+    );
+  }
+
+  void interactionSelectUpdate(
+    Rect area,
+    double startPosition,
+    double position, {
+    bool animation = true,
+    bool finished = false,
+  }) {
+    if (_pointViewPort == null || _pointRangeScaling.isEmpty) {
+      return;
+    }
+    final position1 = min(startPosition, position);
+    final position2 = max(startPosition, position);
+    _pointViewPort!.selectedRange.update(
+      _pointViewPort!.positionToPoint(
+        area,
+        max(area.left, min(area.right, position1)),
+      ),
+      _pointViewPort!.positionToPoint(
+        area,
+        max(area.left, min(area.right, position2)),
+      ),
+    );
+    if (finished) {
+      double value1 = _pointViewPort!.selectedRange.begin!;
+      double value2 = _pointViewPort!.selectedRange.end!;
+      double pointLeftNew = max(min(value1, value2), _pointRangeScaling.begin!);
+      double pointRightNew = min(max(value1, value2), _pointRangeScaling.end!);
+      double minPoints = area.width / _pointViewPort!.maxPointWidth;
+      if (pointRightNew - pointLeftNew < minPoints) {
+        // adjust to make sure the width is not less than minPointWidth
+        double center = (pointLeftNew + pointRightNew) / 2;
+        pointLeftNew = center - minPoints / 2;
+        pointRightNew = center + minPoints / 2;
+      }
+      _pointViewPort!.animateToRange(
+        GRange.range(pointLeftNew, pointRightNew),
+        finished,
+        animation,
+      );
+    }
+  }
+}
+
+/// Helper class for handling [GValueViewPort] interactions.
+class GValueViewPortInteractionHelper {
+  GValueViewPort? _valueViewPort;
+  final GRange _rangeScaling = GRange.empty();
+
+  bool get isScaling => _valueViewPort != null;
+
+  void interactionStart(GValueViewPort valueViewPort) {
+    _valueViewPort = valueViewPort;
+    _rangeScaling.copy(valueViewPort.range);
+  }
+
+  void interactionEnd() {
+    _rangeScaling.clear();
+    _valueViewPort?.selectedRange.clear();
+    _valueViewPort = null;
+    // _notify(finished: true);
+  }
+
+  void interactionZoomUpdate(
+    Rect area,
+    double zoomRatio, {
+    bool notify = true,
+  }) {
+    if (!isScaling) {
+      return;
+    }
+    _valueViewPort!.zoom(
+      area,
+      zoomRatio,
+      startRange: _rangeScaling,
+      animate: false,
+      finished: true,
+      notify: notify,
+    );
+  }
+
+  void interactionMoveUpdate(Rect area, double movedDistance) {
+    if (!isScaling) {
+      return;
+    }
+    double valueMoved =
+        (movedDistance / area.height) *
+        (_rangeScaling.last! - _rangeScaling.first!);
+    double endValueNew = _rangeScaling.last! + valueMoved;
+    double startValueNew = _rangeScaling.first! + valueMoved;
+    _valueViewPort!.setRange(startValue: startValueNew, endValue: endValueNew);
+  }
+
+  void interactionSelectUpdate(
+    Rect area,
+    double startPosition,
+    double position, {
+    bool finished = false,
+  }) {
+    if (!isScaling) {
+      return;
+    }
+    final value1 = _valueViewPort!.positionToValue(
+      area,
+      max(area.top, min(area.bottom, startPosition)),
+    );
+    final value2 = _valueViewPort!.positionToValue(
+      area,
+      max(area.top, min(area.bottom, position)),
+    );
+    _valueViewPort!.selectedRange.update(
+      min(value1, value2),
+      max(value1, value2),
+    );
+    if (finished) {
+      double endValueNew = min(
+        _valueViewPort!.selectedRange.last!,
+        _rangeScaling.last!,
+      );
+      double startValueNew = max(
+        _valueViewPort!.selectedRange.first!,
+        _rangeScaling.first!,
+      );
+      (startValueNew, endValueNew) = _valueViewPort!.clampScaleRange(
+        startValueNew,
+        endValueNew,
+      );
+      _valueViewPort!.animateToRange(
+        GRange.range(startValueNew, endValueNew),
+        finished,
+        true,
+      );
+    }
   }
 }

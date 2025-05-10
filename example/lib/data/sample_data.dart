@@ -28,6 +28,29 @@ const String keyBBU = "bbu";
 const String keyRSI = "rsi";
 const String keyADX = "adx";
 
+class LagValueIndicator<T extends IndicatorResult> extends CachedIndicator<T> {
+  /// Initializes A [PreviousValueIndicator].
+  LagValueIndicator.fromIndicator(this.indicator, {this.period = 26})
+    : assert(period > 0),
+      super.fromIndicator(indicator);
+
+  final Indicator<T> indicator;
+  final int period;
+
+  @override
+  T calculate(int index) {
+    final int targetIndex = min(
+      max(0, index + period),
+      indicator.entries.length - 1,
+    );
+
+    return createResult(
+      index: index,
+      quote: indicator.getValue(targetIndex).quote,
+    );
+  }
+}
+
 Future<GDataSource> loadSampleData({
   String ticker = 'AAPL',
   int simulateLatencyMillis = 0,
@@ -71,8 +94,9 @@ Future<GDataSource> loadSampleData({
   final ichimokuSpanB = IchimokuSpanBIndicator<IndicatorResultImpl>(
     indicatorInput,
   );
-  final ichimokuLagging = IchimokuLaggingSpanIndicator<IndicatorResultImpl>(
-    indicatorInput,
+  final ichimokuLagging = LagValueIndicator.fromIndicator(
+    IchimokuLaggingSpanIndicator<IndicatorResultImpl>(indicatorInput),
+    period: 26,
   );
   final fastStoch = FastStochasticIndicator(indicatorInput);
   final smoothedFastStoch = SmoothedFastStochasticIndicator(fastStoch);

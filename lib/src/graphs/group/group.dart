@@ -36,6 +36,15 @@ class GGraphGroup extends GGraph<GGraphTheme> {
     graphs.sort((a, b) => a.layer.compareTo(b.layer));
   }
 
+  GGraph? findGraphById(String id) {
+    for (final graph in graphs) {
+      if (graph.id == id) {
+        return graph;
+      }
+    }
+    return null;
+  }
+
   @override
   String get type => typeName;
 }
