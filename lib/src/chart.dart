@@ -254,8 +254,8 @@ class GChart extends ChangeNotifier {
   }
 
   /// Resize the chart view area.
-  void resize({required Rect newArea}) {
-    if (newArea == _area.value) {
+  void resize({required Rect newArea, bool force = false}) {
+    if (newArea == _area.value && !force) {
       return;
     }
     Rect refinedArea = newArea.translate(0, 0);
@@ -275,7 +275,7 @@ class GChart extends ChangeNotifier {
         minSize.height,
       );
     }
-    if (_area.value != refinedArea) {
+    if (_area.value != refinedArea || force) {
       final visiblePanel = panels.where((p) => p.visible).first;
       double graphWidthBefore =
           visiblePanel.isLayoutReady ? visiblePanel.graphArea().width : 0;
@@ -283,11 +283,17 @@ class GChart extends ChangeNotifier {
           visiblePanel.isLayoutReady ? visiblePanel.graphArea().height : 0;
       crosshair.clearCrossPosition();
       _area.value = refinedArea;
+      List<double> panelsGraphHeightBefore = panels
+          .map(
+            (panel) => (panel.isLayoutReady ? panel.graphArea().height : 0.0),
+          )
+          .toList(growable: false);
       layout(_area.value);
 
       if (graphWidthBefore > 0 || graphHeightBefore > 0) {
         // update viewports
-        if (graphWidthBefore > 0) {
+        if (graphWidthBefore > 0 &&
+            graphWidthBefore != visiblePanel.graphArea().width) {
           pointViewPort.resize(
             graphWidthBefore,
             visiblePanel.graphArea().width,
@@ -304,9 +310,13 @@ class GChart extends ChangeNotifier {
           });
         }
         if (graphHeightBefore > 0) {
-          for (var panel in panels) {
+          for (int p = 0; p < panels.length; p++) {
+            final panel = panels[p];
+            final panelGraphHeightBefore = panelsGraphHeightBefore[p];
             for (var valueViewPort in panel.valueViewPorts) {
-              if (!valueViewPort.autoScaleFlg) {
+              if (!valueViewPort.autoScaleFlg &&
+                  panelGraphHeightBefore > 0 &&
+                  panelGraphHeightBefore != panel.graphArea().height) {
                 valueViewPort.resize(
                   graphHeightBefore,
                   panel.graphArea().height,
@@ -350,10 +360,9 @@ class GChart extends ChangeNotifier {
           return panelArea;
         }).toList();
     for (int p = 0; p < panels.length; p++) {
+      GPanel? nextPanel = nextVisiblePanel(startIndex: p + 1);
       bool hasSplitter =
-          (p < panels.length - 1) &&
-          panels[p].resizable &&
-          panels[p + 1].resizable;
+          nextPanel != null && panels[p].resizable && nextPanel.resizable;
       panels[p].layout(panelAreas[p], hasSplitter);
     }
   }
@@ -417,6 +426,16 @@ class GChart extends ChangeNotifier {
         if (graph != null) {
           return (panel, graph);
         }
+      }
+    }
+    return null;
+  }
+
+  GPanel? nextVisiblePanel({int startIndex = 0}) {
+    for (int p = startIndex; p < panels.length; p++) {
+      GPanel panel = panels[p];
+      if (panel.visible) {
+        return panel;
       }
     }
     return null;
