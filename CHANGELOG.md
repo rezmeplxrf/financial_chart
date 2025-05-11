@@ -1,3 +1,9 @@
+## 0.2.6
+2025-05-11
+- fix viewport's `resizeMode` not working correctly when resizing by splitter.
+- fix resizing issue when there are more than two panels or any invisible panels.
+- update examples 'workshop' to add 'add / remove' a panel.
+
 ## 0.2.5
 2025-05-10
 - refactor interactions.

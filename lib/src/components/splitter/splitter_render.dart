@@ -23,9 +23,10 @@ class GSplitterRender extends GRender<GSplitter, GSplitterTheme> {
         const Offset(double.infinity, double.infinity);
     for (int p = 0; p < chart.panels.length - 1; p++) {
       final panel = chart.panels[p];
+      final nextPanel = chart.nextVisiblePanel(startIndex: p + 1);
       if (panel.splitterArea().contains(crossPosition) ||
           p == component.resizingPanelIndex) {
-        if (panel.resizable && chart.panels[p + 1].resizable) {
+        if (panel.resizable && (nextPanel?.resizable == true)) {
           renderClipped(
             canvas: canvas,
             clipRect: area,

@@ -42,7 +42,8 @@ class _PanelControlViewState extends State<PanelControlView> {
           label: "resizable",
           description:
               "allow resizing the panel by dragging the splitter between two panels or not."
-              "\nonly when two adjacent panels are both resizable (and visible), the splitter can be dragged.",
+              "\nonly when two adjacent panels are both resizable (and visible), the splitter can be dragged."
+              "\nhere it apply to the first panel only.",
         ),
         AppToggleButtonsBoolean(
           selected: state.chart!.panels[0].resizable,
@@ -53,20 +54,56 @@ class _PanelControlViewState extends State<PanelControlView> {
         ),
         const ControlLabel(
           label: "height",
-          description:
-              "change the heightWeight."
-              "\nhere we set both panels to 1, so they will be equal height.",
+          description: "change the heightWeight of the first two panels.",
         ),
         AppToggleButtons<String>(
-          items: const ["Set Equal Height"],
+          items: const ["Set Height 5:5"],
           minWidth: 160,
           onSelected: (btn) {
-            state.chart!.panels[0].heightWeight = 1;
-            state.chart!.panels[1].heightWeight = 1;
-            state.chart!.layout(state.chart!.area);
+            final totalWeight =
+                state.chart!.panels[0].heightWeight +
+                state.chart!.panels[1].heightWeight;
+            state.chart!.panels[0].heightWeight = totalWeight * 0.5;
+            state.chart!.panels[1].heightWeight = totalWeight * 0.5;
+            state.chart!.resize(newArea: state.chart!.area, force: true);
             state.notify();
           },
         ),
+        AppToggleButtons<String>(
+          items: const ["Set Height 7:3"],
+          minWidth: 160,
+          onSelected: (btn) {
+            final totalWeight =
+                state.chart!.panels[0].heightWeight +
+                state.chart!.panels[1].heightWeight;
+            state.chart!.panels[0].heightWeight = totalWeight * 0.7;
+            state.chart!.panels[1].heightWeight = totalWeight * 0.3;
+            state.chart!.resize(newArea: state.chart!.area, force: true);
+            state.notify();
+          },
+        ),
+        const ControlLabel(
+          label: "add / remove",
+          description: "add or remove a panel.",
+        ),
+        if ((state.chart?.panels.length ?? 10) <= 2)
+          AppToggleButtons<String>(
+            items: const ["Add a panel"],
+            minWidth: 160,
+            onSelected: (btn) {
+              state.addPanel();
+              state.notify();
+            },
+          ),
+        if ((state.chart?.panels.length ?? 0) >= 3)
+          AppToggleButtons<String>(
+            items: const ["Remove last panel"],
+            minWidth: 160,
+            onSelected: (btn) {
+              state.removePanel();
+              state.notify();
+            },
+          ),
         const ControlLabel(
           label: "graphPanMode",
           description:
@@ -110,7 +147,7 @@ class _PanelControlViewState extends State<PanelControlView> {
           label: "onTapGraphArea",
           description:
               "trigger a callback when tap the graph area. "
-              "\nhere it apply to the top panel."
+              "\nhere it apply to the first panel."
               "\nNOTICE that when onDoubleTapGraphArea also being set there is a delay cause by distinguishing single from double taps.",
         ),
         AppToggleButtonsBoolean(
@@ -130,7 +167,7 @@ class _PanelControlViewState extends State<PanelControlView> {
           label: "onDoubleTapGraphArea",
           description:
               "trigger a callback when double tap the graph area. "
-              "\nhere it apply to the top panel.",
+              "\nhere it apply to the first panel.",
         ),
         AppToggleButtonsBoolean(
           selected: state.chart!.panels[0].onDoubleTapGraphArea != null,

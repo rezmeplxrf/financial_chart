@@ -224,4 +224,60 @@ class WorkshopState extends ChangeNotifier {
       theme: chartTheme,
     );
   }
+
+  void addPanel() {
+    if (chart == null || chart!.panels.length >= 3) {
+      return;
+    }
+    const valueViewPort = kVpPrice;
+    const valueKey = keyRSI;
+    final currentHeightWeight = chart!.panels.fold(
+      0.0,
+      (v, p) => (v + p.heightWeight),
+    );
+    final newPanelHeightWeight = currentHeightWeight / 2.0;
+    chart!.panels.add(
+      GPanel(
+        heightWeight: newPanelHeightWeight,
+        valueAxes: [
+          GValueAxis(viewPortId: valueViewPort, position: GAxisPosition.start),
+          GValueAxis(viewPortId: valueViewPort, position: GAxisPosition.end),
+        ],
+        pointAxes: [GPointAxis(position: GAxisPosition.end)],
+        valueViewPorts: [
+          GValueViewPort(
+            id: valueViewPort,
+            valuePrecision: 2,
+            autoScaleStrategy: GValueViewPortAutoScaleStrategyMinMax(
+              dataKeys: [valueKey],
+            ),
+          ),
+        ],
+        graphs: [
+          GGraphGrids(id: "g-grids3", valueViewPortId: valueViewPort),
+          GGraphLine(
+            id: "g-rsi",
+            valueViewPortId: valueViewPort,
+            valueKey: valueKey,
+          ),
+        ],
+        tooltip: GTooltip(
+          position: GTooltipPosition.topLeft,
+          dataKeys: const [valueKey],
+          followValueKey: valueKey,
+          followValueViewPortId: valueViewPort,
+        ),
+      ),
+    );
+    chart!.resize(newArea: chart!.area, force: true);
+    chart!.autoScaleViewports();
+  }
+
+  void removePanel() {
+    if (chart == null || chart!.panels.length <= 2) {
+      return;
+    }
+    chart!.panels.removeLast();
+    chart!.resize(newArea: chart!.area, force: true);
+  }
 }

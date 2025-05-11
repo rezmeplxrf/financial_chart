@@ -80,8 +80,9 @@ class _ValueViewPortControlViewState extends State<ValueViewPortControlView> {
           label: "resizeMode",
           description:
               "change the behavior how to update the point view port range when resizing the view size."
-              "\nthis only works when the viewport's auto scale is off."
-              "\nresize the window height to see the effect (on y direction).",
+              "\nhere it apply to the price viewport in the top panel."
+              "\nNOTICE this only works when the viewport's auto scale is off."
+              "\nresize the window or panel to see the effect (on y direction).",
         ),
         AppToggleButtons<GViewPortResizeMode>(
           items: GViewPortResizeMode.values,
