@@ -23,26 +23,31 @@ class GChartScaleGestureRecognizer extends ScaleGestureRecognizer {
       }
     }
     for (final panel in (chart?.panels ?? <GPanel>[])) {
-      // point axes which can not scale do not allow scale
+      // scalable point axes allow scale
       for (final axis in panel.pointAxes) {
-        if (panel.pointAxisAreaOf(axis).contains(event.localPosition)) {
+        if (panel.pointAxisAreaOf(axis).contains(event.localPosition) &&
+            axis.scaleMode != GAxisScaleMode.none) {
+          super.addAllowedPointer(event);
           return;
         }
       }
-      // value axes which can not scale do not allow scale
+      // scalable value axes allow scale
       for (final axis in panel.valueAxes) {
-        if (axis.scaleMode == GAxisScaleMode.none &&
+        if (axis.scaleMode != GAxisScaleMode.none &&
             panel.valueAxisAreaOf(axis).contains(event.localPosition)) {
+          super.addAllowedPointer(event);
           return;
         }
       }
-      if (panel.graphPanMode == GGraphPanMode.none &&
+    }
+    // graph area allow scale when graphPanMode is not none
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
+      if (panel.graphPanMode != GGraphPanMode.none &&
           panel.graphArea().contains(event.localPosition)) {
-        //  do not allow scale when graphPanMode is none
+        super.addAllowedPointer(event);
         return;
       }
     }
-    super.addAllowedPointer(event);
   }
 }
 
@@ -79,36 +84,29 @@ class GChartVerticalDragGestureRecognizer
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
+    // resizable splitters allows vertical drag
     for (final panel in (chart?.panels ?? <GPanel>[])) {
-      // splitters allows vertical drag
-      if (panel.splitterArea().contains(event.localPosition)) {
-        if (panel.resizable) {
-          _hijackCaptain();
-          super.addAllowedPointer(event);
-        }
+      if (panel.splitterArea().contains(event.localPosition) &&
+          panel.resizable) {
+        _hijackCaptain();
+        super.addAllowedPointer(event);
         return;
       }
     }
+    // scalable value axes allow vertical drag
     for (final panel in (chart?.panels ?? <GPanel>[])) {
-      // point axes do not allow vertical drag
-      for (final axis in panel.pointAxes) {
-        if (panel.pointAxisAreaOf(axis).contains(event.localPosition)) {
-          return;
-        }
-      }
-      // value axes which can not scale do not allow vertical drag
       for (final axis in panel.valueAxes) {
-        if (axis.scaleMode == GAxisScaleMode.none &&
+        if (axis.scaleMode != GAxisScaleMode.none &&
             panel.valueAxisAreaOf(axis).contains(event.localPosition)) {
+          super.addAllowedPointer(event);
           return;
         }
       }
-      if (panel.graphArea().contains(event.localPosition)) {
-        if (panel.graphPanMode == GGraphPanMode.none) {
-          //  do not allow scale when graphPanMode is none
-          return;
-        }
-        // graph with autoScale value viewport do not allow vertical drag
+    }
+    // graph with allow vertical drag when graphPanMode is not none
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
+      if (panel.graphArea().contains(event.localPosition) &&
+          panel.graphPanMode != GGraphPanMode.none) {
         GGraph? graph =
             chart?.hitTestPanelGraphs(
               panel: panel,
@@ -116,12 +114,12 @@ class GChartVerticalDragGestureRecognizer
             ) ??
             panel.graphs.lastOrNull;
         if (graph != null &&
-            panel.findValueViewPortById(graph.valueViewPortId).autoScaleFlg) {
+            !panel.findValueViewPortById(graph.valueViewPortId).autoScaleFlg) {
+          super.addAllowedPointer(event);
           return;
         }
       }
     }
-    super.addAllowedPointer(event);
   }
 }
 
@@ -158,39 +156,33 @@ class GChartHorizontalDragGestureRecognizer
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
+    // splitters do not allow horizontal drag
     for (final panel in (chart?.panels ?? [])) {
-      // splitters do not allow horizontal drag
       if (panel.resizable &&
           panel.splitterArea().contains(event.localPosition)) {
         return;
       }
     }
+    // scalable point axes can be scaled by horizontal drag
     for (final panel in (chart?.panels ?? <GPanel>[])) {
-      // value axes do not allow horizontal drag
-      for (final axis in panel.valueAxes) {
-        if (panel.valueAxisAreaOf(axis).contains(event.localPosition)) {
+      for (final axis in panel.pointAxes) {
+        if (panel.pointAxisAreaOf(axis).contains(event.localPosition) &&
+            axis.scaleMode != GAxisScaleMode.none) {
+          _hijackCaptain();
+          super.addAllowedPointer(event);
           return;
         }
       }
-      // point axes which can not scale do not allow horizontal drag
-      for (final axis in panel.pointAxes) {
-        if (panel.pointAxisAreaOf(axis).contains(event.localPosition)) {
-          if (axis.scaleMode == GAxisScaleMode.none) {
-            return;
-          } else {
-            _hijackCaptain();
-            super.addAllowedPointer(event);
-            return;
-          }
-        }
-      }
-      if (panel.graphPanMode == GGraphPanMode.none &&
+    }
+    // graph areas can be panned by horizontal drag if graphPanMode is not none
+    for (final panel in (chart?.panels ?? <GPanel>[])) {
+      if (panel.graphPanMode != GGraphPanMode.none &&
           panel.graphArea().contains(event.localPosition)) {
-        //  do not allow scale when graphPanMode is none
+        // _hijackCaptain();
+        super.addAllowedPointer(event);
         return;
       }
     }
-    super.addAllowedPointer(event);
   }
 }
 
@@ -209,7 +201,7 @@ class GChartLongPressGestureRecognizer extends LongPressGestureRecognizer {
       }
     }
     for (final panel in (chart?.panels ?? <GPanel>[])) {
-      // only allow long press on the graph area
+      // allow long press on the graph area (which turns touchCrossMode on)
       if (panel.graphArea().contains(event.localPosition)) {
         super.addAllowedPointer(event);
         return;
@@ -226,22 +218,14 @@ class GChartTapGestureRecognizer extends TapGestureRecognizer {
   @override
   void addAllowedPointer(PointerDownEvent event) {
     for (final panel in (chart?.panels ?? <GPanel>[])) {
-      if (panel.resizable &&
-          panel.splitterArea().contains(event.localPosition)) {
-        // splitters do not allow tap
-        return;
-      }
-    }
-    for (final panel in (chart?.panels ?? <GPanel>[])) {
       if ((panel.onTapGraphArea != null ||
               panel.onDoubleTapGraphArea != null) &&
           panel.graphArea().contains(event.localPosition)) {
-        // only allow tap on the graph area when there is any callback
+        // tap on the graph area when there is any tap/doubleTap callback is allowed
         super.addAllowedPointer(event);
         return;
       }
     }
-    // super.addAllowedPointer(event);
   }
 }
 
@@ -253,19 +237,32 @@ class GChartDoubleTapGestureRecognizer extends DoubleTapGestureRecognizer {
   @override
   void addAllowedPointer(PointerDownEvent event) {
     for (final panel in (chart?.panels ?? <GPanel>[])) {
-      if (panel.resizable &&
-          panel.splitterArea().contains(event.localPosition)) {
-        // splitters do not allow double tap
-        return;
+      for (final axis in panel.valueAxes) {
+        if (panel.valueAxisAreaOf(axis).contains(event.localPosition) &&
+            panel.findValueViewPortById(axis.viewPortId).autoScaleStrategy !=
+                null) {
+          // double tap on a auto-scalable value axis is allowed
+          super.addAllowedPointer(event);
+          return;
+        }
+      }
+
+      for (final axis in panel.pointAxes) {
+        if (panel.pointAxisAreaOf(axis).contains(event.localPosition) &&
+            chart?.pointViewPort.autoScaleStrategy != null) {
+          // double tap on a auto-scalable point axis is allowed
+          super.addAllowedPointer(event);
+          return;
+        }
       }
     }
     for (final panel in (chart?.panels ?? <GPanel>[])) {
       if (panel.graphArea().contains(event.localPosition) &&
-          panel.onDoubleTapGraphArea == null) {
-        // double tap graph area is only allowed when onDoubleTapGraphArea is not null
+          panel.onDoubleTapGraphArea != null) {
+        // double tap graph area which has a onDoubleTapGraphArea callback is allowed
+        super.addAllowedPointer(event);
         return;
       }
     }
-    super.addAllowedPointer(event);
   }
 }

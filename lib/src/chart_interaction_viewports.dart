@@ -5,29 +5,40 @@ class GPointViewPortInteractionHelper {
   GPointViewPort? _pointViewPort;
   final GRange _pointRangeScaling = GRange.empty();
 
-  bool get isScaling => _pointViewPort != null;
+  bool get isScaling => _pointViewPort != null && _pointRangeScaling.isNotEmpty;
 
   void interactionStart(GPointViewPort pointViewPort) {
     _pointViewPort = pointViewPort;
     _pointRangeScaling.copy(pointViewPort.range);
   }
 
-  void interactionEnd() {
+  void interactionEnd({bool notify = true}) {
     _pointRangeScaling.clear();
     _pointViewPort?.selectedRange.clear();
+    if (notify) {
+      _pointViewPort?.notify(finished: true);
+    }
     _pointViewPort = null;
-    // _notify(finished: true);
   }
 
-  void interactionZoomUpdate(Rect area, double zoomRatio) {
+  void interactionZoomUpdate(
+    Rect area,
+    Offset startPosition,
+    Offset? position,
+    double zoomRatio,
+  ) {
     if (_pointViewPort == null || _pointRangeScaling.isEmpty) {
       return;
+    }
+    double point = _pointRangeScaling.last!;
+    if (position != null) {
+      point = _pointViewPort!.positionToPoint(area, position.dx);
     }
     _pointViewPort!.zoom(
       area,
       zoomRatio,
       startRange: _pointRangeScaling,
-      centerPoint: _pointRangeScaling.last,
+      centerPoint: point, //_pointRangeScaling.last,
       animate: false,
       finished: false,
     );

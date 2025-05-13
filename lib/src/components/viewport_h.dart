@@ -457,6 +457,10 @@ class GPointViewPort extends ChangeNotifier {
     }
   }
 
+  void notify({required bool finished}) {
+    _notify(finished: finished);
+  }
+
   bool _disposed = false;
 
   @override
