@@ -36,7 +36,11 @@ extension GChartInteractionGestures on GChartInteractionHandler {
                 );
               };
               instance.onEnd = (details) {
-                controller.scaleEnd(details.velocity);
+                controller.scaleEnd(
+                  details.pointerCount,
+                  details.scaleVelocity,
+                  details.velocity,
+                );
               };
             },
           ),
@@ -67,7 +71,7 @@ extension GChartInteractionGestures on GChartInteractionHandler {
             );
           };
           instance.onEnd = (details) {
-            controller.scaleEnd(details.velocity);
+            controller.scaleEnd(1, 0, details.velocity);
           };
           instance.gestureSettings =
               MediaQuery.maybeOf(context)?.gestureSettings;
@@ -100,7 +104,7 @@ extension GChartInteractionGestures on GChartInteractionHandler {
                 );
               };
               instance.onEnd = (details) {
-                controller.scaleEnd(details.velocity);
+                controller.scaleEnd(1, 0, details.velocity);
               };
               instance.gestureSettings =
                   MediaQuery.maybeOf(context)?.gestureSettings;

@@ -1,3 +1,9 @@
+## 0.2.7
+2025-05-13
+- fix interaction issues.
+- pinch to zoom improvement on graph area.
+- fix dataLoader not being called in some cases.
+
 ## 0.2.6
 2025-05-11
 - fix viewport's `resizeMode` not working correctly when resizing by splitter.
