@@ -127,6 +127,7 @@ class GChart extends ChangeNotifier {
 
   bool _initialized = false;
   bool get initialized => _initialized;
+  TickerProvider? _tickerProvider;
 
   GChartInteractionHandler? _interactionHandler;
   bool get isScaling =>
@@ -169,6 +170,7 @@ class GChart extends ChangeNotifier {
     required GChartInteractionHandler interactionHandler,
   }) {
     assert(!_initialized, 'Chart is already initialized');
+    _tickerProvider = vsync;
     _initialized = true;
     _interactionHandler = interactionHandler;
     dataSource.addListener(_notify);
@@ -186,6 +188,27 @@ class GChart extends ChangeNotifier {
         }
       }
     }
+  }
+
+  /// Add a new panel to the chart.
+  void addPanel(GPanel panel) {
+    panels.add(panel);
+    for (var valueViewPort in panel.valueViewPorts) {
+      valueViewPort.addListener(
+        () => _valueViewPortChanged(updatedViewPort: valueViewPort),
+      );
+      if (_tickerProvider != null) {
+        valueViewPort.initializeAnimation(_tickerProvider!);
+      }
+    }
+    resize(newArea: area, force: true);
+    autoScaleViewports();
+  }
+
+  /// Remove a panel from the chart.
+  void removePanel(GPanel panel) {
+    panels.remove(panel);
+    resize(newArea: area, force: true);
   }
 
   /// Load initial data when there is no data in [dataSource].

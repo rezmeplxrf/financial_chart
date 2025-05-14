@@ -314,6 +314,20 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
         anchorPosition.translate(frameWidth, frameHeight),
       );
     }
+    if (tooltipArea.top < area.top) {
+      anchorPosition = Offset(anchorPosition.dx, area.top);
+      tooltipArea = Rect.fromPoints(
+        anchorPosition,
+        anchorPosition.translate(frameWidth, frameHeight),
+      );
+    }
+    if (tooltipArea.left < area.left) {
+      anchorPosition = Offset(area.left, anchorPosition.dy);
+      tooltipArea = Rect.fromPoints(
+        anchorPosition,
+        anchorPosition.translate(frameWidth, frameHeight),
+      );
+    }
     final framePath = addRectPath(
       rect: tooltipArea.deflate(theme.frameMargin),
       cornerRadius: theme.frameCornerRadius,

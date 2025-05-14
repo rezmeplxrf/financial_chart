@@ -609,25 +609,16 @@ class GChartInteractionHandler {
           pointViewPort.endPoint - distance,
         );
         // make sure do not scroll too far that it goes out of current data point range
-        final minLeft =
-            _chart.dataSource.firstPoint - pointViewPort.pointRangeSize - 1;
-        final maxRight =
-            _chart.dataSource.lastPoint + pointViewPort.pointRangeSize + 1;
-        if (distance > 0) {
-          if (newRange.begin! < minLeft) {
-            newRange = GRange.range(
-              minLeft,
-              newRange.end! + (minLeft - newRange.begin!),
-            );
-          }
-        } else {
-          if (newRange.end! > maxRight) {
-            newRange = GRange.range(
-              newRange.begin! - (newRange.end! - maxRight),
-              maxRight,
-            );
-          }
-        }
+        final startMin =
+            _chart.dataSource.firstPoint - pointViewPort.pointRangeSize;
+        final endMax =
+            _chart.dataSource.lastPoint + pointViewPort.pointRangeSize;
+        newRange = pointViewPort.clampRange(
+          newRange.first!,
+          newRange.last!,
+          startMin: startMin,
+          endMax: endMax,
+        );
         final simulation = FrictionSimulation.through(0, 1, 1, 0.9);
         pointViewPort.animateToRange(
           newRange,
