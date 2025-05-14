@@ -1,3 +1,10 @@
+## 0.2.8
+2025-05-14
+- fix tap issue.
+- add `GDataSource`.`addSeries`, `GDataSource`.`removeSeries` methods.
+- add `GChart`.`addPanel` and `GChart`.`removePanel` methods.
+- fix tooltip area top position issue.
+
 ## 0.2.7
 2025-05-13
 - fix interaction issues.

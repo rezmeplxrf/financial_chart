@@ -247,7 +247,7 @@ class GPointViewPort extends ChangeNotifier {
         targetRange.last == endPoint) {
       return;
     }
-    final clampedRange = _clampRange(targetRange.first!, targetRange.last!);
+    final clampedRange = clampRange(targetRange.first!, targetRange.last!);
     _animationStartRange.update(startPoint, endPoint);
     _animationTargetRange.copy(clampedRange);
     Future.delayed(const Duration(milliseconds: 1), () {
@@ -266,18 +266,26 @@ class GPointViewPort extends ChangeNotifier {
     });
   }
 
-  GRange _clampRange(double startPoint, double endPoint) {
+  /// Clamp the range to the min and max values.
+  GRange clampRange(
+    double startPoint,
+    double endPoint, {
+    double? startMin,
+    double? endMax,
+  }) {
     assert(startPoint < endPoint);
-    if (startPoint < startPointMin) {
+    double clampedStartPoint = startPoint;
+    double clampedEndPoint = endPoint;
+    if (startPoint < (startMin ?? startPointMin)) {
       final points = endPoint - startPoint;
-      startPoint = startPointMin;
-      endPoint = startPoint + points;
-    } else if (endPoint > endPointMax) {
+      clampedStartPoint = (startMin ?? startPointMin);
+      clampedEndPoint = clampedStartPoint + points;
+    } else if (endPoint > (endMax ?? endPointMax)) {
       final points = endPoint - startPoint;
-      endPoint = endPointMax;
-      startPoint = endPoint - points;
+      clampedEndPoint = (endMax ?? endPointMax);
+      clampedStartPoint = clampedEndPoint - points;
     }
-    return GRange.range(startPoint, endPoint);
+    return GRange.range(clampedStartPoint, clampedEndPoint);
   }
 
   void setRange({
@@ -291,7 +299,7 @@ class GPointViewPort extends ChangeNotifier {
         endPoint == this.endPoint) {
       return;
     }
-    final clampedRange = _clampRange(startPoint, endPoint);
+    final clampedRange = clampRange(startPoint, endPoint);
     _pointRange.update(clampedRange.first!, clampedRange.last!);
     if (notify) {
       _notify(finished: finished);

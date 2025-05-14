@@ -236,7 +236,7 @@ class WorkshopState extends ChangeNotifier {
       (v, p) => (v + p.heightWeight),
     );
     final newPanelHeightWeight = currentHeightWeight / 2.0;
-    chart!.panels.add(
+    chart!.addPanel(
       GPanel(
         heightWeight: newPanelHeightWeight,
         valueAxes: [
@@ -269,15 +269,12 @@ class WorkshopState extends ChangeNotifier {
         ),
       ),
     );
-    chart!.resize(newArea: chart!.area, force: true);
-    chart!.autoScaleViewports();
   }
 
   void removePanel() {
     if (chart == null || chart!.panels.length <= 2) {
       return;
     }
-    chart!.panels.removeLast();
-    chart!.resize(newArea: chart!.area, force: true);
+    chart!.removePanel(chart!.panels.last);
   }
 }

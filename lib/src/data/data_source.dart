@@ -131,6 +131,50 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
   }
 
   /// Get the data at the given point.
+  GData<P>? getData(int point) {
+    final index = pointToIndex(point);
+    if (index < 0 || index >= dataList.length) {
+      return null;
+    }
+    return dataList[index];
+  }
+
+  /// add a new series to the data source.
+  void addSeries(GDataSeriesProperty property, List<double> values) {
+    assert(
+      !_seriesKeyIndexMap.containsKey(property.key),
+      'Series key already exists: ${property.key}',
+    );
+    assert(
+      values.length == dataList.length,
+      'Values length must be equal to dataList length: ${values.length} != ${dataList.length}',
+    );
+    seriesProperties.add(property);
+    _seriesKeyIndexMap[property.key] = seriesProperties.length - 1;
+    for (int i = 0; i < dataList.length; i++) {
+      dataList[i].seriesValues.add(values[i]);
+    }
+    _notify();
+  }
+
+  /// remove a series from the data source.
+  ///
+  /// make sure it is not being used by any component of the chart before removing.
+  void removeSeries(String key) {
+    assert(_seriesKeyIndexMap.containsKey(key), 'Series key not found: $key');
+    final index = _seriesKeyIndexMap[key]!;
+    seriesProperties.removeAt(index);
+    _seriesKeyIndexMap.remove(key);
+    for (final data in dataList) {
+      data.seriesValues.removeAt(index);
+    }
+    for (int i = index; i < seriesProperties.length; i++) {
+      _seriesKeyIndexMap[seriesProperties[i].key] = i;
+    }
+    _notify();
+  }
+
+  /// Get the data at the given point.
   P? getPointValue(int point) {
     final index = pointToIndex(point);
     if (index < 0 || index >= dataList.length) {

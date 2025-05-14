@@ -217,15 +217,8 @@ class GChartTapGestureRecognizer extends TapGestureRecognizer {
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
-    for (final panel in (chart?.panels ?? <GPanel>[])) {
-      if ((panel.onTapGraphArea != null ||
-              panel.onDoubleTapGraphArea != null) &&
-          panel.graphArea().contains(event.localPosition)) {
-        // tap on the graph area when there is any tap/doubleTap callback is allowed
-        super.addAllowedPointer(event);
-        return;
-      }
-    }
+    // always allow tap
+    super.addAllowedPointer(event);
   }
 }
 
