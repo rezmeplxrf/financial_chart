@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../marker/overlay_marker.dart';
 import '../render.dart';
 import 'graph_render.dart';
@@ -18,6 +20,8 @@ class GGraph<T extends GGraphTheme> extends GComponent {
   /// point viewport is shared for the whole panel. see [GPanel.pointViewPortId]
   final String valueViewPortId;
 
+  /// The keys of the series value in the data source that
+  /// will be highlighted by drawing a circle on the graph.
   final List<String> crosshairHighlightValueKeys = [];
 
   /// The graph markers of the graph.
@@ -70,4 +74,18 @@ class GGraph<T extends GGraphTheme> extends GComponent {
   }
 
   String get type => typeName;
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('valueViewPortId', valueViewPortId));
+    if (crosshairHighlightValueKeys.isNotEmpty) {
+      properties.add(
+        IterableProperty<String>(
+          'crosshairHighlightValueKeys',
+          crosshairHighlightValueKeys,
+        ),
+      );
+    }
+  }
 }

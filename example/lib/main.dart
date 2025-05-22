@@ -22,7 +22,7 @@ final routes = {
   //'/demo/graphs':
   //   (context) =>
   //       const MenuPage(pathPrefix: '/demo/graphs', title: "Graph demos"),
-  //'/demo/graphs/ohlc': (context) => const DemoGraphOhlcPage(),
+  // '/demo/graphs/ohlc': (context) => const DemoGraphOhlcPage(),
   // '/demo/graphs/bar': (context) => const DemoGraphBarPage(),
   // '/demo/graphs/line': (context) => const DemoGraphLinePage(),
   // '/demo/graphs/area': (context) => const DemoGraphAreaPage(),
@@ -33,6 +33,7 @@ final routes = {
   '/demo/loading_data': (context) => const DemoDynamicDataPage(),
   '/demo/live_update': (context) => const DemoLiveUpdatePage(),
   // '/demo/testing': (context) => const PlayApp(),
+  // '/demo/test_data_loader': (context) => const ChartDataLoadDemoPage(),
 };
 
 class CustomScrollBehavior extends MaterialScrollBehavior {

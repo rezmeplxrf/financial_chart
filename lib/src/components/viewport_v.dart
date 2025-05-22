@@ -9,7 +9,7 @@ import 'viewport_resize.dart';
 import 'viewport_v_scaler.dart';
 
 /// Viewport for value (vertical) axis
-class GValueViewPort extends ChangeNotifier {
+class GValueViewPort extends ChangeNotifier with Diagnosticable {
   /// Identifier of the viewport which being referenced by components.
   final String id;
 
@@ -31,7 +31,7 @@ class GValueViewPort extends ChangeNotifier {
   double get centerValue => (endValue + startValue) / 2;
 
   /// The value range of the viewport ([endValue]-[startValue]).
-  double get valueRange => endValue - startValue;
+  double get rangeSize => endValue - startValue;
 
   /// The range when selecting. will be cleared when selection finished.
   GRange get selectedRange => _selectedRange;
@@ -416,5 +416,23 @@ class GValueViewPort extends ChangeNotifier {
       ..dispose();
     _disposed = true;
     super.dispose();
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('id', id));
+    properties.add(DiagnosticsProperty<GRange>('range', range));
+    properties.add(DoubleProperty('rangeSize', rangeSize));
+    properties.add(IntProperty('valuePrecision', valuePrecision));
+    properties.add(DiagnosticsProperty<GRange>('selectedRange', selectedRange));
+    properties.add(DiagnosticsProperty<bool>('autoScaleFlg', autoScaleFlg));
+    properties.add(
+      DiagnosticsProperty<bool>('autoScaleStrategy', autoScaleStrategy != null),
+    );
+    properties.add(IntProperty('animationMilliseconds', animationMilliseconds));
+    properties.add(
+      DiagnosticsProperty<GViewPortResizeMode>('resizeMode', resizeMode),
+    );
   }
 }

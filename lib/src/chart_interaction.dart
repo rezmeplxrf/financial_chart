@@ -1,14 +1,11 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/widgets.dart';
 
 import 'chart.dart';
-import 'components/graph/graph.dart';
-import 'components/panel/panel.dart';
-import 'components/viewport_v.dart';
-import 'components/axis/axis.dart';
-import 'components/viewport_h.dart';
+import 'components/components.dart';
 import 'values/range.dart';
 import 'values/value.dart';
 
@@ -18,7 +15,7 @@ part 'chart_interaction_viewports.dart';
 
 /// [GChartInteractionHandler] for handling user interactions for the attached chart.
 // ignore: must_be_immutable
-class GChartInteractionHandler {
+class GChartInteractionHandler with Diagnosticable {
   late final GChart _chart;
 
   final GValue<bool> _isTouchEvent = GValue(false);
@@ -48,12 +45,20 @@ class GChartInteractionHandler {
   }
 
   void mouseEnter({required Offset position}) {
-    _chart.crosshair.setCrossPosition(position.dx, position.dy);
+    _chart.crosshair.updateCrossPosition(
+      chart: _chart,
+      x: position.dx,
+      y: position.dy,
+      trigger: GCrosshairTrigger.mouseEnter,
+    );
     _notify();
   }
 
   void mouseExit() {
-    _chart.crosshair.clearCrossPosition();
+    _chart.crosshair.updateCrossPosition(
+      chart: _chart,
+      trigger: GCrosshairTrigger.mouseExit,
+    );
     _notify();
   }
 
@@ -108,7 +113,12 @@ class GChartInteractionHandler {
   }
 
   void mouseHover({required Offset position}) {
-    _chart.crosshair.setCrossPosition(position.dx, position.dy);
+    _chart.crosshair.updateCrossPosition(
+      chart: _chart,
+      x: position.dx,
+      y: position.dy,
+      trigger: GCrosshairTrigger.mouseHover,
+    );
     _chart.mouseCursor.value = _mouseCursor(position: position);
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
@@ -167,6 +177,12 @@ class GChartInteractionHandler {
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
+    _chart.crosshair.updateCrossPosition(
+      chart: _chart,
+      x: start.dx,
+      y: start.dy,
+      trigger: GCrosshairTrigger.scaleStart,
+    );
     // hit test splitters
     for (int n = 0; n < _chart.panels.length; n++) {
       GPanel panel = _chart.panels[n];
@@ -214,19 +230,27 @@ class GChartInteractionHandler {
     required double scale,
     required double verticalScale,
   }) {
+    _chart.crosshair.updateCrossPosition(
+      chart: _chart,
+      x: position.dx,
+      y: position.dy,
+      trigger: GCrosshairTrigger.scaleUpdate,
+    );
     if (_hookScaleUpdate != null) {
       _hookScaleUpdate!(
         position: position,
         scale: scale,
         verticalScale: verticalScale,
       );
-    } else {
-      _chart.crosshair.setCrossPosition(position.dx, position.dy);
     }
     _notify();
   }
 
   void scaleEnd(int pointerCount, double scaleVelocity, Velocity velocity) {
+    _chart.crosshair.updateCrossPosition(
+      chart: _chart,
+      trigger: GCrosshairTrigger.scaleEnd,
+    );
     if (_hookScaleEnd != null) {
       _hookScaleEnd!(pointerCount, scaleVelocity, velocity);
       _hookScaleUpdate = null;
@@ -241,13 +265,23 @@ class GChartInteractionHandler {
     }
     if (_isTouchEvent.value) {
       _isTouchCrossMode.value = true;
-      _chart.crosshair.setCrossPosition(position.dx, position.dy);
-      _notify();
     }
+    _chart.crosshair.updateCrossPosition(
+      chart: _chart,
+      x: position.dx,
+      y: position.dy,
+      trigger: GCrosshairTrigger.longPressStart,
+    );
+    _notify();
   }
 
   void longPressMove({required Offset position}) {
-    _chart.crosshair.setCrossPosition(position.dx, position.dy);
+    _chart.crosshair.updateCrossPosition(
+      chart: _chart,
+      x: position.dx,
+      y: position.dy,
+      trigger: GCrosshairTrigger.longPressMove,
+    );
     _notify();
   }
 
@@ -255,19 +289,29 @@ class GChartInteractionHandler {
     if (_isTouchCrossMode.value) {
       _isTouchCrossMode.value = false;
       _isTouchEvent.value = false;
-      _chart.crosshair.clearCrossPosition();
-      _notify();
     }
+    _chart.crosshair.updateCrossPosition(
+      chart: _chart,
+      x: position.dx,
+      y: position.dy,
+      trigger: GCrosshairTrigger.longPressEnd,
+    );
+    _notify();
   }
 
   void tapDown({required Offset position, required bool isTouch}) {
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
+    _chart.crosshair.updateCrossPosition(
+      chart: _chart,
+      x: position.dx,
+      y: position.dy,
+      trigger: GCrosshairTrigger.tapDown,
+    );
     for (final panel in _chart.panels) {
       if (panel.panelArea().contains(position) &&
           (!panel.resizable || !panel.splitterArea().contains(position))) {
-        _chart.crosshair.setCrossPosition(position.dx, position.dy);
         _isTouchEvent.value = isTouch;
         _notify();
         return;
@@ -276,16 +320,15 @@ class GChartInteractionHandler {
   }
 
   void tapUp() {
-    _clearTouchCross();
-  }
-
-  void _clearTouchCross() {
     if (_isTouchCrossMode.value) {
       _isTouchCrossMode.value = false;
       _isTouchEvent.value = false;
-      _chart.crosshair.clearCrossPosition();
-      _notify();
     }
+    _chart.crosshair.updateCrossPosition(
+      chart: _chart,
+      trigger: GCrosshairTrigger.tapUp,
+    );
+    _notify();
   }
 
   void doubleTap({required Offset position}) {
@@ -345,7 +388,6 @@ class GChartInteractionHandler {
       double weightDensity =
           (panel1.heightWeight + panel2.heightWeight) / (h1 + h2);
       _chart.splitter.resizingPanelIndex = panel1Index;
-      _chart.crosshair.crossPosition.clear();
       _hookScaleUpdate = ({
         required Offset position,
         required double scale,
@@ -388,7 +430,6 @@ class GChartInteractionHandler {
             required double scale,
             required double verticalScale,
           }) {
-            _chart.crosshair.setCrossPosition(position.dx, position.dy);
             if (axis.scaleMode == GAxisScaleMode.zoom ||
                 (scale > 0 && scale != 1.0)) {
               double scaleRatio =
@@ -464,7 +505,6 @@ class GChartInteractionHandler {
             required double scale,
             required double verticalScale,
           }) {
-            _chart.crosshair.setCrossPosition(position.dx, position.dy);
             if (axis.scaleMode == GAxisScaleMode.zoom) {
               double scaleRatio = min(
                 max(
@@ -532,7 +572,6 @@ class GChartInteractionHandler {
         required double verticalScale,
       }) {
         _chart.mouseCursor.value = SystemMouseCursors.precise;
-        _chart.crosshair.setCrossPosition(position.dx, position.dy);
       };
       _hookScaleEnd =
           (int pointerCount, double scaleVelocity, Velocity? velocity) {};
@@ -554,7 +593,6 @@ class GChartInteractionHandler {
       required double scale,
       required double verticalScale,
     }) {
-      _chart.crosshair.clearCrossPosition();
       _chart.mouseCursor.value = SystemMouseCursors.grab;
       double moveDistanceX = (position.dx - start.dx);
       if (scale != 1.0) {
@@ -633,5 +671,16 @@ class GChartInteractionHandler {
 
   void _notify() {
     _chart.repaint(layout: false);
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(
+      DiagnosticsProperty<bool>('isTouchEvent', _isTouchEvent.value),
+    );
+    properties.add(
+      DiagnosticsProperty<bool>('isTouchCrossMode', _isTouchCrossMode.value),
+    );
   }
 }

@@ -38,8 +38,9 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
     }
     if (!chart.pointViewPort.isValid ||
         chart.pointViewPort.isAnimating ||
-        chart.isScaling) {
-      // skip rendering if point view port is animating or scaling
+        chart.isScaling ||
+        chart.splitter.resizingPanelIndex != null) {
+      // skip rendering if point view port is animating or scaling or resizing a panel
       _removeWidget(chart);
       return;
     }
@@ -264,7 +265,9 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
       final value = dataKeyValues[key];
       final valueText =
           (value != null)
-              ? dataSource.seriesValueFormater(value, prop.precision)
+              ? (prop.valueFormater != null)
+                  ? prop.valueFormater!(value)
+                  : dataSource.seriesValueFormater(value, prop.precision)
               : '';
       final (labelPainter, _, _) = GRenderUtil.createTextPainter(
         text: label,

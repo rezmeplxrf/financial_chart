@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../components/components.dart';
 import '../../values/value.dart';
 import 'line_render.dart';
@@ -36,4 +38,11 @@ class GGraphLine<T extends GGraphTheme> extends GGraph<T> {
 
   @override
   String get type => typeName;
+
+  @override
+  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('valueKey', valueKey));
+    properties.add(DiagnosticsProperty<bool>('smoothing', smoothing));
+  }
 }

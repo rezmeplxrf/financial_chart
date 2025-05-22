@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../components/component.dart';
 import '../../components/graph/graph.dart';
 import '../../components/graph/graph_theme.dart';
@@ -47,4 +49,10 @@ class GGraphGroup extends GGraph<GGraphTheme> {
 
   @override
   String get type => typeName;
+
+  @override
+  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(IterableProperty<GGraph>('graphs', graphs));
+  }
 }

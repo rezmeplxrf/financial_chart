@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:example/data/sample_data.dart';
 import 'package:example/widgets/toggle_buttons.dart';
 import 'package:example/widgets/control_label.dart';
 import 'package:financial_chart/financial_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../data/indicator_providers.dart';
 import '../workshop_state.dart';
 
 class MarkersControlView extends StatefulWidget {

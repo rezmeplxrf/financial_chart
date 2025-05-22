@@ -28,11 +28,13 @@ class GDataSeriesProperty {
   final String key;
   final String label;
   final int precision;
+  final String Function(double seriesValue)? valueFormater;
 
   const GDataSeriesProperty({
     required this.key,
     required this.label,
     required this.precision,
+    this.valueFormater,
   });
 }
 
@@ -63,7 +65,8 @@ String defaultSeriesValueFormater(double seriesValue, int precision) {
 
 /// Data container for the chart.
 /// ignore: must_be_immutable
-class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
+class GDataSource<P, D extends GData<P>> extends ChangeNotifier
+    with Diagnosticable {
   /// Current start point of the data (point value of the first data in [dataList]).
   ///
   /// Use point instead of index to access data so we can append data to both ends dynamically without breaking data access.
@@ -97,6 +100,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
     this.initialDataLoader,
     this.priorDataLoader,
     this.afterDataLoader,
+    this.dataLoaded,
     this.pointValueFormater = defaultPointValueFormater,
     this.seriesValueFormater = defaultSeriesValueFormater,
   }) : _seriesKeyIndexMap = Map.fromIterables(
@@ -308,13 +312,14 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
         _isLoading.value = true;
         _notify();
         final expectedCount = toPoint - fromPoint + 1;
-        await initialDataLoader!(pointCount: expectedCount).then((data) {
+        await initialDataLoader!(pointCount: expectedCount).then((data) async {
           if (data.isNotEmpty) {
             dataList.addAll(data);
             if (data.length < expectedCount) {
               _minPoint.value = firstPoint;
               _maxPoint.value = lastPoint;
             }
+            await dataLoaded?.call(this);
           } else {
             // no data at all
             _minPoint.value = 1;
@@ -334,10 +339,11 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
                 toPointExclusive: firstPoint,
                 toPointValueExclusive: getPointValue(firstPoint) as P,
               )
-              .then((data) {
+              .then((data) async {
                 if (data.isNotEmpty) {
                   dataList.insertAll(0, data);
                   _basePoint.value = _basePoint.value - data.length;
+                  await dataLoaded?.call(this);
                 }
                 if (data.length < expectedCount) {
                   // no more data before this point
@@ -357,9 +363,10 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
                 fromPointValueExclusive: getPointValue(lastPoint) as P,
                 pointCount: expectedCount,
               )
-              .then((data) {
+              .then((data) async {
                 if (data.isNotEmpty) {
                   dataList.addAll(data);
+                  await dataLoaded?.call(this);
                 }
                 if (data.length < expectedCount) {
                   // no more data after this point
@@ -399,4 +406,17 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier {
     required int pointCount,
   })?
   afterDataLoader;
+
+  final Future<void> Function(GDataSource<P, D> dataSource)? dataLoaded;
+
+  @override
+  @mustCallSuper
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(IntProperty('minPoint', _minPoint.value));
+    properties.add(IntProperty('maxPoint', _maxPoint.value));
+    properties.add(IntProperty('length', length));
+    properties.add(IntProperty('firstPoint', firstPoint));
+    properties.add(IntProperty('lastPoint', lastPoint));
+  }
 }

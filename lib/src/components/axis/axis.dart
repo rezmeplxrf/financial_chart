@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:financial_chart/src/components/marker/axis_marker.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../values/value.dart';
 import '../component.dart';
@@ -143,6 +144,14 @@ abstract class GAxis extends GComponent {
   }
 
   (Rect used, Rect areaLeft) placeTo(Rect area);
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<GAxisPosition>('position', position));
+    properties.add(DoubleProperty('size', size));
+    properties.add(EnumProperty<GAxisScaleMode>('scaleMode', scaleMode));
+  }
 }
 
 /// value axis for vertical direction.
@@ -206,6 +215,12 @@ class GValueAxis extends GAxis {
     } else {
       return (Rect.zero, area.inflate(0));
     }
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('viewPortId', viewPortId));
   }
 }
 

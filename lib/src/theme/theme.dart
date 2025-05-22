@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../components/background/background_theme.dart';
 import '../components/marker/overlay_marker_theme.dart';
 import '../components/marker/axis_marker_theme.dart';
@@ -10,7 +12,7 @@ import '../components/graph/graph_theme.dart';
 import '../components/splitter/splitter_theme.dart';
 
 /// Theme container for all chart components.
-class GTheme {
+class GTheme with Diagnosticable {
   final String name;
   final GBackgroundTheme backgroundTheme;
   final GPanelTheme panelTheme;
@@ -67,5 +69,11 @@ class GTheme {
 
   GGraphTheme? graphTheme(String graphType) {
     return graphThemes[graphType];
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('name', name));
   }
 }

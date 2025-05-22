@@ -10,7 +10,7 @@ import 'viewport_h_scaler.dart';
 import 'viewport_resize.dart';
 
 /// Viewport for point (horizontal) axis
-class GPointViewPort extends ChangeNotifier {
+class GPointViewPort extends ChangeNotifier with Diagnosticable {
   /// The minimum width of a point in pixel when scaling.
   final double minPointWidth;
 
@@ -53,7 +53,7 @@ class GPointViewPort extends ChangeNotifier {
         startPoint: value,
         endPoint: value + points,
         finished: true,
-        notify: false,
+        notify: true,
       );
     }
   }
@@ -76,7 +76,7 @@ class GPointViewPort extends ChangeNotifier {
         startPoint: value - points,
         endPoint: value,
         finished: true,
-        notify: false,
+        notify: true,
       );
     }
   }
@@ -479,5 +479,28 @@ class GPointViewPort extends ChangeNotifier {
       ..dispose();
     _disposed = true;
     super.dispose();
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<GRange>('range', range));
+    properties.add(DoubleProperty('rangeSize', isValid ? pointRangeSize : 0));
+    if (selectedRange.isNotEmpty) {
+      properties.add(
+        DiagnosticsProperty<GRange>('selectedRange', selectedRange),
+      );
+    }
+    properties.add(
+      DiagnosticsProperty<GViewPortResizeMode>('resizeMode', resizeMode),
+    );
+    properties.add(DoubleProperty('minPointWidth', minPointWidth));
+    properties.add(DoubleProperty('maxPointWidth', maxPointWidth));
+    properties.add(DoubleProperty('defaultPointWidth', defaultPointWidth));
+    properties.add(DoubleProperty('startPointMin', startPointMin));
+    properties.add(DoubleProperty('endPointMax', endPointMax));
+    properties.add(DiagnosticsProperty<bool>('autoScaleFlg', autoScaleFlg));
+    properties.add(IntProperty('animationMilliseconds', animationMilliseconds));
+    properties.add(DiagnosticsProperty<bool>('isAnimating', isAnimating));
   }
 }

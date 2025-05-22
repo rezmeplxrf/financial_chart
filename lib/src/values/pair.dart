@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 /// A wrapper of a pair of values with general type <[T]>.
 class GPair<T> extends Equatable {
@@ -41,7 +42,14 @@ class GPair<T> extends Equatable {
 }
 
 /// A wrapper of a pair of [double] values.
-class GDoublePair extends GPair<double> {
+class GDoublePair extends GPair<double> with Diagnosticable {
   GDoublePair.pair(double begin, double end) : super.pair(begin, end);
   GDoublePair.empty() : super.empty();
+
+  @override
+  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('begin', isEmpty ? null : begin));
+    properties.add(DoubleProperty('end', isEmpty ? null : end));
+  }
 }

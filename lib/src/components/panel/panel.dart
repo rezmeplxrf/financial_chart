@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
+
 import 'panel_render.dart';
 import 'panel_theme.dart';
 import '../component.dart';
@@ -104,20 +106,41 @@ class GPanel extends GComponent {
   /// The active graph.
   GGraph get activeGraph => graphs.last;
 
-  /// The callback function when tap the graph area.
+  /// The callback function when tap (up) the graph area.
   ///
   /// NOTICE that when [onDoubleTapGraphArea] also being set there is a delay cause by distinguishing single from double taps
   final GValue<Function(Offset)?> _onTapGraphArea = GValue(null);
   Function(Offset)? get onTapGraphArea => _onTapGraphArea.value;
   set onTapGraphArea(Function(Offset)? value) => _onTapGraphArea.value = value;
 
-  /// The callback function when double tap the graph area.
+  /// The callback function when double tap (down) the graph area.
   ///
   /// NOTICE that when this being set it will cause a delay on [onTapGraphArea] for distinguishing single from double taps
   final GValue<Function(Offset)?> _onDoubleTapGraphArea = GValue(null);
   Function(Offset)? get onDoubleTapGraphArea => _onDoubleTapGraphArea.value;
   set onDoubleTapGraphArea(Function(Offset)? value) =>
       _onDoubleTapGraphArea.value = value;
+
+  /// The callback function when long press down the graph area.
+  final GValue<Function(Offset)?> _onLongPressStartGraphArea = GValue(null);
+  Function(Offset)? get onLongPressStartGraphArea =>
+      _onLongPressStartGraphArea.value;
+  set onLongPressStartGraphArea(Function(Offset)? value) =>
+      _onLongPressStartGraphArea.value = value;
+
+  /// The callback function when long press up the graph area.
+  final GValue<Function(Offset)?> _onLongPressEndGraphArea = GValue(null);
+  Function(Offset)? get onLongPressEndGraphArea =>
+      _onLongPressEndGraphArea.value;
+  set onLongPressEndGraphArea(Function(Offset)? value) =>
+      _onLongPressEndGraphArea.value = value;
+
+  /// The callback function when long press move the graph area.
+  final GValue<Function(Offset)?> _onLongPressMoveGraphArea = GValue(null);
+  Function(Offset)? get onLongPressMoveGraphArea =>
+      _onLongPressMoveGraphArea.value;
+  set onLongPressMoveGraphArea(Function(Offset)? value) =>
+      _onLongPressMoveGraphArea.value = value;
 
   GPanel({
     super.id,
@@ -133,6 +156,9 @@ class GPanel extends GComponent {
     double momentumScrollSpeed = 0.5,
     Function(Offset)? onTapGraphArea,
     Function(Offset)? onDoubleTapGraphArea,
+    Function(Offset)? onLongPressDownGraphArea,
+    Function(Offset)? onLongPressUpGraphArea,
+    Function(Offset)? onLongPressMoveGraphArea,
     GPanelTheme? theme,
     GPanelRender? render,
   }) : super(render: render ?? const GPanelRender(), theme: theme) {
@@ -143,6 +169,9 @@ class GPanel extends GComponent {
     _graphPanMode.value = graphPanMode;
     _onTapGraphArea.value = onTapGraphArea;
     _onDoubleTapGraphArea.value = onDoubleTapGraphArea;
+    _onLongPressStartGraphArea.value = onLongPressDownGraphArea;
+    _onLongPressEndGraphArea.value = onLongPressUpGraphArea;
+    _onLongPressMoveGraphArea.value = onLongPressMoveGraphArea;
     // at least one value viewport is required
     assert(valueViewPorts.isNotEmpty);
     // no duplicate id for value viewport
@@ -215,5 +244,76 @@ class GPanel extends GComponent {
       valueViewPort.dispose();
     }
     tooltip?.dispose();
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(
+      DiagnosticsProperty<List<GValueViewPort>>(
+        'valueViewPorts',
+        valueViewPorts,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<List<GPointAxis>>('pointAxes', pointAxes),
+    );
+    properties.add(
+      DiagnosticsProperty<List<GValueAxis>>('valueAxes', valueAxes),
+    );
+    properties.add(DiagnosticsProperty<List<GGraph>>('graphs', graphs));
+    properties.add(DiagnosticsProperty<GTooltip>('tooltip', tooltip));
+    properties.add(DiagnosticsProperty<bool>('resizable', resizable));
+    properties.add(DoubleProperty('heightWeight', heightWeight));
+    properties.add(DoubleProperty('momentumScrollSpeed', momentumScrollSpeed));
+    properties.add(EnumProperty<GGraphPanMode>('graphPanMode', graphPanMode));
+    properties.add(
+      DiagnosticsProperty<bool>('onTapGraphArea', onTapGraphArea != null),
+    );
+    properties.add(
+      DiagnosticsProperty<bool>(
+        'onDoubleTapGraphArea',
+        onDoubleTapGraphArea != null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<bool>(
+        'onLongPressDownGraphArea',
+        onLongPressStartGraphArea != null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<bool>(
+        'onLongPressUpGraphArea',
+        onLongPressEndGraphArea != null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<bool>(
+        'onLongPressMoveGraphArea',
+        onLongPressMoveGraphArea != null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<double>('splitterHeight', splitterHeight),
+    );
+    properties.add(DiagnosticsProperty<bool>('isLayoutReady', isLayoutReady));
+    if (isLayoutReady) {
+      properties.add(DiagnosticsProperty<Rect>('graphArea', graphArea()));
+      properties.add(DiagnosticsProperty<Rect>('panelArea', panelArea()));
+      properties.add(DiagnosticsProperty<Rect>('splitterArea', splitterArea()));
+      properties.add(
+        IterableProperty<Rect>(
+          'pointAxisAreas',
+          pointAxes.map((a) => pointAxisAreaOf(a)).toList(),
+        ),
+      );
+      properties.add(
+        IterableProperty<Rect>(
+          'valueAxisAreas',
+          valueAxes.map((a) => valueAxisAreaOf(a)).toList(),
+        ),
+      );
+    }
   }
 }

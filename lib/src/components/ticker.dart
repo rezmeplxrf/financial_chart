@@ -85,7 +85,7 @@ class GValueTickerStrategyDefault implements GValueTickerStrategy {
       return [];
     }
 
-    double tickInterval = _defaultTickerValueInterval(viewPort.valueRange);
+    double tickInterval = _defaultTickerValueInterval(viewPort.rangeSize);
     if (tickInterval <= 0) {
       return [];
     }

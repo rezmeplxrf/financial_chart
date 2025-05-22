@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../components/components.dart';
 import '../../values/value.dart';
 import 'ohlc_render.dart';
@@ -33,5 +35,12 @@ class GGraphOhlc<T extends GGraphTheme> extends GGraph<T> {
     assert(ohlcValueKeys.length == 4, "The length of ohlcValueKeys must be 4.");
     super.theme = theme;
     super.render = render ?? GGraphOhlcRender();
+  }
+
+  @override
+  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(IterableProperty<String>('ohlcValueKeys', ohlcValueKeys));
+    properties.add(DiagnosticsProperty<bool>('drawAsCandle', drawAsCandle));
   }
 }

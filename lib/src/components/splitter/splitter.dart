@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../values/value.dart';
 import '../component.dart';
 import 'splitter_render.dart';
@@ -11,4 +13,12 @@ class GSplitter extends GComponent {
 
   GSplitter({GSplitterTheme? theme, GSplitterRender? render})
     : super(render: render ?? const GSplitterRender(), theme: theme);
+
+  @override
+  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(
+      DiagnosticsProperty<int?>('resizingPanelIndex', resizingPanelIndex),
+    );
+  }
 }

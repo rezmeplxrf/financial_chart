@@ -5,7 +5,7 @@ import 'component_theme.dart';
 import 'render.dart';
 
 /// Base class for all view components.
-abstract class GComponent<T extends GComponentTheme> {
+abstract class GComponent<T extends GComponentTheme> with Diagnosticable {
   static const int kDefaultLayer = 1000;
 
   /// Identifier of the component.
@@ -59,6 +59,17 @@ abstract class GComponent<T extends GComponentTheme> {
 
   GRender getRender() {
     return render!;
+  }
+
+  @override
+  @mustCallSuper
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<String>('id', id));
+    properties.add(DiagnosticsProperty<bool>('visible', visible));
+    properties.add(IntProperty('layer', layer));
+    properties.add(DiagnosticsProperty<bool>('highlight', highlight));
+    properties.add(EnumProperty<GHitTestMode>('hitTestMode', hitTestMode));
   }
 }
 

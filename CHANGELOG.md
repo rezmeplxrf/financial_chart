@@ -1,3 +1,13 @@
+## 0.3.0
+2025-05-22
+- fix interaction fail to work when resize. (issue [#49](https://github.com/cjjapan/financial_chart/issues/49)).
+- add `GCrosshair`.`updateStrategy` property to allow customize when to show/hide crosshair. (issue [#51](https://github.com/cjjapan/financial_chart/issues/51)).
+- add `GDataSeriesProperty`.`valueFormater` property.
+- add `GPanel`.`onLongPressStartGraphArea`, `onLongPressMoveGraphArea`, `onLongPressEndGraphArea` callbacks.
+- add `Diagnosticable` implementation to components.
+- add `GDataSource`.`dataLoaded` callback to allow do something else on updated data before rendering.
+- update examples with new async data loading logic. (issue [#50](https://github.com/cjjapan/financial_chart/issues/50)).
+
 ## 0.2.8
 2025-05-14
 - fix tap issue.

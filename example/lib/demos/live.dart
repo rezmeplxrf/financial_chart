@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:financial_chart/financial_chart.dart';
 
-import '../data/sample_data.dart';
+import '../../data/indicator_providers.dart';
 import '../widgets/label_widget.dart';
 import '../widgets/popup_menu.dart';
 import 'demo.dart';

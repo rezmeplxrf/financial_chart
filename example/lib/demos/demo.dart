@@ -1,4 +1,4 @@
-import 'package:example/data/sample_data.dart';
+import 'package:example/data/data_source_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:financial_chart/financial_chart.dart';
 
@@ -39,12 +39,11 @@ abstract class DemoBasePageState extends State<DemoBasePage>
   }
 
   void loadData() async {
-    loadSampleData(
-      simulateLatencyMillis: simulateDataLatencyMillis,
-      simulateEmpty: simulateEmptyData,
-    ).then((value) {
+    createDataSource(asyncDelayMillis: simulateDataLatencyMillis).then((
+      dataSource,
+    ) {
       setState(() {
-        chart = buildChart(value);
+        chart = buildChart(dataSource);
       });
     });
   }

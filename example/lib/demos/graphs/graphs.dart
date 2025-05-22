@@ -1,8 +1,8 @@
-import 'package:example/data/sample_data.dart';
 import 'package:example/widgets/popup_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:financial_chart/financial_chart.dart';
 
+import '../../data/indicator_providers.dart';
 import '../../widgets/label_widget.dart';
 import './my_graph/step_line_theme.dart';
 import './my_graph/step_line.dart';

@@ -1,4 +1,4 @@
-import 'package:example/data/sample_data.dart';
+import '../../data/indicator_providers.dart';
 import 'package:example/widgets/popup_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:financial_chart/financial_chart.dart';

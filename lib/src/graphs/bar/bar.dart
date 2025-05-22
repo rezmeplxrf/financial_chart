@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../components/components.dart';
 import '../../values/value.dart';
 import 'bar_render.dart';
@@ -37,4 +39,11 @@ class GGraphBar<T extends GGraphTheme> extends GGraph<T> {
 
   @override
   String get type => typeName;
+
+  @override
+  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('valueKey', valueKey));
+    properties.add(DoubleProperty('baseValue', baseValue));
+  }
 }

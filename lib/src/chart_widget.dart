@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'chart.dart';
@@ -52,6 +53,12 @@ class GChartWidget extends StatefulWidget {
 
   @override
   GChartWidgetState createState() => GChartWidgetState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    chart.debugFillProperties(properties);
+  }
 }
 
 class GChartWidgetState extends State<GChartWidget> {
@@ -69,7 +76,6 @@ class GChartWidgetState extends State<GChartWidget> {
       vsync: widget.tickerProvider,
       interactionHandler: _interactionHandler,
     );
-    widget.chart.mouseCursor.addListener(cursorChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.chart.ensureInitialData();
     });
@@ -83,7 +89,6 @@ class GChartWidgetState extends State<GChartWidget> {
 
   @override
   void dispose() {
-    widget.chart.mouseCursor.removeListener(cursorChanged);
     super.dispose();
   }
 
@@ -93,16 +98,6 @@ class GChartWidgetState extends State<GChartWidget> {
     if (!identical(oldWidget.chart, widget.chart)) {
       // if the chart instance is changed, we need to reinitialize it
       initializeChart();
-    }
-  }
-
-  void cursorChanged() {
-    final newCursor = widget.chart.mouseCursor.value;
-    if (newCursor != cursor) {
-      cursor = newCursor;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {});
-      });
     }
   }
 
@@ -127,6 +122,7 @@ class GChartWidgetState extends State<GChartWidget> {
         return Stack(
           children: [
             RawGestureDetector(
+              key: ValueKey(rect),
               gestures: controller.createGestureRecognizers(
                 context,
                 supportedDevices: widget.supportedDevices,
@@ -145,14 +141,26 @@ class GChartWidgetState extends State<GChartWidget> {
                     },
                   );
                 },
-                child: MouseRegion(
-                  cursor: chart.mouseCursor.value,
-                  child: RepaintBoundary(
-                    child: CustomPaint(
-                      size: chart.size,
-                      painter: GChartPainter(chart: chart),
-                    ),
+                child: RepaintBoundary(
+                  child: CustomPaint(
+                    size: chart.size,
+                    painter: GChartPainter(chart: chart),
                   ),
+                ),
+                onPointerDown: (PointerDownEvent details) {
+                  widget.onPointerDown?.call(details);
+                },
+                onPointerUp: (PointerUpEvent details) {
+                  widget.onPointerUp?.call(details);
+                },
+              ),
+            ),
+            ListenableBuilder(
+              listenable: widget.chart.mouseCursor,
+              builder: (context, child) {
+                return MouseRegion(
+                  cursor: chart.mouseCursor.value,
+                  opaque: false,
                   onEnter: (PointerEvent details) {
                     controller.mouseEnter(position: details.localPosition);
                   },
@@ -162,14 +170,8 @@ class GChartWidgetState extends State<GChartWidget> {
                   onHover: (PointerEvent details) {
                     controller.mouseHover(position: details.localPosition);
                   },
-                ),
-                onPointerDown: (PointerDownEvent details) {
-                  widget.onPointerDown?.call(details);
-                },
-                onPointerUp: (PointerUpEvent details) {
-                  widget.onPointerUp?.call(details);
-                },
-              ),
+                );
+              },
             ),
             // loading indicator & no data indicator widget
             ListenableBuilder(
@@ -235,6 +237,13 @@ class GChartWidgetState extends State<GChartWidget> {
         );
       },
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<MouseCursor>('cursor', cursor));
+    _interactionHandler.debugFillProperties(properties);
   }
 }
 

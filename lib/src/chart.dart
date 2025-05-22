@@ -37,7 +37,7 @@ enum GPointerScrollMode {
 }
 
 /// Chart model.
-class GChart extends ChangeNotifier {
+class GChart extends ChangeNotifier with Diagnosticable {
   /// The data source.
   final GDataSource dataSource;
 
@@ -304,7 +304,10 @@ class GChart extends ChangeNotifier {
           visiblePanel.isLayoutReady ? visiblePanel.graphArea().width : 0;
       double graphHeightBefore =
           visiblePanel.isLayoutReady ? visiblePanel.graphArea().height : 0;
-      crosshair.clearCrossPosition();
+      crosshair.updateCrossPosition(
+        chart: this,
+        trigger: GCrosshairTrigger.resized,
+      );
       _area.value = refinedArea;
       List<double> panelsGraphHeightBefore = panels
           .map(
@@ -517,5 +520,22 @@ class GChart extends ChangeNotifier {
     }
     dataSource.removeListener(_notify);
     super.dispose();
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<GDataSource>('dataSource', dataSource));
+    properties.add(
+      DiagnosticsProperty<GPointViewPort>('pointViewPort', pointViewPort),
+    );
+    properties.add(DiagnosticsProperty<GBackground>('background', background));
+    for (int n = 0; n < panels.length; n++) {
+      properties.add(DiagnosticsProperty<GPanel>('panel[$n]', panels[n]));
+    }
+    properties.add(DiagnosticsProperty<GSplitter>('splitter', splitter));
+    properties.add(DiagnosticsProperty<GCrosshair>('crosshair', crosshair));
+    properties.add(DiagnosticsProperty<GTheme>('theme', theme));
+    properties.add(DiagnosticsProperty<Rect>('area', area));
   }
 }

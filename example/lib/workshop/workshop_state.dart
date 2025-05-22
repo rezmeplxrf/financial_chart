@@ -1,7 +1,8 @@
+import 'package:example/data/data_source_builder.dart';
 import 'package:financial_chart/financial_chart.dart';
 import 'package:flutter/material.dart';
 
-import '../data/sample_data.dart';
+import '../../data/indicator_providers.dart';
 
 const kVpVolume = 'vp-volume';
 const kVpPrice = 'vp-price';
@@ -43,7 +44,7 @@ class WorkshopState extends ChangeNotifier {
   }
 
   void loadData([bool resetTheme = false]) async {
-    loadSampleData(ticker: ticker).then((data) {
+    createDataSource(ticker: ticker, asyncDelayMillis: 0).then((data) {
       buildChart(data);
       if (resetTheme) {
         mode = ThemeMode.dark;
@@ -116,6 +117,7 @@ class WorkshopState extends ChangeNotifier {
             visible: true,
             valueViewPortId: kVpPrice,
             ohlcValueKeys: const [keyOpen, keyHigh, keyLow, keyClose],
+            crosshairHighlightValueKeys: [keyHigh, keyLow],
           ),
           GGraphGroup(
             id: "g-group",
@@ -179,11 +181,11 @@ class WorkshopState extends ChangeNotifier {
             keyClose,
             keyVolume,
             keySMA,
-            keyIchimokuBase,
-            keyIchimokuConversion,
-            keyIchimokuSpanA,
-            keyIchimokuSpanB,
-            keyIchimokuLagging,
+            // keyIchimokuBase,
+            // keyIchimokuConversion,
+            // keyIchimokuSpanA,
+            // keyIchimokuSpanB,
+            // keyIchimokuLagging,
           ],
           followValueKey: keyClose,
           followValueViewPortId: kVpPrice,

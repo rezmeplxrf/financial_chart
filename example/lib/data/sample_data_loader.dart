@@ -46,7 +46,7 @@ Future<YahooFinanceResponse> loadYahooFinanceData(
     } else {
       final now = DateTime.now();
       final period1 =
-          now.subtract(const Duration(days: 365 * 5)).millisecondsSinceEpoch ~/
+          now.subtract(const Duration(days: 365 * 10)).millisecondsSinceEpoch ~/
           1000;
       json = await _yahooFinanceDataReader.getDailyData(
         ticker,

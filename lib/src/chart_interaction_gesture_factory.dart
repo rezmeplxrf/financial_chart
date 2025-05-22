@@ -145,12 +145,33 @@ extension GChartInteractionGestures on GChartInteractionHandler {
         (GChartLongPressGestureRecognizer instance) {
           instance.onLongPressStart = (details) {
             controller.longPressStart(position: details.localPosition);
+            for (final panel in _chart.panels) {
+              if (panel.onLongPressStartGraphArea != null &&
+                  panel.graphArea().contains(details.localPosition)) {
+                panel.onLongPressStartGraphArea?.call(details.localPosition);
+                break;
+              }
+            }
           };
           instance.onLongPressMoveUpdate = (details) {
             controller.longPressMove(position: details.localPosition);
+            for (final panel in _chart.panels) {
+              if (panel.onLongPressMoveGraphArea != null &&
+                  panel.graphArea().contains(details.localPosition)) {
+                panel.onLongPressMoveGraphArea?.call(details.localPosition);
+                break;
+              }
+            }
           };
           instance.onLongPressEnd = (details) {
             controller.longPressEnd(position: details.localPosition);
+            for (final panel in _chart.panels) {
+              if (panel.onLongPressEndGraphArea != null &&
+                  panel.graphArea().contains(details.localPosition)) {
+                panel.onLongPressEndGraphArea?.call(details.localPosition);
+                break;
+              }
+            }
           };
           instance.gestureSettings =
               MediaQuery.maybeOf(context)?.gestureSettings;
