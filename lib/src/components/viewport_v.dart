@@ -53,10 +53,10 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
   set resizeMode(GViewPortResizeMode value) => _resizeMode.value = value;
 
   /// The minimum value range when scaling.
-  final double? minValueRange;
+  final double? minRangeSize;
 
   /// The maximum value range when scaling.
-  final double? maxValueRange;
+  final double? maxRangeSize;
 
   /// Callback when range updated.
   final GRange Function({required GRange updatedRange, required bool finished})?
@@ -101,8 +101,8 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
     GViewPortResizeMode? resizeMode,
     int animationMilliseconds = 200,
     this.onRangeUpdate,
-    this.maxValueRange,
-    this.minValueRange,
+    this.maxRangeSize,
+    this.minRangeSize,
     double? baseValue,
   }) {
     assert(
@@ -113,13 +113,13 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
       assert(initialEndValue > initialStartValue);
       _autoScale.value = false;
     }
-    if (maxValueRange != null) {
-      assert(maxValueRange! > 0);
+    if (maxRangeSize != null) {
+      assert(maxRangeSize! > 0);
     }
-    if (maxValueRange != null) {
-      assert(maxValueRange! > 0);
-      if (minValueRange != null) {
-        assert(minValueRange! < maxValueRange!);
+    if (maxRangeSize != null) {
+      assert(maxRangeSize! > 0);
+      if (minRangeSize != null) {
+        assert(minRangeSize! < maxRangeSize!);
       }
     }
     _range.update(initialStartValue ?? 0, initialEndValue ?? 1);
@@ -166,6 +166,9 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
   }
 
   void _rangeAnimationListener() {
+    if (_disposed) {
+      return;
+    }
     if (_animationStartRange.isEmpty || _animationTargetRange.isEmpty) {
       return;
     }
@@ -188,6 +191,9 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
     VoidCallback? onFinished,
     bool notify = true,
   }) {
+    if (_disposed) {
+      return;
+    }
     if (!animation ||
         _rangeAnimationController == null ||
         (targetRange == _range)) {
@@ -219,6 +225,9 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
     bool finished = true,
     bool notify = true,
   }) {
+    if (_disposed) {
+      return;
+    }
     assert(endValue > startValue);
     if (onRangeUpdate == null) {
       if (endValue == this.endValue && startValue == this.startValue) {
@@ -237,6 +246,9 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
 
   /// update the viewport range when view size changed (ignored when auto scaling is on).
   void resize(double fromSize, double toSize, bool notify) {
+    if (_disposed) {
+      return;
+    }
     if (resizeMode == GViewPortResizeMode.keepRange ||
         fromSize == toSize ||
         !isValid ||
@@ -308,20 +320,20 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
   ) {
     double endValueClamped = endValue;
     double startValueClamped = startValue;
-    if (minValueRange != null) {
-      if (endValueClamped - startValueClamped < minValueRange!) {
+    if (minRangeSize != null) {
+      if (endValueClamped - startValueClamped < minRangeSize!) {
         // expand from center
         double centerValue = (endValue + startValue) / 2;
-        endValueClamped = centerValue + minValueRange! / 2;
-        startValueClamped = centerValue - minValueRange! / 2;
+        endValueClamped = centerValue + minRangeSize! / 2;
+        startValueClamped = centerValue - minRangeSize! / 2;
       }
     }
-    if (maxValueRange != null) {
-      if (endValueClamped - startValueClamped > maxValueRange!) {
+    if (maxRangeSize != null) {
+      if (endValueClamped - startValueClamped > maxRangeSize!) {
         // shrink from center
         double centerValue = (endValue + startValue) / 2;
-        endValueClamped = centerValue + maxValueRange! / 2;
-        startValueClamped = centerValue - maxValueRange! / 2;
+        endValueClamped = centerValue + maxRangeSize! / 2;
+        startValueClamped = centerValue - maxRangeSize! / 2;
       }
     }
     return (startValueClamped, endValueClamped);

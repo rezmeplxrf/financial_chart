@@ -38,11 +38,6 @@ dependencies:
   financial_chart:
     path: ../
   vector_math: ^2.1.4
-  yahoo_finance_data_reader:
-    git:
-      url:
-        https://github.com/cjjapan/yahoo_finance_data_reader.git
-  path_provider: ^2.1.5
   deriv_technical_analysis: ^1.1.1
   http: ^1.3.0
   provider: ^6.1.5

@@ -107,23 +107,37 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
     areaPoints.add(basePoints.first);
     valueLinePoints.add(valuePoints.first);
     baseLinePoints.add(basePoints.first);
+    bool? isAbove;
     for (int i = 0; i < valuePoints.length; i++) {
       // find cross point of value line and base line so we can apply different style for above and below
       final Offset p1 = valuePoints[i];
       final Offset p3 = basePoints[i];
-      final isAbove = p1.dy < p3.dy;
+      if (isAbove == null && p1.dy != p3.dy) {
+        isAbove = p1.dy < p3.dy;
+      }
 
       Offset? intersection;
       Offset? p2, p4;
       if (i < valuePoints.length - 1) {
         p2 = valuePoints[i + 1];
         p4 = basePoints[i + 1];
-        intersection = LineUtil.findIntersectionPointOfTwoLineSegments(
-          p1,
-          p2,
-          p3,
-          p4,
-        );
+        if (isAbove != null) {
+          if (p2.dy == p4.dy) {
+            intersection =
+                p2; // if the next point is on the same level, we can use it as intersection
+          } else {
+            final bool isAboveNext = p2.dy < p4.dy;
+            if (isAboveNext != isAbove) {
+              // if the next point reverted the direction, we need to find the intersection point
+              intersection = LineUtil.findIntersectionPointOfTwoLineSegments(
+                p1,
+                p2,
+                p3,
+                p4,
+              );
+            }
+          }
+        }
       }
       if (intersection == null) {
         // no intersection, just add the next points
@@ -132,6 +146,9 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
           areaPoints.add(p4);
           valueLinePoints.add(p2);
           baseLinePoints.add(p4);
+          if (isAbove == null && p2.dy != p4.dy) {
+            isAbove = p2.dy < p4.dy;
+          }
         }
       } else {
         areaPoints.insert(0, intersection);
@@ -141,7 +158,9 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
       }
 
       if (intersection != null || i == valuePoints.length - 1) {
-        final style = isAbove ? theme.styleAboveBase : theme.styleBelowBase;
+        final style =
+            (isAbove == true) ? theme.styleAboveBase : theme.styleBelowBase;
+        isAbove = null;
 
         Path areaPath = addPolygonPath(points: areaPoints, close: true);
         drawPath(canvas: canvas, path: areaPath, style: style, fillOnly: true);

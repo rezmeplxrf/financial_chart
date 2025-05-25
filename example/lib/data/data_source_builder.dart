@@ -176,7 +176,6 @@ Future<GDataSource<int, GData<int>>> createDataSource({
 
   // synchronous data loading
   if (asyncDelayMillis <= 0) {
-    print(ohlcDataInput.entries.length);
     final dataList =
         ohlcDataInput.entries
             .map(

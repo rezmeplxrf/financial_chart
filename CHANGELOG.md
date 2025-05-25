@@ -1,3 +1,12 @@
+# 0.3.1
+2025-05-25
+- fix wrong rendering for some edge cases of area graph.
+- fix graph highlight markers being drawn outside of the graph area issue.
+- fix animation error after disposed.
+- add `GDataSource`.`dataLoadMargin` to allow load more data than necessary to reduce data requests.
+- rename `GValueViewPort`.`minValueRange`, `maxValueRange` to `minRangeSize`, `maxRangeSize`.
+- remove `yahoo_finance_data_reader` dependency from example.
+
 ## 0.3.0
 2025-05-22
 - fix interaction fail to work when resize. (issue [#49](https://github.com/cjjapan/financial_chart/issues/49)).

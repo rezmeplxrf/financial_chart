@@ -76,6 +76,9 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
   final GValue<int> _minPoint = GValue<int>(-100000000);
   final GValue<int> _maxPoint = GValue<int>(100000000);
 
+  /// load more data than necessary to avoid loading too frequently.
+  final int dataLoadMargin;
+
   final GValue<bool> _isLoading = GValue<bool>(false);
   bool get isLoading => _isLoading.value;
 
@@ -100,6 +103,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     this.initialDataLoader,
     this.priorDataLoader,
     this.afterDataLoader,
+    this.dataLoadMargin = 50,
     this.dataLoaded,
     this.pointValueFormater = defaultPointValueFormater,
     this.seriesValueFormater = defaultSeriesValueFormater,
@@ -304,6 +308,8 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
         _minPoint.value > _maxPoint.value) {
       return;
     }
+    final fromPointRequest = fromPoint - dataLoadMargin;
+    final toPointRequest = toPoint + dataLoadMargin;
     try {
       if (dataList.isEmpty) {
         if (initialDataLoader == null) {
@@ -311,7 +317,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
         }
         _isLoading.value = true;
         _notify();
-        final expectedCount = toPoint - fromPoint + 1;
+        final expectedCount = toPointRequest - fromPointRequest + 1;
         await initialDataLoader!(pointCount: expectedCount).then((data) async {
           if (data.isNotEmpty) {
             dataList.addAll(data);
@@ -333,7 +339,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
             fromPoint >= _minPoint.value) {
           _isLoading.value = true;
           _notify();
-          final expectedCount = firstPoint - fromPoint;
+          final expectedCount = firstPoint - fromPointRequest;
           await priorDataLoader!(
                 pointCount: expectedCount,
                 toPointExclusive: firstPoint,
@@ -357,7 +363,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
             toPoint <= _maxPoint.value) {
           _isLoading.value = true;
           _notify();
-          final expectedCount = toPoint - lastPoint;
+          final expectedCount = toPointRequest - lastPoint;
           await afterDataLoader!(
                 fromPointExclusive: lastPoint,
                 fromPointValueExclusive: getPointValue(lastPoint) as P,

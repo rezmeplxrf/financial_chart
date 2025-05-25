@@ -40,29 +40,33 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
 
     // Render the markers
     if (component.overlayMarkers.isNotEmpty) {
-      Rect panelArea = panel!.panelArea();
+      Rect area = panel!.graphArea();
       canvas.save();
-      canvas.clipPath(Path()..addRect(panelArea));
+      canvas.clipRect(area);
       doRenderMarkers(
         canvas: canvas,
         chart: chart,
         panel: panel,
         graph: component,
-        area: panelArea,
+        area: area,
         theme: theme,
       );
       canvas.restore();
     }
 
     if (component.crosshairHighlightValueKeys.isNotEmpty) {
+      Rect area = panel!.graphArea();
+      canvas.save();
+      canvas.clipRect(area);
       doRenderCrosshairHighlightValues(
         canvas: canvas,
         chart: chart,
-        panel: panel!,
+        panel: panel,
         graph: component,
         area: area,
         theme: theme,
       );
+      canvas.restore();
     }
   }
 

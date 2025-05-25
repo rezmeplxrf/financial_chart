@@ -210,6 +210,9 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
   }
 
   void _rangeAnimationListener() {
+    if (_disposed) {
+      return;
+    }
     if (_animationStartRange.isEmpty || _animationTargetRange.isEmpty) {
       return;
     }
@@ -231,6 +234,9 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
     bool animation, {
     Simulation? simulation,
   }) {
+    if (_disposed) {
+      return;
+    }
     if (!animation ||
         _rangeAnimationController == null ||
         (targetRange == _pointRange)) {
@@ -294,6 +300,9 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
     required bool finished,
     bool notify = true,
   }) {
+    if (_disposed) {
+      return;
+    }
     if (_pointRange.isNotEmpty &&
         startPoint == this.startPoint &&
         endPoint == this.endPoint) {
@@ -343,6 +352,9 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
 
   /// update the viewport range when view size changed
   void resize(double fromSize, double toSize, bool notify) {
+    if (_disposed) {
+      return;
+    }
     if (resizeMode == GViewPortResizeMode.keepRange ||
         fromSize == toSize ||
         !isValid) {
