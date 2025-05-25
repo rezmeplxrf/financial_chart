@@ -1,4 +1,4 @@
-# 0.3.1
+## 0.3.1
 2025-05-25
 - fix wrong rendering for some edge cases of area graph.
 - fix graph highlight markers being drawn outside of the graph area issue.
