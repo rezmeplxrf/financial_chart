@@ -215,12 +215,14 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     required int fromPoint,
     required int toPoint,
     required String key,
+    bool ignoreInvalid = true,
   }) {
     final fromIndex = pointToIndex(fromPoint);
     final toIndex = pointToIndex(toPoint);
     return dataList
         .sublist(fromIndex, toIndex + 1)
         .map((data) => data.seriesValues[_seriesKeyIndexMap[key]!])
+        .where((v) => !ignoreInvalid || !(v.isInfinite || v.isNaN))
         .toList();
   }
 
@@ -252,6 +254,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     required int fromPoint,
     required int toPoint,
     required String key,
+    bool ignoreInvalid = true,
   }) {
     var fromIndex = pointToIndex(fromPoint);
     var toIndex = pointToIndex(toPoint);
@@ -270,6 +273,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
       fromPoint: indexToPoint(fromIndex),
       toPoint: indexToPoint(toIndex),
       key: key,
+      ignoreInvalid: ignoreInvalid,
     );
     minValue = values.fold(minValue, min);
     maxValue = values.fold(maxValue, max);
@@ -281,6 +285,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     required int fromPoint,
     required int toPoint,
     required List<String> keys,
+    bool ignoreInvalid = true,
   }) {
     double minValue = double.infinity;
     double maxValue = double.negativeInfinity;
@@ -289,6 +294,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
         fromPoint: fromPoint,
         toPoint: toPoint,
         key: key,
+        ignoreInvalid: ignoreInvalid,
       );
       minValue = min(minValue, rangeOfKey.$1);
       maxValue = max(maxValue, rangeOfKey.$2);

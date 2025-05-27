@@ -268,6 +268,9 @@ class LagValueIndicator<T extends IndicatorResult> extends CachedIndicator<T> {
 
   @override
   T calculate(int index) {
+    if (index + period >= indicator.entries.length) {
+      return createResult(index: index, quote: double.nan);
+    }
     final int targetIndex = min(
       max(0, index + period),
       indicator.entries.length - 1,

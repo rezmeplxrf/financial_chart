@@ -159,7 +159,7 @@ class GThemeDark extends GTheme {
       textStyle: const TextStyle(color: Colors.black, fontSize: 12.0),
     ),
     pointHighlightStyle: PaintStyle(fillColor: Colors.blue.withAlpha(120)),
-    valueHighlightStyle: PaintStyle(strokeColor: Colors.blue, strokeWidth: 1),
+    valueHighlightStyle: PaintStyle(strokeColor: Colors.blue, strokeWidth: 0.5),
   );
 
   static final GSplitterTheme splitterThemeDefault = GSplitterTheme(

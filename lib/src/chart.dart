@@ -130,10 +130,8 @@ class GChart extends ChangeNotifier with Diagnosticable {
   TickerProvider? _tickerProvider;
 
   GChartInteractionHandler? _interactionHandler;
-  bool get isScaling =>
-      _interactionHandler?.pointViewPortInteractionHelper.isScaling == true;
 
-  bool get isScalingAny => _interactionHandler?.isScaling == true;
+  bool get isScaling => _interactionHandler?.isScalingViewPort == true;
 
   GChart({
     required this.dataSource,

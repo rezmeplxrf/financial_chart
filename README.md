@@ -1,7 +1,7 @@
 ## Financial chart
 
-A chart library for Flutter, supports various types of charts commonly used in financial apps, 
-easy to customize and extend.
+A interactive chart library for Flutter, supports various types of charts commonly used in financial apps, 
+high performance and easy to customize and extend.
 
 #### [Try live demo](https://cjjapan.github.io/financial_chart)
 
@@ -11,9 +11,8 @@ easy to customize and extend.
 - Supports OHLC, candlestick, line, area, bar graphs.
 - Supports markers over graphs and axes, including labels, lines, arrows, callouts, shapes, etc.
 - Easy to extend to add custom graph types and markers.
-- Resizable multiple panels and multiple graphs in single panel.
+- Resizable multiple panels and multiple graphs and axes in single panel.
 - Show tooltips and crosshair lines for data points.
-- Supports multiple axes.
 - Zoom and pan of axes and graph. double tap axes to reset zoom. supports momentum scrolling.
 - Show animation when zooming.
 - Dynamic data loading with loading indicator.

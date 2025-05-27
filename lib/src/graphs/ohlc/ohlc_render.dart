@@ -164,9 +164,10 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
             ]);
           }
           if (theme.barStylePlus.getFillPaint() != null) {
-            if (open == close) {
+            if ((open - close).abs() < 1) {
               // make sure a least 1 pixel is drawn
-              fillPlus.addAll([x, open - 0.5, x, close + 0.5]);
+              final adjust = (1.0 - (open - close).abs()) * 0.5;
+              fillPlus.addAll([x, open + adjust, x, close - adjust]);
             } else {
               fillPlus.addAll([x, open, x, close]);
             }
@@ -190,9 +191,10 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
             ]);
           }
           if (theme.barStyleMinus.getFillPaint() != null) {
-            if (open == close) {
+            if ((open - close).abs() < 1) {
               // make sure a least 1 pixel is drawn
-              fillMinus.addAll([x, open + 0.5, x, close - 0.5]);
+              final adjust = (1.0 - (open - close).abs()) * 0.5;
+              fillMinus.addAll([x, open - adjust, x, close + adjust]);
             } else {
               fillMinus.addAll([x, open, x, close]);
             }
@@ -359,7 +361,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
         double low = graphValues[i][3];
         double close = graphValues[i][4];
         // ohlc needs only lines
-        (open > close ? borderPlus : borderMinus).addAll([
+        (open >= close ? borderPlus : borderMinus).addAll([
           ...[x1, open, x, open],
           ...[x, high, x, low],
           ...[x, close, x2, close],

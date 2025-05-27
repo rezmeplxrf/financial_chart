@@ -46,7 +46,7 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
         point: point,
         key: graph.valueKey,
       );
-      if (value == null) {
+      if (value == null || value.isNaN || value.isInfinite) {
         continue;
       }
       double valuePosition = valueViewPort.valueToPosition(area, value);
@@ -57,11 +57,14 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
           point: point,
           key: graph.baseValueKey!,
         );
+        if (baseValue == null || baseValue.isNaN || baseValue.isInfinite) {
+          continue; // skip if base value is not valid
+        }
       } else {
         // if baseValue is specified use that value or use the bottom of the valueViewPort as base value
         baseValue = graph.baseValue ?? valueViewPort.startValue;
       }
-      double basePosition = valueViewPort.valueToPosition(area, baseValue!);
+      double basePosition = valueViewPort.valueToPosition(area, baseValue);
       double x = pointViewPort.pointToPosition(area, point.toDouble());
       valuePoints.add(Offset(x, valuePosition));
       basePoints.add(Offset(x, basePosition));

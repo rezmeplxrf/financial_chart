@@ -35,7 +35,7 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
         point: point,
         key: graph.valueKey,
       );
-      if (value == null) {
+      if (value == null || value.isNaN || value.isInfinite) {
         continue;
       }
       double x = pointViewPort.pointToPosition(area, point.toDouble());

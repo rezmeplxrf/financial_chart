@@ -1,3 +1,9 @@
+## 0.3.2
+2025-05-27
+- skip rendering of `double.nan` and `double.infinite` values for area and line graphs.
+- skip rendering of resizing splitters when scaling the viewport.
+- fix candlestick graph rendering issue when open and close values are very close.
+
 ## 0.3.1
 2025-05-25
 - fix wrong rendering for some edge cases of area graph.

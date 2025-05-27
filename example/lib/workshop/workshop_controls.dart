@@ -209,7 +209,7 @@ class WorkshopControlViewState extends State<WorkshopControlView>
                       items: const ["Reset"],
                       minWidth: 160,
                       onSelected: (btn) {
-                        widget.workshopState.mode = ThemeMode.dark;
+                        widget.workshopState.mode = ThemeMode.light;
                         widget.workshopState.loadData();
                       },
                     ),

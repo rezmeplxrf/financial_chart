@@ -21,6 +21,9 @@ class GSplitterRender extends GRender<GSplitter, GSplitterTheme> {
     final crossPosition =
         chart.crosshair.getCrossPosition() ??
         const Offset(double.infinity, double.infinity);
+    if (chart.isScaling) {
+      return;
+    }
     for (int p = 0; p < chart.panels.length - 1; p++) {
       final panel = chart.panels[p];
       final nextPanel = chart.nextVisiblePanel(startIndex: p + 1);

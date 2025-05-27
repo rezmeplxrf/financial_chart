@@ -25,7 +25,7 @@ class GChartInteractionHandler with Diagnosticable {
       GPointViewPortInteractionHelper();
   GValueViewPortInteractionHelper valueViewPortInteractionHelper =
       GValueViewPortInteractionHelper();
-  bool get isScaling =>
+  bool get isScalingViewPort =>
       pointViewPortInteractionHelper.isScaling ||
       valueViewPortInteractionHelper.isScaling;
 
@@ -159,7 +159,12 @@ class GChartInteractionHandler with Diagnosticable {
             pointViewPort.endPoint - distance,
           );
           pointViewPort.autoScaleFlg = false;
-          pointViewPort.animateToRange(newRange, true, false);
+          pointViewPort.setRange(
+            startPoint: newRange.begin!,
+            endPoint: newRange.end!,
+            finished: true,
+            notify: true,
+          );
         } else if (_chart.pointerScrollMode == GPointerScrollMode.zoom) {
           final centerPoint =
               pointViewPort.positionToPoint(area, position.dx).toDouble();
