@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:equatable/equatable.dart';
 import 'package:financial_chart/financial_chart.dart';
@@ -112,13 +113,23 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
   final String Function(double seriesValue, int precision) seriesValueFormater;
 
   /// Map of point value to index for efficient lookups.
-  final Map<P, int> _pointValueToIndexMap = <P, int>{};
+  late final Map<P, int> _pointValueToIndexMap = <P, int>{};
+
+  // Cache for frequently accessed values
+  late int? _cachedLength;
+  bool _needsLengthUpdate = true;
 
   bool get isEmpty => dataList.isEmpty;
   bool get isNotEmpty => dataList.isNotEmpty;
   int get firstPoint => indexToPoint(0);
   int get lastPoint => indexToPoint(dataList.length - 1);
-  int get length => dataList.length;
+  int get length {
+    if (_needsLengthUpdate) {
+      _cachedLength = dataList.length;
+      _needsLengthUpdate = false;
+    }
+    return _cachedLength!;
+  }
 
   /// Convert point to index in data list.
   int pointToIndex(int point) {
@@ -149,26 +160,21 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     return dataList[index];
   }
 
-  /// Find the index of data by point value efficiently.
-  int findIndexByPointValue(P pointValue) {
-    return _pointValueToIndexMap[pointValue] ?? -1;
-  }
-
   /// Update data at the given point value or add new data.
   /// Returns true if data was updated, false if new data was added.
   bool updateOrAddData(D newData) {
-    final existingIndex = findIndexByPointValue(newData.pointValue);
+    final existingIndex = _pointValueToIndexMap[newData.pointValue];
 
-    if (existingIndex != -1) {
+    if (existingIndex != null && existingIndex < dataList.length) {
       // Update existing data
       dataList[existingIndex] = newData;
-      _notify();
       return true;
     } else {
       // Add new data
+      final newIndex = dataList.length;
       dataList.add(newData);
-      _pointValueToIndexMap[newData.pointValue] = dataList.length - 1;
-      _notify();
+      _pointValueToIndexMap[newData.pointValue] = newIndex;
+      _needsLengthUpdate = true;
       return false;
     }
   }
@@ -179,6 +185,12 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     for (var i = 0; i < dataList.length; i++) {
       _pointValueToIndexMap[dataList[i].pointValue] = i;
     }
+    _needsLengthUpdate = true;
+  }
+
+  /// Find the index of data by point value efficiently.
+  int findIndexByPointValue(P pointValue) {
+    return _pointValueToIndexMap[pointValue] ?? -1;
   }
 
   /// add a new series to the data source.
@@ -251,13 +263,24 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     required String key,
     bool ignoreInvalid = true,
   }) {
+    final seriesIndex = _seriesKeyIndexMap[key];
+    if (seriesIndex == null) return [];
+
     final fromIndex = pointToIndex(fromPoint);
     final toIndex = pointToIndex(toPoint);
-    return dataList
-        .sublist(fromIndex, toIndex + 1)
-        .map((data) => data.seriesValues[_seriesKeyIndexMap[key]!])
-        .where((v) => !ignoreInvalid || !(v.isInfinite || v.isNaN))
-        .toList();
+    final endIndex = math.min(toIndex + 1, dataList.length);
+    final startIndex = math.max(fromIndex, 0);
+
+    if (startIndex >= endIndex) return [];
+
+    final result = <double>[];
+    for (var i = startIndex; i < endIndex; i++) {
+      final value = dataList[i].seriesValues[seriesIndex];
+      if (!ignoreInvalid || (!value.isInfinite && !value.isNaN)) {
+        result.add(value);
+      }
+    }
+    return result;
   }
 
   /// Get the series property by key.
@@ -290,27 +313,29 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     required String key,
     bool ignoreInvalid = true,
   }) {
-    var fromIndex = pointToIndex(fromPoint);
-    var toIndex = pointToIndex(toPoint);
+    final seriesIndex = _seriesKeyIndexMap[key];
+    if (seriesIndex == null) {
+      return (double.infinity, double.negativeInfinity);
+    }
+
+    final fromIndex = math.max(pointToIndex(fromPoint), 0);
+    final toIndex = math.min(pointToIndex(toPoint), dataList.length - 1);
+
+    if (fromIndex > toIndex) {
+      return (double.infinity, double.negativeInfinity);
+    }
+
     var minValue = double.infinity;
     var maxValue = double.negativeInfinity;
-    if (fromIndex < 0) {
-      fromIndex = 0;
+
+    for (var i = fromIndex; i <= toIndex; i++) {
+      final value = dataList[i].seriesValues[seriesIndex];
+      if (!ignoreInvalid || (!value.isInfinite && !value.isNaN)) {
+        if (value < minValue) minValue = value;
+        if (value > maxValue) maxValue = value;
+      }
     }
-    if (toIndex > dataList.length - 1) {
-      toIndex = dataList.length - 1;
-    }
-    if (fromIndex > toIndex) {
-      return (minValue, maxValue);
-    }
-    final values = getSeriesValues(
-      fromPoint: indexToPoint(fromIndex),
-      toPoint: indexToPoint(toIndex),
-      key: key,
-      ignoreInvalid: ignoreInvalid,
-    );
-    minValue = values.fold(minValue, min);
-    maxValue = values.fold(maxValue, max);
+
     return (minValue, maxValue);
   }
 
@@ -432,7 +457,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
   }
 
   void _notify() {
-    if (super.hasListeners) {
+    if (hasListeners) {
       notifyListeners();
     }
   }
