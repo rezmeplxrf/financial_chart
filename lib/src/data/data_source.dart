@@ -168,6 +168,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     if (existingIndex != null && existingIndex < dataList.length) {
       // Update existing data
       dataList[existingIndex] = newData;
+      _notify(); // Add notification for updates
       return true;
     } else {
       // Add new data
@@ -175,6 +176,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
       dataList.add(newData);
       _pointValueToIndexMap[newData.pointValue] = newIndex;
       _needsLengthUpdate = true;
+      _notify(); // Add notification for new data
       return false;
     }
   }
