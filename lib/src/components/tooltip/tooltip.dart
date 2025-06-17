@@ -1,8 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:financial_chart/src/components/components.dart';
+import 'package:financial_chart/src/values/value.dart';
 import 'package:flutter/widgets.dart';
-
-import '../../values/value.dart';
-import '../components.dart';
 
 /// Position of the tooltip.
 enum GTooltipPosition {
@@ -35,11 +34,6 @@ typedef GToolTipWidgetBuilder =
     );
 
 class GToolTipWidgetContext extends Equatable {
-  final GPanel panel;
-  final Rect area;
-  final GTooltip tooltip;
-  final int point;
-  final Offset anchorPosition;
 
   const GToolTipWidgetContext({
     required this.panel,
@@ -48,6 +42,11 @@ class GToolTipWidgetContext extends Equatable {
     required this.point,
     required this.anchorPosition,
   });
+  final GPanel panel;
+  final Rect area;
+  final GTooltip tooltip;
+  final int point;
+  final Offset anchorPosition;
 
   @override
   List<Object?> get props => [
@@ -62,6 +61,33 @@ class GToolTipWidgetContext extends Equatable {
 
 /// Tooltip component.
 class GTooltip extends GComponent {
+
+  GTooltip({
+    GTooltipPosition position = GTooltipPosition.followPointer,
+    bool showPointValue = true,
+    this.dataKeys = const [],
+    String? followValueKey,
+    String? followValueViewPortId,
+    bool pointLineHighlightVisible = true,
+    bool valueLineHighlightVisible = true,
+    super.render = const GTooltipRender(),
+    super.theme,
+    GToolTipWidgetBuilder? tooltipWidgetBuilder,
+  }) : _position = GValue<GTooltipPosition>(position),
+       _showPointValue = GValue<bool>(showPointValue),
+       _followValueKey = GValue<String?>(followValueKey),
+       _followValueViewPortId = GValue<String?>(followValueViewPortId),
+       _pointLineHighlightVisible = GValue<bool>(pointLineHighlightVisible),
+       _valueLineHighlightVisible = GValue<bool>(valueLineHighlightVisible),
+       _tooltipWidgetBuilder = GValue<GToolTipWidgetBuilder?>(
+         tooltipWidgetBuilder,
+       ) {
+    if (tooltipWidgetBuilder != null) {
+      _tooltipNotifier = ValueNotifier<GToolTipWidgetContext?>(null);
+    } else {
+      _tooltipNotifier = null;
+    }
+  }
   /// Position of the tooltip. default is [GTooltipPosition.followPointer].
   ///
   /// See [GTooltipPosition] for more details.
@@ -119,33 +145,6 @@ class GTooltip extends GComponent {
       _tooltipNotifier ??= ValueNotifier<GToolTipWidgetContext?>(null);
     } else {
       _tooltipNotifier?.dispose();
-      _tooltipNotifier = null;
-    }
-  }
-
-  GTooltip({
-    GTooltipPosition position = GTooltipPosition.followPointer,
-    bool showPointValue = true,
-    this.dataKeys = const [],
-    String? followValueKey,
-    String? followValueViewPortId,
-    bool pointLineHighlightVisible = true,
-    bool valueLineHighlightVisible = true,
-    super.render = const GTooltipRender(),
-    super.theme,
-    GToolTipWidgetBuilder? tooltipWidgetBuilder,
-  }) : _position = GValue<GTooltipPosition>(position),
-       _showPointValue = GValue<bool>(showPointValue),
-       _followValueKey = GValue<String?>(followValueKey),
-       _followValueViewPortId = GValue<String?>(followValueViewPortId),
-       _pointLineHighlightVisible = GValue<bool>(pointLineHighlightVisible),
-       _valueLineHighlightVisible = GValue<bool>(valueLineHighlightVisible),
-       _tooltipWidgetBuilder = GValue<GToolTipWidgetBuilder?>(
-         tooltipWidgetBuilder,
-       ) {
-    if (tooltipWidgetBuilder != null) {
-      _tooltipNotifier = ValueNotifier<GToolTipWidgetContext?>(null);
-    } else {
       _tooltipNotifier = null;
     }
   }

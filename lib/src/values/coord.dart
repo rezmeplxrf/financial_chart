@@ -1,14 +1,14 @@
 import 'dart:ui';
 
-import '../components/viewport_h.dart';
-import '../components/viewport_v.dart';
-import 'pair.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
+import 'package:financial_chart/src/values/pair.dart';
 
 /// base class for coordinate
 abstract class GCoordinate extends GDoublePair {
+  GCoordinate(super.x, super.y) : super.pair();
   double get x => super.begin!;
   double get y => super.end!;
-  GCoordinate(double x, double y) : super.pair(x, y);
 
   /// convert the coordinate to position in the view area
   Offset toPosition({
@@ -22,21 +22,6 @@ abstract class GCoordinate extends GDoublePair {
 ///
 /// [x] and [y] can be absolute position or ratio of the width and height of the view area.
 class GPositionCoord extends GCoordinate {
-  /// true if [x] is ratio of the width of the view area, false if x is absolute position
-  final bool xIsRatio;
-
-  /// true if [y] is ratio of the height of the view area, false if y is absolute position
-  final bool yIsRatio;
-
-  /// An additional x offset to the position
-  ///
-  /// useful when need to add some offset to the position calculated from rational position.
-  final double xOffset;
-
-  /// An additional y offset to the position
-  ///
-  /// useful when need to add some offset to the position calculated from rational position.
-  final double yOffset;
 
   GPositionCoord({
     required double x,
@@ -46,23 +31,6 @@ class GPositionCoord extends GCoordinate {
     this.xOffset = 0,
     this.yOffset = 0,
   }) : super(x, y);
-
-  /// create a copy of this coordinate with some changes
-  GPositionCoord copyWith({
-    double? x,
-    double? y,
-    double? xOffset,
-    double? yOffset,
-  }) {
-    return GPositionCoord(
-      x: x ?? this.x,
-      y: y ?? this.y,
-      xIsRatio: xIsRatio,
-      yIsRatio: yIsRatio,
-      xOffset: xOffset ?? this.xOffset,
-      yOffset: yOffset ?? this.yOffset,
-    );
-  }
 
   /// create a coordinate with absolute position in the view area
   GPositionCoord.absolute({required double x, required double y})
@@ -82,6 +50,38 @@ class GPositionCoord extends GCoordinate {
          xIsRatio: true,
          yIsRatio: true,
        );
+  /// true if [x] is ratio of the width of the view area, false if x is absolute position
+  final bool xIsRatio;
+
+  /// true if [y] is ratio of the height of the view area, false if y is absolute position
+  final bool yIsRatio;
+
+  /// An additional x offset to the position
+  ///
+  /// useful when need to add some offset to the position calculated from rational position.
+  final double xOffset;
+
+  /// An additional y offset to the position
+  ///
+  /// useful when need to add some offset to the position calculated from rational position.
+  final double yOffset;
+
+  /// create a copy of this coordinate with some changes
+  GPositionCoord copyWith({
+    double? x,
+    double? y,
+    double? xOffset,
+    double? yOffset,
+  }) {
+    return GPositionCoord(
+      x: x ?? this.x,
+      y: y ?? this.y,
+      xIsRatio: xIsRatio,
+      yIsRatio: yIsRatio,
+      xOffset: xOffset ?? this.xOffset,
+      yOffset: yOffset ?? this.yOffset,
+    );
+  }
 
   /// convert the coordinate to position in the view area
   @override
@@ -101,19 +101,9 @@ class GPositionCoord extends GCoordinate {
 ///
 /// see [GPointViewPort] and [GValueViewPort] for details of viewports.
 class GViewPortCoord extends GCoordinate {
-  double get point => super.begin!;
-  double get value => super.end!;
 
   GViewPortCoord({required double point, required double value})
     : super(point, value);
-
-  /// create a copy of this coordinate with some changes
-  GViewPortCoord copyWith({double? point, double? value}) {
-    return GViewPortCoord(
-      point: point ?? this.point,
-      value: value ?? this.value,
-    );
-  }
 
   /// create a coordinate from position in the view area
   GViewPortCoord.fromPosition({
@@ -125,6 +115,16 @@ class GViewPortCoord extends GCoordinate {
          point: pointViewPort.positionToPoint(area, position.dx),
          value: valueViewPort.positionToValue(area, position.dy),
        );
+  double get point => super.begin!;
+  double get value => super.end!;
+
+  /// create a copy of this coordinate with some changes
+  GViewPortCoord copyWith({double? point, double? value}) {
+    return GViewPortCoord(
+      point: point ?? this.point,
+      value: value ?? this.value,
+    );
+  }
 
   /// convert the coordinate to position in the view area
   @override
@@ -182,12 +182,12 @@ Offset kCoordinateConvertorXPointYPosition({
 ///
 /// convertor is function with type of [GCoordinateConvertor].
 class GCustomCoord extends GCoordinate {
-  final GCoordinateConvertor coordinateConvertor;
   GCustomCoord({
     required double x,
     required double y,
     required this.coordinateConvertor,
   }) : super(x, y);
+  final GCoordinateConvertor coordinateConvertor;
 
   /// create a copy of this coordinate with some changes
   GCustomCoord copyWith({

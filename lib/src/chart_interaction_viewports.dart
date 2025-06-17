@@ -30,7 +30,7 @@ class GPointViewPortInteractionHelper {
     if (_pointViewPort == null || _pointRangeScaling.isEmpty) {
       return;
     }
-    double point = _pointRangeScaling.last!;
+    var point = _pointRangeScaling.last!;
     if (position != null) {
       point = _pointViewPort!.positionToPoint(area, position.dx);
     }
@@ -48,13 +48,13 @@ class GPointViewPortInteractionHelper {
     if (_pointViewPort == null || _pointRangeScaling.isEmpty) {
       return;
     }
-    double pointWidthStart = _pointViewPort!.pointSize(
+    final pointWidthStart = _pointViewPort!.pointSize(
       area.width,
       range: _pointRangeScaling,
     );
-    double pointsMoved = movedDistance / pointWidthStart;
-    double startPointNew = _pointRangeScaling.begin! - pointsMoved;
-    double endPointNew = _pointRangeScaling.end! - pointsMoved;
+    final pointsMoved = movedDistance / pointWidthStart;
+    final startPointNew = _pointRangeScaling.begin! - pointsMoved;
+    final endPointNew = _pointRangeScaling.end! - pointsMoved;
     _pointViewPort!.setRange(
       startPoint: startPointNew,
       endPoint: endPointNew,
@@ -85,14 +85,14 @@ class GPointViewPortInteractionHelper {
       ),
     );
     if (finished) {
-      double value1 = _pointViewPort!.selectedRange.begin!;
-      double value2 = _pointViewPort!.selectedRange.end!;
+      final value1 = _pointViewPort!.selectedRange.begin!;
+      final value2 = _pointViewPort!.selectedRange.end!;
       double pointLeftNew = max(min(value1, value2), _pointRangeScaling.begin!);
       double pointRightNew = min(max(value1, value2), _pointRangeScaling.end!);
-      double minPoints = area.width / _pointViewPort!.maxPointWidth;
+      final minPoints = area.width / _pointViewPort!.maxPointWidth;
       if (pointRightNew - pointLeftNew < minPoints) {
         // adjust to make sure the width is not less than minPointWidth
-        double center = (pointLeftNew + pointRightNew) / 2;
+        final center = (pointLeftNew + pointRightNew) / 2;
         pointLeftNew = center - minPoints / 2;
         pointRightNew = center + minPoints / 2;
       }
@@ -137,7 +137,6 @@ class GValueViewPortInteractionHelper {
       zoomRatio,
       startRange: _rangeScaling,
       animate: false,
-      finished: true,
       notify: notify,
     );
   }
@@ -146,11 +145,11 @@ class GValueViewPortInteractionHelper {
     if (!isScaling) {
       return;
     }
-    double valueMoved =
+    final valueMoved =
         (movedDistance / area.height) *
         (_rangeScaling.last! - _rangeScaling.first!);
-    double endValueNew = _rangeScaling.last! + valueMoved;
-    double startValueNew = _rangeScaling.first! + valueMoved;
+    final endValueNew = _rangeScaling.last! + valueMoved;
+    final startValueNew = _rangeScaling.first! + valueMoved;
     _valueViewPort!.setRange(startValue: startValueNew, endValue: endValueNew);
   }
 

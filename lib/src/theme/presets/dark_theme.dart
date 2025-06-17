@@ -1,34 +1,30 @@
+import 'package:financial_chart/src/components/axis/axis_theme.dart';
+import 'package:financial_chart/src/components/background/background_theme.dart';
+import 'package:financial_chart/src/components/crosshair/crosshair_theme.dart';
+import 'package:financial_chart/src/components/graph/graph.dart';
+import 'package:financial_chart/src/components/graph/graph_theme.dart';
+import 'package:financial_chart/src/components/marker/axis_marker_theme.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/components/panel/panel_theme.dart';
+import 'package:financial_chart/src/components/splitter/splitter_theme.dart';
+import 'package:financial_chart/src/components/tooltip/tooltip_theme.dart';
+import 'package:financial_chart/src/graphs/area/area.dart';
+import 'package:financial_chart/src/graphs/area/area_theme.dart';
+import 'package:financial_chart/src/graphs/bar/bar.dart';
+import 'package:financial_chart/src/graphs/bar/bar_theme.dart';
+import 'package:financial_chart/src/graphs/grids/grids.dart';
+import 'package:financial_chart/src/graphs/grids/grids_theme.dart';
+import 'package:financial_chart/src/graphs/line/line.dart';
+import 'package:financial_chart/src/graphs/line/line_theme.dart';
+import 'package:financial_chart/src/graphs/ohlc/ohlc.dart';
+import 'package:financial_chart/src/graphs/ohlc/ohlc_theme.dart';
+import 'package:financial_chart/src/style/label_style.dart';
+import 'package:financial_chart/src/style/paint_style.dart';
+import 'package:financial_chart/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import '../../components/graph/graph.dart';
-import '../../components/graph/graph_theme.dart';
-import '../theme.dart';
-
-import '../../style/label_style.dart';
-import '../../style/paint_style.dart';
-
-import '../../graphs/bar/bar.dart';
-import '../../graphs/bar/bar_theme.dart';
-import '../../graphs/grids/grids.dart';
-import '../../graphs/grids/grids_theme.dart';
-import '../../graphs/line/line.dart';
-import '../../graphs/line/line_theme.dart';
-import '../../graphs/ohlc/ohlc.dart';
-import '../../graphs/ohlc/ohlc_theme.dart';
-import '../../graphs/area/area.dart';
-import '../../graphs/area/area_theme.dart';
-
-import '../../components/panel/panel_theme.dart';
-import '../../components/axis/axis_theme.dart';
-import '../../components/crosshair/crosshair_theme.dart';
-import '../../components/splitter/splitter_theme.dart';
-import '../../components/tooltip/tooltip_theme.dart';
-import '../../components/background/background_theme.dart';
-import '../../components/marker/overlay_marker_theme.dart';
-import '../../components/marker/axis_marker_theme.dart';
 
 /// Preset dark theme.
 class GThemeDark extends GTheme {
-  static const String themeName = 'dark';
   GThemeDark()
     : super(
         name: themeName,
@@ -53,6 +49,7 @@ class GThemeDark extends GTheme {
         axisMarkerTheme: axisMarkerThemeDefault,
         overlayMarkerTheme: overlayMarkerThemeDefault,
       );
+  static const String themeName = 'dark';
 
   static final GBackgroundTheme backgroundThemeDefault = GBackgroundTheme(
     style: PaintStyle(),
@@ -69,21 +66,20 @@ class GThemeDark extends GTheme {
   static final GAxisTheme pointAxisThemeDefault = GAxisTheme(
     lineStyle: PaintStyle(
       strokeColor: const Color(0xFFCCCCCC),
-      strokeWidth: 1.0,
+      strokeWidth: 1,
     ),
-    tickerLength: 5.0,
     tickerStyle: PaintStyle(
       strokeColor: const Color(0xFFDDDDDD),
-      strokeWidth: 1.0,
+      strokeWidth: 1,
     ),
     selectionStyle: PaintStyle(
       fillColor: const Color(0x55BBBBFF),
       strokeColor: const Color(0xAABBBBFF),
-      strokeWidth: 1.0,
+      strokeWidth: 1,
     ),
     labelTheme: GAxisLabelTheme(
       labelStyle: LabelStyle(
-        textStyle: const TextStyle(color: Color(0xFFCCCCCC), fontSize: 10.0),
+        textStyle: const TextStyle(color: Color(0xFFCCCCCC), fontSize: 10),
         backgroundStyle: PaintStyle(),
         backgroundPadding: const EdgeInsets.all(2),
         backgroundCornerRadius: 2,
@@ -94,12 +90,11 @@ class GThemeDark extends GTheme {
   static final GAxisTheme valueAxisThemeDefault = GAxisTheme(
     lineStyle: PaintStyle(
       strokeColor: const Color(0xFFCCCCCC),
-      strokeWidth: 1.0,
+      strokeWidth: 1,
     ),
-    tickerLength: 5.0,
     tickerStyle: PaintStyle(
       strokeColor: const Color(0xFFDDDDDD),
-      strokeWidth: 1.0,
+      strokeWidth: 1,
     ),
     selectionStyle: PaintStyle(
       fillColor: const Color(0x55BBBBFF),
@@ -107,7 +102,7 @@ class GThemeDark extends GTheme {
     ),
     labelTheme: GAxisLabelTheme(
       labelStyle: LabelStyle(
-        textStyle: const TextStyle(color: Color(0xFFCCCCCC), fontSize: 10.0),
+        textStyle: const TextStyle(color: Color(0xFFCCCCCC), fontSize: 10),
         backgroundStyle: PaintStyle(),
         backgroundPadding: const EdgeInsets.all(2),
         backgroundCornerRadius: 2,
@@ -123,7 +118,7 @@ class GThemeDark extends GTheme {
     ),
     pointLabelTheme: GAxisLabelTheme(
       labelStyle: LabelStyle(
-        textStyle: const TextStyle(color: Color(0xFF222222), fontSize: 10.0),
+        textStyle: const TextStyle(color: Color(0xFF222222), fontSize: 10),
         backgroundStyle: PaintStyle(fillColor: const Color(0xFFDDDDDD)),
         backgroundPadding: const EdgeInsets.all(2),
         backgroundCornerRadius: 2,
@@ -131,7 +126,7 @@ class GThemeDark extends GTheme {
     ),
     valueLabelTheme: GAxisLabelTheme(
       labelStyle: LabelStyle(
-        textStyle: const TextStyle(color: Color(0xFF222222), fontSize: 10.0),
+        textStyle: const TextStyle(color: Color(0xFF222222), fontSize: 10),
         backgroundStyle: PaintStyle(fillColor: const Color(0xFFDDDDDD)),
         backgroundPadding: const EdgeInsets.all(2),
         backgroundCornerRadius: 2,
@@ -146,17 +141,17 @@ class GThemeDark extends GTheme {
       strokeWidth: 1,
     ),
     pointStyle: LabelStyle(
-      textStyle: const TextStyle(color: Colors.black, fontSize: 12.0),
+      textStyle: const TextStyle(color: Colors.black, fontSize: 12),
     ),
     labelStyle: LabelStyle(
       textStyle: const TextStyle(
         color: Colors.black,
-        fontSize: 12.0,
+        fontSize: 12,
         fontWeight: FontWeight.bold,
       ),
     ),
     valueStyle: LabelStyle(
-      textStyle: const TextStyle(color: Colors.black, fontSize: 12.0),
+      textStyle: const TextStyle(color: Colors.black, fontSize: 12),
     ),
     pointHighlightStyle: PaintStyle(fillColor: Colors.blue.withAlpha(120)),
     valueHighlightStyle: PaintStyle(strokeColor: Colors.blue, strokeWidth: 0.5),
@@ -170,7 +165,6 @@ class GThemeDark extends GTheme {
     handleStyle: PaintStyle(fillColor: Colors.white, strokeColor: Colors.grey),
     handleLineStyle: PaintStyle(strokeColor: Colors.black, strokeWidth: 0.5),
     handleWidth: 80,
-    handleBorderRadius: 4,
   );
 
   static final GGraphOhlcTheme ohlcGraphTheme = GGraphOhlcTheme(
@@ -236,7 +230,7 @@ class GThemeDark extends GTheme {
   static final GAxisMarkerTheme axisMarkerThemeDefault = GAxisMarkerTheme(
     labelTheme: GAxisLabelTheme(
       labelStyle: LabelStyle(
-        textStyle: const TextStyle(color: Color(0xFFEEEEEE), fontSize: 10.0),
+        textStyle: const TextStyle(color: Color(0xFFEEEEEE), fontSize: 10),
         backgroundStyle: PaintStyle(fillColor: const Color(0xFF0000EE)),
         backgroundPadding: const EdgeInsets.all(2),
         backgroundCornerRadius: 2,
@@ -258,7 +252,7 @@ class GThemeDark extends GTheme {
           strokeWidth: 2,
         ),
         labelStyle: LabelStyle(
-          textStyle: const TextStyle(color: Colors.black, fontSize: 10.0),
+          textStyle: const TextStyle(color: Colors.black, fontSize: 10),
           backgroundStyle: PaintStyle(
             fillColor: Colors.white,
             strokeColor: Colors.black,
@@ -276,8 +270,5 @@ class GThemeDark extends GTheme {
           strokeWidth: 1,
           fillColor: Colors.white,
         ),
-        size: 4.0,
-        interval: 100.0,
-        crosshairHighlightSize: 4.0,
       );
 }

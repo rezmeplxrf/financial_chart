@@ -1,5 +1,6 @@
-import 'dart:ui';
 import 'dart:math';
+import 'dart:ui';
+
 import 'package:vector_math/vector_math.dart';
 
 // https://github.com/flame-engine/flame/blob/main/packages/flame/lib/src/extensions/vector2.dart
@@ -132,7 +133,7 @@ extension Vector2Extension on Vector2 {
     assert(other.length2 > 0, 'other needs to have a length > 0');
     final dotProduct = dot(other);
     final result = (out?..setFrom(other)) ?? other.clone();
-    double t = dotProduct / other.length2;
+    var t = dotProduct / other.length2;
     if (clamp) {
       t = t < 0 ? 0 : (t > 1 ? 1 : t);
     }
@@ -195,7 +196,7 @@ extension Vector2Extension on Vector2 {
   /// Left: Vector(-1.0, 0.0).screenAngle == -pi/2
   /// Right: Vector(-1.0, 0.0).screenAngle == pi/2
   double screenAngle() => (_reusableVector..setValues(x, y * (-1)))
-      .angleToSigned(Vector2(0.0, 1.0));
+      .angleToSigned(Vector2(0, 1));
 
   /// Modulo/Remainder
   Vector2 operator %(Vector2 mod) => Vector2(x % mod.x, y % mod.y);
@@ -221,7 +222,7 @@ extension Vector2Extension on Vector2 {
   static Vector2 fromDegrees(double d) => fromRadians(d * degrees2Radians);
 
   /// Creates a new identity [Vector2] (1.0, 1.0).
-  static Vector2 identity() => Vector2.all(1.0);
+  static Vector2 identity() => Vector2.all(1);
 }
 
 extension OffsetToVector2 on Offset {

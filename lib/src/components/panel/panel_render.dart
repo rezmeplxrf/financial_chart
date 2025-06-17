@@ -1,9 +1,9 @@
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../render.dart';
-import 'panel.dart';
-import 'panel_theme.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/panel/panel_theme.dart';
+import 'package:financial_chart/src/components/render.dart';
 
 /// The render for [GPanel].
 class GPanelRender extends GRender<GPanel, GPanelTheme> {
@@ -12,18 +12,17 @@ class GPanelRender extends GRender<GPanel, GPanelTheme> {
   void doRender({
     required Canvas canvas,
     required GChart chart,
-    GPanel? panel,
     required GPanel component,
     required Rect area,
     required GPanelTheme theme,
+    GPanel? panel,
   }) {
     if (component.visible == false || area.height <= 0 || area.width <= 0) {
       return;
     }
-    Path path = Path();
-    path.addRect(area);
+    final path = Path()..addRect(area);
     drawPath(canvas: canvas, path: path, style: theme.style);
-    doRenderAxes(canvas: canvas, chart: chart, panel: component, inside: false);
+    doRenderAxes(canvas: canvas, chart: chart, panel: component);
     doRenderGraphs(canvas: canvas, chart: chart, panel: component);
     doRenderAxes(canvas: canvas, chart: chart, panel: component, inside: true);
     doRenderTooltips(canvas: canvas, chart: chart, panel: component);
@@ -35,7 +34,7 @@ class GPanelRender extends GRender<GPanel, GPanelTheme> {
     required GPanel panel,
     bool inside = false,
   }) {
-    for (int n = 0; n < panel.valueAxes.length; n++) {
+    for (var n = 0; n < panel.valueAxes.length; n++) {
       final axis = panel.valueAxes[n];
       if (!axis.visible) {
         continue;
@@ -55,7 +54,7 @@ class GPanelRender extends GRender<GPanel, GPanelTheme> {
       );
     }
 
-    for (int n = 0; n < panel.pointAxes.length; n++) {
+    for (var n = 0; n < panel.pointAxes.length; n++) {
       final axis = panel.pointAxes[n];
       if (!axis.visible) {
         continue;
@@ -82,8 +81,8 @@ class GPanelRender extends GRender<GPanel, GPanelTheme> {
     required GPanel panel,
   }) {
     panel.graphs.sort((a, b) => a.layer.compareTo(b.layer));
-    for (int g = 0; g < panel.graphs.length; g++) {
-      var graph = panel.graphs[g];
+    for (var g = 0; g < panel.graphs.length; g++) {
+      final graph = panel.graphs[g];
       if (graph.visible) {
         graph.getRender().render(
           canvas: canvas,
@@ -91,7 +90,7 @@ class GPanelRender extends GRender<GPanel, GPanelTheme> {
           panel: panel,
           area: panel.graphArea(),
           component: graph,
-          theme: (graph.theme ?? chart.theme.graphTheme(graph.type)!),
+          theme: graph.theme ?? chart.theme.graphTheme(graph.type)!,
         );
       }
     }

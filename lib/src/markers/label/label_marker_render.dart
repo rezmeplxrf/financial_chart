@@ -1,13 +1,13 @@
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../../components/component.dart';
-import '../../components/marker/overlay_marker_render.dart';
-import '../../components/marker/overlay_marker_theme.dart';
-import '../../components/panel/panel.dart';
-import '../../components/viewport_h.dart';
-import '../../components/viewport_v.dart';
-import 'label_marker.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_render.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
+import 'package:financial_chart/src/markers/label/label_marker.dart';
 
 class GLabelMarkerRender
     extends GOverlayMarkerRender<GLabelMarker, GOverlayMarkerTheme> {

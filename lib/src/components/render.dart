@@ -1,14 +1,13 @@
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/axis/axis.dart';
+import 'package:financial_chart/src/components/axis/axis_theme.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/component_theme.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/render_util.dart';
+import 'package:financial_chart/src/style/label_style.dart';
+import 'package:financial_chart/src/style/paint_style.dart';
 import 'package:flutter/painting.dart';
-
-import '../chart.dart';
-import '../style/label_style.dart';
-import '../style/paint_style.dart';
-import 'component_theme.dart';
-import 'axis/axis.dart';
-import 'axis/axis_theme.dart';
-import 'component.dart';
-import 'panel/panel.dart';
-import 'render_util.dart';
 
 /// Base class for component renderers.
 abstract class GRender<C extends GComponent, T extends GComponentTheme> {
@@ -19,10 +18,7 @@ abstract class GRender<C extends GComponent, T extends GComponentTheme> {
   void render({
     required Canvas canvas,
     required GChart chart,
-    GPanel? panel,
-    required C component,
-    required Rect area,
-    required T theme,
+    required C component, required Rect area, required T theme, GPanel? panel,
   }) {
     if (component.visible == false) {
       return;
@@ -89,9 +85,8 @@ abstract class GRender<C extends GComponent, T extends GComponentTheme> {
   Rect drawText({
     required Canvas canvas,
     required String text,
-    Offset anchor = Offset.zero,
+    required LabelStyle style, Offset anchor = Offset.zero,
     Alignment defaultAlign = Alignment.center,
-    required LabelStyle style,
   }) {
     return GRenderUtil.drawText(
       canvas: canvas,
@@ -146,16 +141,11 @@ abstract class GRender<C extends GComponent, T extends GComponentTheme> {
   ) => GRenderUtil.getTextBlockPaintPoint(axis, width, height, align);
 
   Path addLinePath({
-    Path? toPath,
-    required double x1,
-    required double y1,
-    required double x2,
-    required double y2,
+    required double x1, required double y1, required double x2, required double y2, Path? toPath,
   }) => GRenderUtil.addLinePath(toPath: toPath, x1: x1, y1: y1, x2: x2, y2: y2);
 
   Path addRectPath({
-    Path? toPath,
-    required Rect rect,
+    required Rect rect, Path? toPath,
     double cornerRadius = 0,
   }) => GRenderUtil.addRectPath(
     toPath: toPath,
@@ -164,8 +154,7 @@ abstract class GRender<C extends GComponent, T extends GComponentTheme> {
   );
 
   Path addOvalPath({
-    Path? toPath,
-    required Rect rect,
+    required Rect rect, Path? toPath,
     double cornerRadius = 0,
   }) => GRenderUtil.addOvalPath(
     toPath: toPath,
@@ -174,9 +163,7 @@ abstract class GRender<C extends GComponent, T extends GComponentTheme> {
   );
 
   Path addPolygonPath({
-    Path? toPath,
-    required List<Offset> points,
-    required bool close,
+    required List<Offset> points, required bool close, Path? toPath,
     double cornerRadius = 0,
   }) => GRenderUtil.addPolygonPath(
     toPath: toPath,
@@ -218,10 +205,7 @@ abstract class GRender<C extends GComponent, T extends GComponentTheme> {
   void doRender({
     required Canvas canvas,
     required GChart chart,
-    GPanel? panel,
-    required C component,
-    required Rect area,
-    required T theme,
+    required C component, required Rect area, required T theme, GPanel? panel,
   });
 
   bool hitTest({required Offset position, double? epsilon}) {
@@ -236,10 +220,7 @@ class GEmptyRender extends GRender<GComponent, GComponentTheme> {
   void doRender({
     required Canvas canvas,
     required GChart chart,
-    GPanel? panel,
-    required GComponent component,
-    required Rect area,
-    required GComponentTheme theme,
+    required GComponent component, required Rect area, required GComponentTheme theme, GPanel? panel,
   }) {
     // Do nothing
   }

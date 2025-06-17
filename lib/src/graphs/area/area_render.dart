@@ -1,14 +1,14 @@
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../../components/component.dart';
-import '../../components/graph/graph_render.dart';
-import '../../components/panel/panel.dart';
-import '../../components/viewport_h.dart';
-import '../../components/viewport_v.dart';
-import '../../vector/vectors.dart';
-import 'area.dart';
-import 'area_theme.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/graph/graph_render.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
+import 'package:financial_chart/src/graphs/area/area.dart';
+import 'package:financial_chart/src/graphs/area/area_theme.dart';
+import 'package:financial_chart/src/vector/vectors.dart';
 
 class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
   @override
@@ -27,14 +27,14 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
     // if graph.baseValueKey being specified, the base line will be the value of the baseValueKey
     // else if graph.baseValue being specified, the base line will be the fix value
     // else the base line will be the bottom of the valueViewPort
-    final List<Offset> valuePoints = [];
-    final List<Offset> basePoints = [];
+    final valuePoints = <Offset>[];
+    final basePoints = <Offset>[];
     _hitTestLinePoints1.clear(); // value lines for hit test
     _hitTestLinePoints2.clear(); // base lines for hit test
 
-    final List<Vector2> highlightMarks = <Vector2>[];
-    double highlightInterval = theme.highlightMarkerTheme?.interval ?? 1000.0;
-    int highlightIntervalPoints =
+    final highlightMarks = <Vector2>[];
+    final highlightInterval = theme.highlightMarkerTheme?.interval ?? 1000.0;
+    final highlightIntervalPoints =
         (highlightInterval / pointViewPort.pointSize(area.width)).round();
 
     for (
@@ -42,14 +42,14 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
       point <= pointViewPort.endPoint.ceil();
       point++
     ) {
-      double? value = dataSource.getSeriesValue(
+      final value = dataSource.getSeriesValue(
         point: point,
         key: graph.valueKey,
       );
       if (value == null || value.isNaN || value.isInfinite) {
         continue;
       }
-      double valuePosition = valueViewPort.valueToPosition(area, value);
+      final valuePosition = valueViewPort.valueToPosition(area, value);
       double? baseValue;
       if (graph.baseValueKey != null) {
         // if baseValueKey is specified, use it to get the base value
@@ -64,8 +64,8 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
         // if baseValue is specified use that value or use the bottom of the valueViewPort as base value
         baseValue = graph.baseValue ?? valueViewPort.startValue;
       }
-      double basePosition = valueViewPort.valueToPosition(area, baseValue);
-      double x = pointViewPort.pointToPosition(area, point.toDouble());
+      final basePosition = valueViewPort.valueToPosition(area, baseValue);
+      final x = pointViewPort.pointToPosition(area, point.toDouble());
       valuePoints.add(Offset(x, valuePosition));
       basePoints.add(Offset(x, basePosition));
       if (graph.highlight && (point % highlightIntervalPoints == 0)) {
@@ -103,24 +103,23 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
     List<Offset> valuePoints,
     List<Offset> basePoints,
   ) {
-    final List<Offset> valueLinePoints = [];
-    final List<Offset> baseLinePoints = [];
-    final List<Offset> areaPoints = [];
-    areaPoints.add(valuePoints.first);
-    areaPoints.add(basePoints.first);
+    final valueLinePoints = <Offset>[];
+    final baseLinePoints = <Offset>[];
+    final areaPoints = <Offset>[valuePoints.first, basePoints.first];
     valueLinePoints.add(valuePoints.first);
     baseLinePoints.add(basePoints.first);
     bool? isAbove;
-    for (int i = 0; i < valuePoints.length; i++) {
+    for (var i = 0; i < valuePoints.length; i++) {
       // find cross point of value line and base line so we can apply different style for above and below
-      final Offset p1 = valuePoints[i];
-      final Offset p3 = basePoints[i];
+      final p1 = valuePoints[i];
+      final p3 = basePoints[i];
       if (isAbove == null && p1.dy != p3.dy) {
         isAbove = p1.dy < p3.dy;
       }
 
       Offset? intersection;
-      Offset? p2, p4;
+      Offset? p2;
+      Offset? p4;
       if (i < valuePoints.length - 1) {
         p2 = valuePoints[i + 1];
         p4 = basePoints[i + 1];
@@ -129,7 +128,7 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
             intersection =
                 p2; // if the next point is on the same level, we can use it as intersection
           } else {
-            final bool isAboveNext = p2.dy < p4.dy;
+            final isAboveNext = p2.dy < p4.dy;
             if (isAboveNext != isAbove) {
               // if the next point reverted the direction, we need to find the intersection point
               intersection = LineUtil.findIntersectionPointOfTwoLineSegments(
@@ -145,8 +144,9 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
       if (intersection == null) {
         // no intersection, just add the next points
         if (p2 != null && p4 != null) {
-          areaPoints.insert(0, p2);
-          areaPoints.add(p4);
+          areaPoints
+            ..insert(0, p2)
+            ..add(p4);
           valueLinePoints.add(p2);
           baseLinePoints.add(p4);
           if (isAbove == null && p2.dy != p4.dy) {
@@ -154,8 +154,9 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
           }
         }
       } else {
-        areaPoints.insert(0, intersection);
-        areaPoints.add(intersection);
+        areaPoints
+          ..insert(0, intersection)
+          ..add(intersection);
         valueLinePoints.add(intersection);
         baseLinePoints.add(intersection);
       }
@@ -165,10 +166,10 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
             (isAbove == true) ? theme.styleAboveBase : theme.styleBelowBase;
         isAbove = null;
 
-        Path areaPath = addPolygonPath(points: areaPoints, close: true);
+        final areaPath = addPolygonPath(points: areaPoints, close: true);
         drawPath(canvas: canvas, path: areaPath, style: style, fillOnly: true);
 
-        Path valueLinesPath = addPolygonPath(
+        final valueLinesPath = addPolygonPath(
           points: valueLinePoints,
           close: false,
         );
@@ -179,7 +180,7 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
           strokeOnly: true,
         );
         if (theme.styleBaseLine != null) {
-          Path baseLinesPath = addPolygonPath(
+          final baseLinesPath = addPolygonPath(
             points: baseLinePoints,
             close: false,
           );
@@ -190,7 +191,7 @@ class GGraphAreaRender extends GGraphRender<GGraphArea, GGraphAreaTheme> {
             strokeOnly: true,
           );
         } else if (style.getStrokePaint() != null) {
-          Path baseLinesPath = addPolygonPath(
+          final baseLinesPath = addPolygonPath(
             points: baseLinePoints,
             close: false,
           );

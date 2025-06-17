@@ -3,6 +3,14 @@ import 'package:flutter/foundation.dart';
 
 /// A wrapper of a pair of values with general type <[T]>.
 class GPair<T> extends Equatable {
+  GPair.pair(T begin, T end) {
+    _range[0] = begin;
+    _range[1] = end;
+  }
+
+  GPair.empty() {
+    clear();
+  }
   final List<T?> _range = List<T?>.filled(2, null);
 
   bool get isEmpty => _range[0] == null || _range[1] == null;
@@ -12,15 +20,6 @@ class GPair<T> extends Equatable {
   T? get end => _range[1];
   T? get first => _range[0];
   T? get last => _range[1];
-
-  GPair.pair(T begin, T end) {
-    _range[0] = begin;
-    _range[1] = end;
-  }
-
-  GPair.empty() {
-    clear();
-  }
 
   void update(T begin, T end) {
     _range[0] = begin;
@@ -43,13 +42,14 @@ class GPair<T> extends Equatable {
 
 /// A wrapper of a pair of [double] values.
 class GDoublePair extends GPair<double> with Diagnosticable {
-  GDoublePair.pair(double begin, double end) : super.pair(begin, end);
+  GDoublePair.pair(super.begin, super.end) : super.pair();
   GDoublePair.empty() : super.empty();
 
   @override
-  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DoubleProperty('begin', isEmpty ? null : begin));
-    properties.add(DoubleProperty('end', isEmpty ? null : end));
+    properties
+      ..add(DoubleProperty('begin', isEmpty ? null : begin))
+      ..add(DoubleProperty('end', isEmpty ? null : end));
   }
 }

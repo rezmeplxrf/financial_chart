@@ -1,6 +1,6 @@
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/render_util.dart';
 import 'package:flutter/widgets.dart';
-import 'chart.dart';
-import 'components/render_util.dart';
 
 class GChartRender {
   const GChartRender();
@@ -30,7 +30,7 @@ class GChartRender {
   }
 
   void renderPanels({required Canvas canvas, required GChart chart}) {
-    for (int p = 0; p < chart.panels.length; p++) {
+    for (var p = 0; p < chart.panels.length; p++) {
       final panel = chart.panels[p];
       panel.getRender().render(
         canvas: canvas,

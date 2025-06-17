@@ -2,16 +2,15 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/graph/graph_render.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
+import 'package:financial_chart/src/graphs/ohlc/ohlc.dart';
+import 'package:financial_chart/src/graphs/ohlc/ohlc_theme.dart';
 import 'package:vector_math/vector_math.dart';
-
-import '../../chart.dart';
-import '../../components/component.dart';
-import '../../components/graph/graph_render.dart';
-import '../../components/panel/panel.dart';
-import '../../components/viewport_h.dart';
-import '../../components/viewport_v.dart';
-import 'ohlc.dart';
-import 'ohlc_theme.dart';
 
 class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
   GGraphOhlcRender();
@@ -27,47 +26,47 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
     required GValueViewPort valueViewPort,
   }) {
     final dataSource = chart.dataSource;
-    double barRenderWidth =
+    final barRenderWidth =
         pointViewPort.pointSize(area.width) * theme.barWidthRatio;
     _hitTestLines.clear();
-    double highlightInterval = theme.highlightMarkerTheme?.interval ?? 1000.0;
-    int highlightIntervalPoints =
+    final highlightInterval = theme.highlightMarkerTheme?.interval ?? 1000.0;
+    final highlightIntervalPoints =
         (highlightInterval / pointViewPort.pointSize(area.width)).round();
-    final List<Vector2> highlightMarks = <Vector2>[];
-    List<List<double>> graphValues = [];
+    final highlightMarks = <Vector2>[];
+    final graphValues = <List<double>>[];
     for (
       var point = pointViewPort.startPoint.floor();
       point <= pointViewPort.endPoint.ceil();
       point++
     ) {
-      double? o = dataSource.getSeriesValue(
+      final o = dataSource.getSeriesValue(
         point: point,
         key: graph.ohlcValueKeys[0],
       );
-      double? h = dataSource.getSeriesValue(
+      final h = dataSource.getSeriesValue(
         point: point,
         key: graph.ohlcValueKeys[1],
       );
-      double? l = dataSource.getSeriesValue(
+      final l = dataSource.getSeriesValue(
         point: point,
         key: graph.ohlcValueKeys[2],
       );
-      double? c = dataSource.getSeriesValue(
+      final c = dataSource.getSeriesValue(
         point: point,
         key: graph.ohlcValueKeys[3],
       );
       if (o == null || h == null || l == null || c == null) {
         continue;
       }
-      double barPosition = pointViewPort.pointToPosition(
+      final barPosition = pointViewPort.pointToPosition(
         area,
         point.toDouble(),
       );
 
-      double op = valueViewPort.valueToPosition(area, o);
-      double hp = valueViewPort.valueToPosition(area, h);
-      double lp = valueViewPort.valueToPosition(area, l);
-      double cp = valueViewPort.valueToPosition(area, c);
+      final op = valueViewPort.valueToPosition(area, o);
+      final hp = valueViewPort.valueToPosition(area, h);
+      final lp = valueViewPort.valueToPosition(area, l);
+      final cp = valueViewPort.valueToPosition(area, c);
       graphValues.add([barPosition, op, hp, lp, cp]);
 
       if (chart.hitTestEnable && graph.hitTestMode != GHitTestMode.none) {
@@ -125,25 +124,25 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
   ) {
     if (theme.barStyleMinus.isSimple && theme.barStylePlus.isSimple) {
       // use batch drawing when possible
-      List<double> borderPlus = [];
-      List<double> borderMinus = [];
-      List<double> fillPlus = [];
-      List<double> fillMinus = [];
+      final borderPlus = <double>[];
+      final borderMinus = <double>[];
+      final fillPlus = <double>[];
+      final  fillMinus = <double>[];
 
-      final bool strokePlus =
+      final strokePlus =
           theme.barStylePlus.getStrokePaint() != null &&
           theme.barStylePlus.strokeColor != theme.barStylePlus.fillColor;
-      final bool strokeMinus =
+      final strokeMinus =
           theme.barStyleMinus.getStrokePaint() != null &&
           theme.barStyleMinus.strokeColor != theme.barStyleMinus.fillColor;
       for (var i = 0; i < graphValues.length; i++) {
-        double x = graphValues[i][0];
-        double x1 = x - barRenderWidth / 2;
-        double x2 = x + barRenderWidth / 2;
-        double open = graphValues[i][1]; // this is position not price value
-        double high = graphValues[i][2];
-        double low = graphValues[i][3];
-        double close = graphValues[i][4];
+        final x = graphValues[i][0];
+        final x1 = x - barRenderWidth / 2;
+        final x2 = x + barRenderWidth / 2;
+        final open = graphValues[i][1]; // this is position not price value
+        final high = graphValues[i][2];
+        final  low = graphValues[i][3];
+        final close = graphValues[i][4];
 
         if (open >= close) {
           if (strokePlus) {
@@ -203,7 +202,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
       }
       // draw the bars
       if (fillPlus.isNotEmpty) {
-        Paint fillPlusPaint =
+        final fillPlusPaint =
             Paint()
               ..color =
                   theme.barStylePlus.fillColor ??
@@ -217,7 +216,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
         );
       }
       if (fillMinus.isNotEmpty) {
-        Paint fillMinusPaint =
+        final fillMinusPaint =
             Paint()
               ..color =
                   theme.barStyleMinus.fillColor ??
@@ -232,14 +231,14 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
       }
       // draw the lines
       if (borderPlus.isNotEmpty) {
-        Paint borderPlusPaint =
+        final borderPlusPaint =
             Paint()
               ..color =
                   (theme.barStylePlus.strokeColor ??
                       theme.barStylePlus.fillColor ??
                       const Color.fromARGB(0, 0, 0, 0))
               ..strokeWidth = min(
-                max(1.0, theme.barStylePlus.strokeWidth ?? 1.0),
+                max(1, theme.barStylePlus.strokeWidth ?? 1.0),
                 barRenderWidth,
               )
               ..strokeCap = theme.barStylePlus.strokeCap ?? StrokeCap.round;
@@ -250,14 +249,14 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
         );
       }
       if (borderMinus.isNotEmpty) {
-        Paint borderMinusPaint =
+        final borderMinusPaint =
             Paint()
               ..color =
                   (theme.barStyleMinus.strokeColor ??
                       theme.barStyleMinus.fillColor ??
                       const Color.fromARGB(0, 0, 0, 0))
               ..strokeWidth = min(
-                max(1.0, theme.barStyleMinus.strokeWidth ?? 1.0),
+                max(1, theme.barStyleMinus.strokeWidth ?? 1.0),
                 barRenderWidth,
               )
               ..strokeCap = theme.barStyleMinus.strokeCap ?? StrokeCap.round;
@@ -269,15 +268,15 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
       }
       return;
     }
-    for (int i = 0; i < graphValues.length; i++) {
-      double barPosition = graphValues[i][0];
-      double op = graphValues[i][1];
-      double hp = graphValues[i][2];
-      double lp = graphValues[i][3];
-      double cp = graphValues[i][4];
+    for (var i = 0; i < graphValues.length; i++) {
+      final  barPosition = graphValues[i][0];
+      final op = graphValues[i][1];
+      final hp = graphValues[i][2];
+      final lp = graphValues[i][3];
+      final cp = graphValues[i][4];
 
       if (op >= cp) {
-        Path fillPath =
+        final fillPath =
             Path()
               ..moveTo(barPosition - barRenderWidth / 2, cp)
               ..lineTo(barPosition - barRenderWidth / 2, op)
@@ -290,7 +289,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
           style: theme.barStylePlus,
           fillOnly: true,
         );
-        Path strokePath =
+        final strokePath =
             Path()
               ..moveTo(barPosition, hp)
               ..lineTo(barPosition, cp)
@@ -308,7 +307,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
           strokeOnly: true,
         );
       } else {
-        Path fillPath =
+        final  fillPath =
             Path()
               ..moveTo(barPosition - barRenderWidth / 2, op)
               ..lineTo(barPosition - barRenderWidth / 2, cp)
@@ -321,7 +320,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
           style: theme.barStyleMinus,
           fillOnly: true,
         );
-        Path strokePath =
+        final strokePath =
             Path()
               ..moveTo(barPosition, hp)
               ..lineTo(barPosition, op)
@@ -350,16 +349,16 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
     List<List<double>> graphValues,
   ) {
     if (theme.barStyleMinus.isSimple && theme.barStylePlus.isSimple) {
-      List<double> borderPlus = [];
-      List<double> borderMinus = [];
+      final borderPlus = <double>[];
+      final borderMinus = <double>[];
       for (var i = 0; i < graphValues.length; i++) {
-        double x = graphValues[i][0];
-        double x1 = x - barRenderWidth / 2;
-        double x2 = x + barRenderWidth / 2;
-        double open = graphValues[i][1]; // this is position not price value
-        double high = graphValues[i][2];
-        double low = graphValues[i][3];
-        double close = graphValues[i][4];
+        final x = graphValues[i][0];
+        final x1 = x - barRenderWidth / 2;
+        final x2 = x + barRenderWidth / 2;
+        final open = graphValues[i][1]; // this is position not price value
+        final high = graphValues[i][2];
+        final low = graphValues[i][3];
+        final close = graphValues[i][4];
         // ohlc needs only lines
         (open >= close ? borderPlus : borderMinus).addAll([
           ...[x1, open, x, open],
@@ -369,14 +368,14 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
       }
       // batch draw the ohlc lines
       if (borderPlus.isNotEmpty) {
-        Paint borderPlusPaint =
+        final borderPlusPaint =
             Paint()
               ..color =
                   (theme.barStylePlus.strokeColor ??
                       theme.barStylePlus.fillColor ??
                       const Color.fromARGB(0, 0, 0, 0))
               ..strokeWidth = min(
-                max(1.0, theme.barStylePlus.strokeWidth ?? 1.0),
+                max(1, theme.barStylePlus.strokeWidth ?? 1.0),
                 barRenderWidth,
               )
               ..strokeCap = theme.barStylePlus.strokeCap ?? StrokeCap.round;
@@ -387,14 +386,14 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
         );
       }
       if (borderMinus.isNotEmpty) {
-        Paint borderMinusPaint =
+        final borderMinusPaint =
             Paint()
               ..color =
                   (theme.barStyleMinus.strokeColor ??
                       theme.barStyleMinus.fillColor ??
                       const Color.fromARGB(0, 0, 0, 0))
               ..strokeWidth = min(
-                max(1.0, theme.barStyleMinus.strokeWidth ?? 1.0),
+                max(1, theme.barStyleMinus.strokeWidth ?? 1.0),
                 barRenderWidth,
               )
               ..strokeCap = theme.barStyleMinus.strokeCap ?? StrokeCap.round;
@@ -407,15 +406,15 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
       return;
     }
 
-    for (int i = 0; i < graphValues.length; i++) {
-      double barPosition = graphValues[i][0];
-      double op = graphValues[i][1];
-      double hp = graphValues[i][2];
-      double lp = graphValues[i][3];
-      double cp = graphValues[i][4];
+    for (var i = 0; i < graphValues.length; i++) {
+      final barPosition = graphValues[i][0];
+      final op = graphValues[i][1];
+      final hp = graphValues[i][2];
+      final lp = graphValues[i][3];
+      final cp = graphValues[i][4];
 
       if (op >= cp) {
-        Path strokePath =
+        final strokePath =
             Path()
               ..moveTo(barPosition - barRenderWidth / 2, op)
               ..lineTo(barPosition, op)
@@ -430,7 +429,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
           strokeOnly: true,
         );
       } else {
-        Path strokePath =
+        final strokePath =
             Path()
               ..moveTo(barPosition - barRenderWidth / 2, op)
               ..lineTo(barPosition, op)

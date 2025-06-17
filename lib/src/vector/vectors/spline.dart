@@ -1,7 +1,10 @@
+// ignore_for_file: avoid_positional_boolean_parameters
+
 import 'dart:ui';
+
+import 'package:financial_chart/src/vector/vectors/extensions.dart';
+import 'package:financial_chart/src/vector/vectors/polygon.dart';
 import 'package:vector_math/vector_math.dart';
-import 'extensions.dart';
-import 'polygon.dart';
 
 class SplineUtil {
   static const int kDefaultSampleSize = 20;
@@ -28,7 +31,7 @@ class SplineUtil {
       min = Vector2(double.infinity, double.infinity);
       max = Vector2(double.negativeInfinity, double.negativeInfinity);
 
-      for (var vector in vectors) {
+      for (final vector in vectors) {
         Vector2.min(min, vector, min);
         Vector2.max(max, vector, max);
       }
@@ -81,8 +84,9 @@ class SplineUtil {
         Vector2.min(cp1, max, cp1);
       }
 
-      cps.add(cp0);
-      cps.add(cp1);
+      cps
+        ..add(cp0)
+        ..add(cp1);
     }
 
     if (isLoop) {
@@ -146,13 +150,13 @@ class SplineUtil {
     if (tmps.isEmpty) {
       tmps = curve.map((pt) => pt.clone()).toList();
     } else {
-      for (int i = 0; i < curve.length; i++) {
+      for (var i = 0; i < curve.length; i++) {
         tmps[i].setFrom(curve[i]);
       }
     }
 
-    for (int degree = curve.length - 1; degree-- > 0;) {
-      for (int i = 0; i <= degree; ++i) {
+    for (var degree = curve.length - 1; degree-- > 0;) {
+      for (var i = 0; i <= degree; ++i) {
         tmps[i].lerp(tmps[i + 1], t);
       }
     }
@@ -166,11 +170,11 @@ class SplineUtil {
     int sampleSize,
     bool isLoop,
   ) {
-    List<Vector2> samples = [];
-    List<Vector2> tmps = [];
+    final samples = <Vector2>[];
+    final tmps = <Vector2>[];
     Vector2? last;
-    for (int i = 0; i < controlPoints.length; i++) {
-      List<Vector2> cps = controlPoints[i];
+    for (var i = 0; i < controlPoints.length; i++) {
+      final cps = controlPoints[i];
       if (cps.length < 3) {
         continue;
       }
@@ -179,7 +183,7 @@ class SplineUtil {
       } else {
         last = controlPoints[i - 1][2];
       }
-      List<Vector2> curve = [last, cps[0], cps[1], cps[2]];
+      final curve = <Vector2>[last, cps[0], cps[1], cps[2]];
       sampleSpline(
         curve[0],
         curve[1],
@@ -202,12 +206,12 @@ class SplineUtil {
     List<Vector2> out,
     List<Vector2> tmps,
   ) {
-    for (int i = 0; i <= sampleSize; i++) {
+    for (var i = 0; i <= sampleSize; i++) {
       out.add(
         _bezierPoint(
           Vector2.zero(),
           [p0, p1, p2, p3],
-          (i / sampleSize).toDouble(),
+          i / sampleSize,
           tmps,
         ),
       );

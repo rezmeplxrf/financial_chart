@@ -1,10 +1,16 @@
-import '../../style/paint_style.dart';
-import '../component_theme.dart';
-import '../axis/axis_theme.dart';
-import 'crosshair.dart';
+import 'package:financial_chart/src/components/axis/axis_theme.dart';
+import 'package:financial_chart/src/components/component_theme.dart';
+import 'package:financial_chart/src/components/crosshair/crosshair.dart';
+import 'package:financial_chart/src/style/paint_style.dart';
 
 /// Theme for the [GCrosshair] component.
 class GCrosshairTheme extends GComponentTheme {
+
+  const GCrosshairTheme({
+    required this.lineStyle,
+    required this.valueLabelTheme,
+    required this.pointLabelTheme,
+  });
   /// Style of the lines.
   final PaintStyle lineStyle;
 
@@ -13,12 +19,6 @@ class GCrosshairTheme extends GComponentTheme {
 
   /// Theme for the point labels.
   final GAxisLabelTheme pointLabelTheme;
-
-  const GCrosshairTheme({
-    required this.lineStyle,
-    required this.valueLabelTheme,
-    required this.pointLabelTheme,
-  });
 
   GCrosshairTheme copyWith({
     PaintStyle? lineStyle,

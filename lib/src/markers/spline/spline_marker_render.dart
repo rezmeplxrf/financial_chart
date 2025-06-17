@@ -1,15 +1,15 @@
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../../components/component.dart';
-import '../../components/marker/overlay_marker_theme.dart';
-import '../../components/marker/overlay_marker_render.dart';
-import '../../components/panel/panel.dart';
-import '../../components/render_util.dart';
-import '../../components/viewport_h.dart';
-import '../../components/viewport_v.dart';
-import '../../vector/vectors.dart';
-import 'spline_marker.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_render.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/render_util.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
+import 'package:financial_chart/src/markers/spline/spline_marker.dart';
+import 'package:financial_chart/src/vector/vectors.dart';
 
 class GSplineMarkerRender
     extends GOverlayMarkerRender<GSplineMarker, GOverlayMarkerTheme> {
@@ -40,7 +40,7 @@ class GSplineMarkerRender
         valueViewPort: valueViewPort,
         pointViewPort: pointViewPort,
       );
-      Path path = addLinePath(
+      final path = addLinePath(
         x1: start.dx,
         y1: start.dy,
         x2: end.dx,
@@ -63,7 +63,7 @@ class GSplineMarkerRender
       final splinePoints = SplineUtil.catmullRomSpline(points, marker.close)
           .map((l) => l.map((v) => v.toOffset()).toList(growable: false))
           .toList(growable: false);
-      Path path = GRenderUtil.addSplinePath(
+      final path = GRenderUtil.addSplinePath(
         start: points[0].toOffset(),
         cubicList: splinePoints,
       );

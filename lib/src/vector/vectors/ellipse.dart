@@ -1,7 +1,7 @@
 import 'dart:math';
 
+import 'package:financial_chart/src/vector/vectors/extensions.dart';
 import 'package:vector_math/vector_math.dart';
-import 'extensions.dart';
 
 class EllipseUtil {
   static Vector2 pointOnEllipse(
@@ -11,8 +11,8 @@ class EllipseUtil {
     double b,
     double t,
   ) {
-    double x = cx + a * cos(t);
-    double y = cy + b * sin(t);
+    final x = cx + a * cos(t);
+    final y = cy + b * sin(t);
     return Vector2(x, y);
   }
 
@@ -25,8 +25,8 @@ class EllipseUtil {
     double theta,
   ) {
     // theta is the angle of rotation in pi radians
-    double x = cx + a * cos(t) * cos(theta) - b * sin(t) * sin(theta);
-    double y = cy + a * cos(t) * sin(theta) + b * sin(t) * cos(theta);
+    final x = cx + a * cos(t) * cos(theta) - b * sin(t) * sin(theta);
+    final y = cy + a * cos(t) * sin(theta) + b * sin(t) * cos(theta);
     return Vector2(x, y);
   }
 
@@ -39,23 +39,23 @@ class EllipseUtil {
     double rotationTheta = 0,
     double stopScanDistance = 1,
   }) {
-    Vector2 point2 = point.clone();
+    final point2 = point.clone();
     // Semi-major and semi-minor axes
-    double rx = (right - left) / 2; // Semi-major axis
-    double ry = (bottom - top) / 2; // Semi-minor axis
+    final rx = (right - left) / 2; // Semi-major axis
+    final ry = (bottom - top) / 2; // Semi-minor axis
 
-    int scans = (max(rx, ry) * 0.5).ceil();
+    final scans = (max(rx, ry) * 0.5).ceil();
 
     // Center of the ellipse
-    double cx = (left + right) / 2;
-    double cy = (top + bottom) / 2;
+    final cx = (left + right) / 2;
+    final cy = (top + bottom) / 2;
     if (rotationTheta != 0) {
       point2.rotate(-rotationTheta, center: Vector2(cx, cy));
     }
 
-    double minDistance = double.infinity;
-    Vector2 nearestPoint = Vector2(0, 0);
-    double theta = atan2(point2.y - cy, point2.x - cx);
+    var minDistance = double.infinity;
+    var nearestPoint = Vector2(0, 0);
+    final theta = atan2(point2.y - cy, point2.x - cx);
 
     double scanStartTheta = 0;
     double scanEndTheta = 0;
@@ -75,10 +75,10 @@ class EllipseUtil {
       scanEndTheta = 2 * pi;
     }
 
-    for (int i = 0; i <= scans; i++) {
-      double t = scanStartTheta + (scanEndTheta - scanStartTheta) * i / scans;
-      Vector2 ellipsePoint = pointOnEllipse(cx, cy, rx, ry, t);
-      double dist = point2.distanceTo(ellipsePoint);
+    for (var i = 0; i <= scans; i++) {
+      final t = scanStartTheta + (scanEndTheta - scanStartTheta) * i / scans;
+      final ellipsePoint = pointOnEllipse(cx, cy, rx, ry, t);
+      final dist = point2.distanceTo(ellipsePoint);
 
       if (dist < minDistance) {
         minDistance = dist;
@@ -104,7 +104,7 @@ class EllipseUtil {
     double px,
     double py,
   ) {
-    Vector2 nearestPoint = nearestPointOn(
+    final nearestPoint = nearestPointOn(
       Vector2(px, py),
       cx - a,
       cy - b,
@@ -122,8 +122,8 @@ class EllipseUtil {
     double px,
     double py,
   ) {
-    double dx = px - cx;
-    double dy = py - cy;
+    final dx = px - cx;
+    final dy = py - cy;
     return (dx * dx) / (a * a) + (dy * dy) / (b * b) <= 1;
   }
 

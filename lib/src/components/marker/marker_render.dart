@@ -1,13 +1,13 @@
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../component.dart';
-import '../panel/panel.dart';
-import '../render.dart';
-import 'marker.dart';
-import 'marker_theme.dart';
-import '../viewport_v.dart';
-import '../viewport_h.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/marker/marker.dart';
+import 'package:financial_chart/src/components/marker/marker_theme.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/render.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
 
 /// Base class for rendering a [GMarker].
 ///
@@ -72,11 +72,8 @@ abstract class GMarkerRender<M extends GMarker, T extends GMarkerTheme>
   void doRender({
     required Canvas canvas,
     required GChart chart,
-    GPanel? panel,
-    required M component,
-    required Rect area,
-    required T theme,
+    required M component, required Rect area, required T theme, GPanel? panel,
   }) {
-    throw UnimplementedError("should call renderMarker for GMarkerRender");
+    throw UnimplementedError('should call renderMarker for GMarkerRender');
   }
 }

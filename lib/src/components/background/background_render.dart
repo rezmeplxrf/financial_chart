@@ -1,10 +1,10 @@
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../panel/panel.dart';
-import '../render.dart';
-import 'background.dart';
-import 'background_theme.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/background/background.dart';
+import 'package:financial_chart/src/components/background/background_theme.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/render.dart';
 
 /// The render for [GBackground].
 class GBackgroundRender extends GRender<GBackground, GBackgroundTheme> {
@@ -13,10 +13,7 @@ class GBackgroundRender extends GRender<GBackground, GBackgroundTheme> {
   void doRender({
     required Canvas canvas,
     required GChart chart,
-    GPanel? panel,
-    required GBackground component,
-    required Rect area,
-    required GBackgroundTheme theme,
+    required GBackground component, required Rect area, required GBackgroundTheme theme, GPanel? panel,
   }) {
     drawPath(canvas: canvas, path: Path()..addRect(area), style: theme.style);
   }

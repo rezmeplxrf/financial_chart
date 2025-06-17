@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import '../../../financial_chart.dart';
+import 'package:financial_chart/financial_chart.dart';
 
 class GGraphGridsRender extends GGraphRender<GGraphGrids, GGraphGridsTheme> {
   const GGraphGridsRender();
@@ -15,11 +15,11 @@ class GGraphGridsRender extends GGraphRender<GGraphGrids, GGraphGridsTheme> {
     required GPointViewPort pointViewPort,
     required GValueViewPort valueViewPort,
   }) {
-    final Path tickLinesPath = Path();
+    final tickLinesPath = Path();
     graph.pointTickerStrategy
         .pointTicks(viewSize: area.width, viewPort: pointViewPort)
         .forEach((point) {
-          double dx = pointViewPort.pointToPosition(area, point.toDouble());
+          final dx = pointViewPort.pointToPosition(area, point.toDouble());
           addLinePath(
             toPath: tickLinesPath,
             x1: dx,
@@ -31,7 +31,7 @@ class GGraphGridsRender extends GGraphRender<GGraphGrids, GGraphGridsTheme> {
     graph.valueTickerStrategy
         .valueTicks(viewSize: area.height, viewPort: valueViewPort)
         .forEach((value) {
-          double dy = valueViewPort.valueToPosition(area, value);
+          final dy = valueViewPort.valueToPosition(area, value);
           addLinePath(
             toPath: tickLinesPath,
             x1: area.left,
@@ -45,7 +45,7 @@ class GGraphGridsRender extends GGraphRender<GGraphGrids, GGraphGridsTheme> {
     // draw selected range for value axis selection
     if (valueViewPort.selectedRange.isNotEmpty &&
         theme.selectionStyle != null) {
-      Path selectedRangePath = addRectPath(
+      final selectedRangePath = addRectPath(
         rect: Rect.fromLTRB(
           area.left,
           valueViewPort.valueToPosition(
@@ -69,16 +69,16 @@ class GGraphGridsRender extends GGraphRender<GGraphGrids, GGraphGridsTheme> {
     // draw selected range for point axis selection
     if (pointViewPort.selectedRange.isNotEmpty &&
         theme.selectionStyle != null) {
-      Path selectedRangePath = addRectPath(
+      final selectedRangePath = addRectPath(
         rect: Rect.fromLTRB(
           pointViewPort.pointToPosition(
             area,
-            pointViewPort.selectedRange.first!.toDouble(),
+            pointViewPort.selectedRange.first!,
           ),
           area.top,
           pointViewPort.pointToPosition(
             area,
-            pointViewPort.selectedRange.last!.toDouble(),
+            pointViewPort.selectedRange.last!,
           ),
           area.bottom,
         ),

@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:financial_chart/src/vector/vectors/extensions.dart';
 import 'package:vector_math/vector_math.dart';
-import 'extensions.dart';
 
 class LineUtil {
   static Vector2 nearestPointOn({
@@ -30,9 +30,9 @@ class LineUtil {
         return Vector2(px, y1);
       }
     }
-    Vector2 A = Vector2(x1, y1);
-    Vector2 B = Vector2(x2, y2);
-    Vector2 P = Vector2(px, py);
+    final A = Vector2(x1, y1);
+    final B = Vector2(x2, y2);
+    final P = Vector2(px, py);
     //return projection(A, B, P);
     return (P - A).projection(B - A, clamp: true) + A;
   }
@@ -45,7 +45,7 @@ class LineUtil {
     required double px,
     required double py,
   }) {
-    Vector2 nearestPoint = nearestPointOn(
+    final nearestPoint = nearestPointOn(
       x1: x1,
       y1: y1,
       x2: x2,
@@ -65,7 +65,7 @@ class LineUtil {
     required double py,
     double epsilon = 5.0,
   }) {
-    double distance = distanceTo(
+    final distance = distanceTo(
       x1: x1,
       y1: y1,
       x2: x2,
@@ -82,23 +82,23 @@ class LineUtil {
     Offset p3,
     Offset p4,
   ) {
-    final double x1 = p1.dx;
-    final double y1 = p1.dy;
-    final double x2 = p2.dx;
-    final double y2 = p2.dy;
-    final double x3 = p3.dx;
-    final double y3 = p3.dy;
-    final double x4 = p4.dx;
-    final double y4 = p4.dy;
+    final x1 = p1.dx;
+    final y1 = p1.dy;
+    final x2 = p2.dx;
+    final y2 = p2.dy;
+    final x3 = p3.dx;
+    final y3 = p3.dy;
+    final x4 = p4.dx;
+    final y4 = p4.dy;
 
-    final double denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    final denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
     if (denominator == 0) {
       return null;
     }
-    final double x =
+    final x =
         ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) /
         denominator;
-    final double y =
+    final y =
         ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) /
         denominator;
 

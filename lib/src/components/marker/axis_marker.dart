@@ -1,8 +1,15 @@
-import '../../values/value.dart';
-import '../../values/range.dart';
-import '../components.dart';
+import 'package:financial_chart/src/components/components.dart';
+import 'package:financial_chart/src/values/range.dart';
+import 'package:financial_chart/src/values/value.dart';
 
 abstract class GAxisMarker extends GMarker {
+  GAxisMarker({
+    required GAxisMarkerRender render,
+    super.id,
+    super.visible,
+    super.layer,
+    GAxisMarkerTheme? theme,
+  }) : super(theme: theme, render: render);
   @override
   GAxisMarkerTheme? get theme => super.theme as GAxisMarkerTheme?;
 
@@ -13,19 +20,35 @@ abstract class GAxisMarker extends GMarker {
     }
     super.theme = value;
   }
-
-  GAxisMarker({
-    super.id,
-    super.visible,
-    super.layer,
-    super.hitTestMode,
-    GAxisMarkerTheme? theme,
-    required GAxisMarkerRender render,
-  }) : super(theme: theme, render: render);
 }
 
 /// Markers on the value axis. it can be a label or a range.
 class GValueAxisMarker extends GAxisMarker {
+  /// create a label marker with value.
+  GValueAxisMarker.label({
+    required double labelValue,
+    super.id,
+    super.visible,
+    super.layer,
+    super.theme,
+    super.render = const GValueAxisMarkerRender(),
+  }) {
+    _labelValue.value = labelValue;
+  }
+
+  /// create a range marker with start and end value.
+  GValueAxisMarker.range({
+    required double startValue,
+    required double endValue,
+    super.id,
+    super.visible,
+    super.layer,
+    super.theme,
+    super.render = const GValueAxisMarkerRender(),
+  }) {
+    _range.update(startValue, endValue);
+  }
+
   /// the value of the label marker.
   final GValue<double> _labelValue = GValue<double>(double.nan);
   double get labelValue => _labelValue.value;
@@ -42,37 +65,35 @@ class GValueAxisMarker extends GAxisMarker {
     _range.copy(value);
     _labelValue.value = double.nan;
   }
-
-  /// create a label marker with value.
-  GValueAxisMarker.label({
-    super.id,
-    super.visible,
-    super.layer,
-    super.hitTestMode,
-    super.theme,
-    super.render = const GValueAxisMarkerRender(),
-    required double labelValue,
-  }) {
-    _labelValue.value = labelValue;
-  }
-
-  /// create a range marker with start and end value.
-  GValueAxisMarker.range({
-    super.id,
-    super.visible,
-    super.layer,
-    super.hitTestMode,
-    super.theme,
-    super.render = const GValueAxisMarkerRender(),
-    required double startValue,
-    required double endValue,
-  }) {
-    _range.update(startValue, endValue);
-  }
 }
 
 /// Markers on the point axis. it can be a label or a range.
 class GPointAxisMarker extends GAxisMarker {
+  /// create a label marker with point.
+  GPointAxisMarker.label({
+    required int point,
+    super.id,
+    super.visible,
+    super.layer,
+    super.theme,
+    super.render = const GPointAxisMarkerRender(),
+  }) {
+    _labelPoint.value = point;
+  }
+
+  /// create a range marker with start and end point.
+  GPointAxisMarker.range({
+    required double startPoint,
+    required double endPoint,
+    super.id,
+    super.visible,
+    super.layer,
+    super.theme,
+    super.render = const GPointAxisMarkerRender(),
+  }) {
+    _range.update(startPoint, endPoint);
+  }
+
   /// the point of the label marker.
   final GValue<int> _labelPoint = GValue<int>(0);
   int get labelPoint => _labelPoint.value;
@@ -88,32 +109,5 @@ class GPointAxisMarker extends GAxisMarker {
     assert(value.isNotEmpty);
     _range.copy(value);
     _labelPoint.value = 0;
-  }
-
-  /// create a label marker with point.
-  GPointAxisMarker.label({
-    super.id,
-    super.visible,
-    super.layer,
-    super.hitTestMode,
-    super.theme,
-    super.render = const GPointAxisMarkerRender(),
-    required int point,
-  }) {
-    _labelPoint.value = point;
-  }
-
-  /// create a range marker with start and end point.
-  GPointAxisMarker.range({
-    super.id,
-    super.visible,
-    super.layer,
-    super.hitTestMode,
-    super.theme,
-    super.render = const GPointAxisMarkerRender(),
-    required double startPoint,
-    required double endPoint,
-  }) {
-    _range.update(startPoint, endPoint);
   }
 }

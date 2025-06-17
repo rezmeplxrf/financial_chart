@@ -1,11 +1,19 @@
+import 'package:financial_chart/src/components/component_theme.dart';
+import 'package:financial_chart/src/components/render.dart';
+import 'package:financial_chart/src/values/value.dart';
 import 'package:flutter/foundation.dart';
-
-import '../values/value.dart';
-import 'component_theme.dart';
-import 'render.dart';
 
 /// Base class for all view components.
 abstract class GComponent<T extends GComponentTheme> with Diagnosticable {
+  GComponent({
+    this.id,
+    bool visible = true,
+    int layer = kDefaultLayer,
+    T? theme,
+    this.render,
+  }) : _theme = GValue<T?>(theme),
+       _visible = GValue<bool>(visible),
+       _layer = GValue<int>(layer);
   static const int kDefaultLayer = 1000;
 
   /// Identifier of the component.
@@ -46,17 +54,6 @@ abstract class GComponent<T extends GComponentTheme> with Diagnosticable {
   @protected
   GRender? render;
 
-  GComponent({
-    this.id,
-    bool visible = true,
-    int layer = kDefaultLayer,
-    GHitTestMode hitTestMode = GHitTestMode.border,
-    T? theme,
-    this.render,
-  }) : _theme = GValue<T?>(theme),
-       _visible = GValue<bool>(visible),
-       _layer = GValue<int>(layer);
-
   GRender getRender() {
     return render!;
   }
@@ -65,11 +62,12 @@ abstract class GComponent<T extends GComponentTheme> with Diagnosticable {
   @mustCallSuper
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<String>('id', id));
-    properties.add(DiagnosticsProperty<bool>('visible', visible));
-    properties.add(IntProperty('layer', layer));
-    properties.add(DiagnosticsProperty<bool>('highlight', highlight));
-    properties.add(EnumProperty<GHitTestMode>('hitTestMode', hitTestMode));
+    properties
+      ..add(DiagnosticsProperty<String>('id', id))
+      ..add(DiagnosticsProperty<bool>('visible', visible))
+      ..add(IntProperty('layer', layer))
+      ..add(DiagnosticsProperty<bool>('highlight', highlight))
+      ..add(EnumProperty<GHitTestMode>('hitTestMode', hitTestMode));
   }
 }
 

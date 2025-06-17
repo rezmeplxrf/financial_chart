@@ -1,16 +1,69 @@
+// ignore_for_file: avoid_positional_boolean_parameters
+
 import 'dart:math';
+
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/viewport_h_scaler.dart';
+import 'package:financial_chart/src/components/viewport_resize.dart';
+import 'package:financial_chart/src/values/range.dart';
+import 'package:financial_chart/src/values/value.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 
-import '../chart.dart';
-import '../values/range.dart';
-import '../values/value.dart';
-import 'panel/panel.dart';
-import 'viewport_h_scaler.dart';
-import 'viewport_resize.dart';
-
 /// Viewport for point (horizontal) axis
 class GPointViewPort extends ChangeNotifier with Diagnosticable {
+  GPointViewPort({
+    double? initialStartPoint,
+    double? initialEndPoint,
+    this.autoScaleStrategy = const GPointViewPortAutoScaleStrategyLatest(),
+    GViewPortResizeMode? resizeMode,
+    int animationMilliseconds = 200,
+    this.minPointWidth = 2,
+    this.maxPointWidth = 100,
+    this.defaultPointWidth = 10,
+    double startPointMin = double.negativeInfinity,
+    double endPointMax = double.infinity,
+  }) {
+    assert(
+      (initialStartPoint == null && initialEndPoint == null) ||
+          (initialStartPoint != null && initialEndPoint != null),
+      'initialStartPoint and initialEndPoint should be both null or not null.',
+    );
+    assert(
+      startPointMin < endPointMax,
+      'startPointMin should be less than endPointMax.',
+    );
+    _startPointMin.value = startPointMin;
+    _endPointMax.value = endPointMax;
+    assert(minPointWidth > 0, 'minPointWidth should be greater than 0.');
+    assert(
+      maxPointWidth >= minPointWidth,
+      'maxPointWidth should be greater than minPointWidth.',
+    );
+    assert(
+      defaultPointWidth >= minPointWidth,
+      'defaultPointWidth should be greater than minPointWidth.',
+    );
+    assert(
+      animationMilliseconds >= 0,
+      'animationMilliseconds should be greater than or equal to 0.',
+    );
+    if (initialStartPoint != null && initialEndPoint != null) {
+      setRange(
+        startPoint: initialStartPoint,
+        endPoint: initialEndPoint,
+        finished: true,
+        notify: false,
+      );
+      _autoScale.value = false;
+    }
+    _animationMilliseconds.value = animationMilliseconds;
+    if (resizeMode != null) {
+      _resizeMode.value = resizeMode;
+    }
+  }
+
   /// The minimum width of a point in pixel when scaling.
   final double minPointWidth;
 
@@ -53,7 +106,6 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
         startPoint: value,
         endPoint: value + points,
         finished: true,
-        notify: true,
       );
     }
   }
@@ -76,7 +128,6 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
         startPoint: value - points,
         endPoint: value,
         finished: true,
-        notify: true,
       );
     }
   }
@@ -132,57 +183,6 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
   final GRange _animationStartRange = GRange.empty();
   final GRange _animationTargetRange = GRange.empty();
   bool get isAnimating => _animationStartRange.isNotEmpty;
-
-  GPointViewPort({
-    double? initialStartPoint,
-    double? initialEndPoint,
-    this.autoScaleStrategy = const GPointViewPortAutoScaleStrategyLatest(),
-    GViewPortResizeMode? resizeMode,
-    int animationMilliseconds = 200,
-    this.minPointWidth = 2,
-    this.maxPointWidth = 100,
-    this.defaultPointWidth = 10,
-    double startPointMin = double.negativeInfinity,
-    double endPointMax = double.infinity,
-  }) {
-    assert(
-      (initialStartPoint == null && initialEndPoint == null) ||
-          (initialStartPoint != null && initialEndPoint != null),
-      'initialStartPoint and initialEndPoint should be both null or not null.',
-    );
-    assert(
-      startPointMin < endPointMax,
-      'startPointMin should be less than endPointMax.',
-    );
-    _startPointMin.value = startPointMin;
-    _endPointMax.value = endPointMax;
-    assert(minPointWidth > 0, 'minPointWidth should be greater than 0.');
-    assert(
-      maxPointWidth >= minPointWidth,
-      'maxPointWidth should be greater than minPointWidth.',
-    );
-    assert(
-      defaultPointWidth >= minPointWidth,
-      'defaultPointWidth should be greater than minPointWidth.',
-    );
-    assert(
-      animationMilliseconds >= 0,
-      'animationMilliseconds should be greater than or equal to 0.',
-    );
-    if (initialStartPoint != null && initialEndPoint != null) {
-      setRange(
-        startPoint: initialStartPoint,
-        endPoint: initialEndPoint,
-        finished: true,
-        notify: false,
-      );
-      _autoScale.value = false;
-    }
-    _animationMilliseconds.value = animationMilliseconds;
-    if (resizeMode != null) {
-      _resizeMode.value = resizeMode;
-    }
-  }
 
   void initializeAnimation(TickerProvider vsync) {
     if (_rangeAnimationController == null && animationMilliseconds > 0) {
@@ -280,15 +280,15 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
     double? endMax,
   }) {
     assert(startPoint < endPoint);
-    double clampedStartPoint = startPoint;
-    double clampedEndPoint = endPoint;
+    var clampedStartPoint = startPoint;
+    var clampedEndPoint = endPoint;
     if (startPoint < (startMin ?? startPointMin)) {
       final points = endPoint - startPoint;
-      clampedStartPoint = (startMin ?? startPointMin);
+      clampedStartPoint = startMin ?? startPointMin;
       clampedEndPoint = clampedStartPoint + points;
     } else if (endPoint > (endMax ?? endPointMax)) {
       final points = endPoint - startPoint;
-      clampedEndPoint = (endMax ?? endPointMax);
+      clampedEndPoint = endMax ?? endPointMax;
       clampedStartPoint = clampedEndPoint - points;
     }
     return GRange.range(clampedStartPoint, clampedEndPoint);
@@ -331,7 +331,7 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
 
   /// Get the point from position in view area.
   double positionToPoint(Rect area, double position) {
-    return ((position - area.left) / pointSize(area.width) + startPoint);
+    return (position - area.left) / pointSize(area.width) + startPoint;
   }
 
   /// Get the size of points in view area.
@@ -373,7 +373,6 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
           finished: true,
           notify: notify,
         );
-        break;
       case GViewPortResizeMode.keepEnd:
         final newStartPoint = endPoint - toSize / pointSizeCurrent;
         setRange(
@@ -382,7 +381,6 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
           finished: true,
           notify: notify,
         );
-        break;
       case GViewPortResizeMode.keepCenter:
         final centerPoint = (startPoint + endPoint) / 2;
         final newStartPoint = centerPoint - toSize / (2 * pointSizeCurrent);
@@ -393,7 +391,6 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
           finished: true,
           notify: notify,
         );
-        break;
       case GViewPortResizeMode.keepRange:
         break;
     }
@@ -411,20 +408,20 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
       return;
     }
     autoScaleFlg = false;
-    double pointWidthStart = _pointSize(
+    final pointWidthStart = _pointSize(
       area.width,
       startRange.first!,
       startRange.last!,
     );
-    double pointWidthNew = min(
+    final double pointWidthNew = min(
       max(pointWidthStart * zoomRatio, minPointWidth),
       maxPointWidth,
     );
-    double centerPosition = pointToPosition(area, centerPoint);
-    double leftSize = centerPosition - area.left;
-    double rightSize = area.right - centerPosition;
-    double startPointNew = centerPoint - leftSize / pointWidthNew;
-    double endPointNew = centerPoint + rightSize / pointWidthNew;
+    final centerPosition = pointToPosition(area, centerPoint);
+    final leftSize = centerPosition - area.left;
+    final rightSize = area.right - centerPosition;
+    final startPointNew = centerPoint - leftSize / pointWidthNew;
+    final endPointNew = centerPoint + rightSize / pointWidthNew;
     animateToRange(GRange.range(startPointNew, endPointNew), finished, animate);
   }
 
@@ -496,23 +493,25 @@ class GPointViewPort extends ChangeNotifier with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<GRange>('range', range));
-    properties.add(DoubleProperty('rangeSize', isValid ? pointRangeSize : 0));
+    properties
+      ..add(DiagnosticsProperty<GRange>('range', range))
+      ..add(DoubleProperty('rangeSize', isValid ? pointRangeSize : 0));
     if (selectedRange.isNotEmpty) {
       properties.add(
         DiagnosticsProperty<GRange>('selectedRange', selectedRange),
       );
     }
-    properties.add(
-      DiagnosticsProperty<GViewPortResizeMode>('resizeMode', resizeMode),
-    );
-    properties.add(DoubleProperty('minPointWidth', minPointWidth));
-    properties.add(DoubleProperty('maxPointWidth', maxPointWidth));
-    properties.add(DoubleProperty('defaultPointWidth', defaultPointWidth));
-    properties.add(DoubleProperty('startPointMin', startPointMin));
-    properties.add(DoubleProperty('endPointMax', endPointMax));
-    properties.add(DiagnosticsProperty<bool>('autoScaleFlg', autoScaleFlg));
-    properties.add(IntProperty('animationMilliseconds', animationMilliseconds));
-    properties.add(DiagnosticsProperty<bool>('isAnimating', isAnimating));
+    properties
+      ..add(
+        DiagnosticsProperty<GViewPortResizeMode>('resizeMode', resizeMode),
+      )
+      ..add(DoubleProperty('minPointWidth', minPointWidth))
+      ..add(DoubleProperty('maxPointWidth', maxPointWidth))
+      ..add(DoubleProperty('defaultPointWidth', defaultPointWidth))
+      ..add(DoubleProperty('startPointMin', startPointMin))
+      ..add(DoubleProperty('endPointMax', endPointMax))
+      ..add(DiagnosticsProperty<bool>('autoScaleFlg', autoScaleFlg))
+      ..add(IntProperty('animationMilliseconds', animationMilliseconds))
+      ..add(DiagnosticsProperty<bool>('isAnimating', isAnimating));
   }
 }

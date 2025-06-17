@@ -1,14 +1,9 @@
-import '../../style/paint_style.dart';
-import '../component_theme.dart';
-import 'splitter.dart';
+import 'package:financial_chart/src/components/component_theme.dart';
+import 'package:financial_chart/src/components/splitter/splitter.dart';
+import 'package:financial_chart/src/style/paint_style.dart';
 
 /// Theme for [GSplitter]
 class GSplitterTheme extends GComponentTheme {
-  final PaintStyle lineStyle;
-  final PaintStyle handleStyle;
-  final PaintStyle handleLineStyle;
-  final double handleWidth;
-  final double handleBorderRadius;
 
   const GSplitterTheme({
     required this.lineStyle,
@@ -17,6 +12,11 @@ class GSplitterTheme extends GComponentTheme {
     this.handleWidth = 60,
     this.handleBorderRadius = 4,
   });
+  final PaintStyle lineStyle;
+  final PaintStyle handleStyle;
+  final PaintStyle handleLineStyle;
+  final double handleWidth;
+  final double handleBorderRadius;
 
   GSplitterTheme copyWith({
     PaintStyle? lineStyle,

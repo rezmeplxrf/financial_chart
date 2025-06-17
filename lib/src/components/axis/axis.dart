@@ -1,13 +1,12 @@
 import 'dart:ui';
 
+import 'package:financial_chart/src/components/axis/axis_render.dart';
+import 'package:financial_chart/src/components/component.dart';
 import 'package:financial_chart/src/components/marker/axis_marker.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker.dart';
+import 'package:financial_chart/src/components/ticker.dart';
+import 'package:financial_chart/src/values/value.dart';
 import 'package:flutter/foundation.dart';
-
-import '../../values/value.dart';
-import '../component.dart';
-import '../marker/overlay_marker.dart';
-import 'axis_render.dart';
-import '../ticker.dart';
 
 const defaultHAxisSize = 30.0; // in pixel
 const defaultVAxisSize = 60.0; // in pixel
@@ -47,6 +46,28 @@ enum GAxisScaleMode {
 
 /// The base class of the axis component.
 abstract class GAxis extends GComponent {
+  GAxis({
+    required GAxisPosition position,
+    required double size,
+    super.id,
+    super.visible,
+    GAxisScaleMode scaleMode = GAxisScaleMode.zoom,
+    super.render,
+    super.theme,
+    List<GAxisMarker> axisMarkers = const [],
+    List<GOverlayMarker> overlayMarkers = const [],
+  }) : _position = GValue<GAxisPosition>(position),
+       _size = GValue<double>(size),
+       _scaleMode = GValue<GAxisScaleMode>(scaleMode),
+       super() {
+    if (axisMarkers.isNotEmpty) {
+      this.axisMarkers.addAll(axisMarkers);
+    }
+    if (overlayMarkers.isNotEmpty) {
+      this.overlayMarkers.addAll(overlayMarkers);
+    }
+  }
+
   /// The position of the axis relative to the graph area.
   ///
   /// see [GAxisPosition] for more details.
@@ -72,38 +93,15 @@ abstract class GAxis extends GComponent {
   /// Overlay markers on the axis.
   final List<GOverlayMarker> overlayMarkers = [];
 
-  GAxis({
-    super.id,
-    super.visible,
-    required GAxisPosition position,
-    required double size,
-    GAxisScaleMode scaleMode = GAxisScaleMode.zoom,
-    super.render,
-    super.theme,
-    List<GAxisMarker> axisMarkers = const [],
-    List<GOverlayMarker> overlayMarkers = const [],
-  }) : _position = GValue<GAxisPosition>(position),
-       _size = GValue<double>(size),
-       _scaleMode = GValue<GAxisScaleMode>(scaleMode),
-       super() {
-    if (axisMarkers.isNotEmpty) {
-      this.axisMarkers.addAll(axisMarkers);
-    }
-    if (overlayMarkers.isNotEmpty) {
-      this.overlayMarkers.addAll(overlayMarkers);
-    }
-  }
-
-  /// Place the [axes] to the given [area] and return the areas of the axes ([axesAreas]) and the area left ([areaLeft]) for graph.
   static (List<Rect> axesAreas, Rect areaLeft) placeAxes(
     Rect area,
     List<GAxis> axes,
   ) {
-    List<Rect> axesAreas = [];
-    Rect areaAxis = Rect.zero;
-    Rect areaLeft = area;
+    final axesAreas = <Rect>[];
+    var areaAxis = Rect.zero;
+    var areaLeft = area;
     // place the axes
-    for (int n = 0; n < axes.length; n++) {
+    for (var n = 0; n < axes.length; n++) {
       final axis = axes[n];
       if (axis.position == GAxisPosition.startInside ||
           axis.position == GAxisPosition.endInside) {
@@ -114,7 +112,7 @@ abstract class GAxis extends GComponent {
       axesAreas.add(areaAxis);
     }
     // adjust the area of inside axes
-    for (int n = 0; n < axes.length; n++) {
+    for (var n = 0; n < axes.length; n++) {
       final axis = axes[n];
       if (axis.position == GAxisPosition.startInside ||
           axis.position == GAxisPosition.endInside) {
@@ -123,7 +121,7 @@ abstract class GAxis extends GComponent {
       }
     }
     // adjust the area of the axes to fit final graph size
-    for (int n = 0; n < axes.length; n++) {
+    for (var n = 0; n < axes.length; n++) {
       if (axes[n] is GPointAxis) {
         axesAreas[n] = Rect.fromLTRB(
           areaLeft.left,
@@ -148,26 +146,18 @@ abstract class GAxis extends GComponent {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<GAxisPosition>('position', position));
-    properties.add(DoubleProperty('size', size));
-    properties.add(EnumProperty<GAxisScaleMode>('scaleMode', scaleMode));
+    properties
+      ..add(DiagnosticsProperty<GAxisPosition>('position', position))
+      ..add(DoubleProperty('size', size))
+      ..add(EnumProperty<GAxisScaleMode>('scaleMode', scaleMode));
   }
 }
 
 /// value axis for vertical direction.
 class GValueAxis extends GAxis {
-  /// The value view port id of the value axis.
-  final String viewPortId;
-
-  /// The strategy to calculate the value ticks.
-  final GValueTickerStrategy valueTickerStrategy;
-
-  /// The formatter to format the value.
-  final String Function(double value, int precision)? valueFormatter;
-
   GValueAxis({
     super.id,
-    this.viewPortId = "", // empty means the default view port id
+    this.viewPortId = '', // empty means the default view port id
     super.position = GAxisPosition.end,
     super.scaleMode = GAxisScaleMode.zoom,
     super.size = defaultVAxisSize,
@@ -178,6 +168,15 @@ class GValueAxis extends GAxis {
     super.theme,
     super.render = const GValueAxisRender(),
   }) : super(axisMarkers: axisMarkers);
+
+  /// The value view port id of the value axis.
+  final String viewPortId;
+
+  /// The strategy to calculate the value ticks.
+  final GValueTickerStrategy valueTickerStrategy;
+
+  /// The formatter to format the value.
+  final String Function(double value, int precision)? valueFormatter;
 
   bool get isAlignRight =>
       position == GAxisPosition.start || position == GAxisPosition.endInside;
@@ -226,11 +225,6 @@ class GValueAxis extends GAxis {
 
 /// point axis for horizontal direction.
 class GPointAxis extends GAxis {
-  /// The strategy to calculate the point ticks.
-  final GPointTickerStrategy pointTickerStrategy;
-
-  /// The formatter to format the point value.
-  final String Function(int, dynamic)? pointFormatter;
   GPointAxis({
     super.id,
     super.position = GAxisPosition.end,
@@ -243,6 +237,12 @@ class GPointAxis extends GAxis {
     super.theme,
     super.render = const GPointAxisRender(),
   }) : super(axisMarkers: axisMarkers);
+
+  /// The strategy to calculate the point ticks.
+  final GPointTickerStrategy pointTickerStrategy;
+
+  /// The formatter to format the point value.
+  final String Function(int, dynamic)? pointFormatter;
 
   bool get isAlignBottom =>
       position == GAxisPosition.start || position == GAxisPosition.endInside;

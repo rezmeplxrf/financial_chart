@@ -22,6 +22,8 @@
 
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
+
 /// Creates a new path that is drawn from the segments of `source`.
 ///
 /// Dash intervals are controled by the `dashArray` - see [CircularIntervalList]
@@ -37,15 +39,15 @@ Path dashPath(
 }) {
   assert(dashArray != null); // ignore: unnecessary_null_comparison
 
-  dashOffset = dashOffset ?? const DashOffset.absolute(0.0);
+  dashOffset = dashOffset ?? const DashOffset.absolute(0);
   // Is there some way to determine how much of a path would be visible today?
 
-  final Path dest = Path();
-  for (final PathMetric metric in source.computeMetrics()) {
-    double distance = dashOffset._calculate(metric.length);
-    bool draw = true;
+  final dest = Path();
+  for (final metric in source.computeMetrics()) {
+    var distance = dashOffset._calculate(metric.length);
+    var draw = true;
     while (distance < metric.length) {
-      final double len = dashArray.next;
+      final len = dashArray.next;
       if (draw) {
         dest.addPath(metric.extractPath(distance, distance + len), Offset.zero);
       }
@@ -63,6 +65,7 @@ enum _DashOffsetType { absolute, percentage }
 /// percentage or absolute value.
 ///
 /// The internal value will be guaranteed to not be null.
+@immutable
 class DashOffset {
   /// Create a DashOffset that will be measured as a percentage of the length
   /// of the segment being dashed.

@@ -1,12 +1,11 @@
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/axis/axis.dart';
+import 'package:financial_chart/src/components/axis/axis_theme.dart';
+import 'package:financial_chart/src/components/crosshair/crosshair_theme.dart';
+import 'package:financial_chart/src/components/marker/axis_marker.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/render.dart';
 import 'package:flutter/painting.dart';
-
-import '../../chart.dart';
-import '../marker/axis_marker.dart';
-import '../panel/panel.dart';
-import '../crosshair/crosshair_theme.dart';
-import 'axis_theme.dart';
-import 'axis.dart';
-import '../render.dart';
 
 abstract class GAxisRender<C extends GAxis> extends GRender<C, GAxisTheme> {
   const GAxisRender();
@@ -19,22 +18,22 @@ class GValueAxisRender extends GAxisRender<GValueAxis> {
   void doRender({
     required Canvas canvas,
     required GChart chart,
-    GPanel? panel,
     required GValueAxis component,
     required Rect area,
     required GAxisTheme theme,
+    GPanel? panel,
   }) {
     final axis = component;
     final valueViewPort = panel!.findValueViewPortById(axis.viewPortId);
     if (!valueViewPort.isValid) {
       return;
     }
-    final List<double> valueTicks = axis.valueTickerStrategy.valueTicks(
+    final valueTicks = axis.valueTickerStrategy.valueTicks(
       viewSize: area.height,
       viewPort: valueViewPort,
     );
 
-    Path linePath = addLinePath(
+    final linePath = addLinePath(
       x1: axis.isAlignLeft ? area.left : area.right,
       y1: area.top,
       x2: axis.isAlignLeft ? area.left : area.right,
@@ -42,10 +41,10 @@ class GValueAxisRender extends GAxisRender<GValueAxis> {
     );
     drawPath(canvas: canvas, path: linePath, style: theme.lineStyle);
 
-    Path tickLinesPath = Path();
-    for (int i = 0; i < valueTicks.length; i++) {
-      double value = valueTicks[i];
-      double valuePosition = valueViewPort.valueToPosition(area, value);
+    final tickLinesPath = Path();
+    for (var i = 0; i < valueTicks.length; i++) {
+      final value = valueTicks[i];
+      final valuePosition = valueViewPort.valueToPosition(area, value);
 
       addLinePath(
         toPath: tickLinesPath,
@@ -72,9 +71,9 @@ class GValueAxisRender extends GAxisRender<GValueAxis> {
 
     // draw axis markers
     if (axis.axisMarkers.isNotEmpty) {
-      final axisMarkers = [...axis.axisMarkers];
-      axisMarkers.sort((a, b) => a.layer.compareTo(b.layer));
-      for (var marker in axisMarkers) {
+      final axisMarkers = [...axis.axisMarkers]
+        ..sort((a, b) => a.layer.compareTo(b.layer));
+      for (final marker in axisMarkers) {
         if (marker is GValueAxisMarker) {
           marker.getRender().renderMarker(
             canvas: canvas,
@@ -95,9 +94,9 @@ class GValueAxisRender extends GAxisRender<GValueAxis> {
 
     // draw overlay markers
     if (axis.overlayMarkers.isNotEmpty) {
-      final overlayMarkers = [...axis.overlayMarkers];
-      overlayMarkers.sort((a, b) => a.layer.compareTo(b.layer));
-      for (var marker in overlayMarkers) {
+      final overlayMarkers = [...axis.overlayMarkers]
+        ..sort((a, b) => a.layer.compareTo(b.layer));
+      for (final marker in overlayMarkers) {
         marker.getRender().renderMarker(
           canvas: canvas,
           chart: chart,
@@ -116,7 +115,7 @@ class GValueAxisRender extends GAxisRender<GValueAxis> {
 
     // draw selected range
     if (valueViewPort.selectedRange.isNotEmpty) {
-      Path selectedRangePath = addRectPath(
+      final selectedRangePath = addRectPath(
         rect: Rect.fromLTRB(
           area.left,
           valueViewPort.valueToPosition(
@@ -141,7 +140,7 @@ class GValueAxisRender extends GAxisRender<GValueAxis> {
         valueViewPort.selectedRange.last,
       ]) {
         final value = rangeValue!;
-        double valuePosition = valueViewPort.valueToPosition(area, value);
+        final valuePosition = valueViewPort.valueToPosition(area, value);
         final labelText = (axis.valueFormatter ??
                 chart.dataSource.seriesValueFormater)
             .call(value, valueViewPort.valuePrecision);
@@ -170,10 +169,10 @@ class GPointAxisRender extends GAxisRender<GPointAxis> {
   void doRender({
     required Canvas canvas,
     required GChart chart,
-    GPanel? panel,
     required GPointAxis component,
     required Rect area,
     required GAxisTheme theme,
+    GPanel? panel,
   }) {
     final axis = component;
     final dataSource = chart.dataSource;
@@ -181,12 +180,12 @@ class GPointAxisRender extends GAxisRender<GPointAxis> {
     if (!pointViewPort.isValid) {
       return;
     }
-    List<int> pointTicks = axis.pointTickerStrategy.pointTicks(
+    final pointTicks = axis.pointTickerStrategy.pointTicks(
       viewSize: area.width,
       viewPort: pointViewPort,
     );
 
-    Path linePath = addLinePath(
+    final linePath = addLinePath(
       x1: area.left,
       y1: component.isAlignTop ? area.top : area.bottom,
       x2: area.right,
@@ -194,14 +193,14 @@ class GPointAxisRender extends GAxisRender<GPointAxis> {
     );
     drawPath(canvas: canvas, path: linePath, style: theme.lineStyle);
 
-    Path tickLinesPath = Path();
-    for (int i = 0; i < pointTicks.length; i++) {
+    final tickLinesPath = Path();
+    for (var i = 0; i < pointTicks.length; i++) {
       final point = pointTicks[i];
       final pointValue = dataSource.getPointValue(point);
       if (pointValue == null) {
         continue;
       }
-      double pointPosition = pointViewPort.pointToPosition(
+      final pointPosition = pointViewPort.pointToPosition(
         area,
         point.toDouble(),
       );
@@ -238,9 +237,9 @@ class GPointAxisRender extends GAxisRender<GPointAxis> {
 
     // draw axis markers
     if (axis.axisMarkers.isNotEmpty) {
-      final axisMarkers = [...axis.axisMarkers];
-      axisMarkers.sort((a, b) => a.layer.compareTo(b.layer));
-      for (var marker in axisMarkers) {
+      final axisMarkers = [...axis.axisMarkers]
+        ..sort((a, b) => a.layer.compareTo(b.layer));
+      for (final marker in axisMarkers) {
         if (marker is GPointAxisMarker) {
           marker.getRender().renderMarker(
             canvas: canvas,
@@ -260,9 +259,9 @@ class GPointAxisRender extends GAxisRender<GPointAxis> {
 
     // draw overlay markers
     if (axis.overlayMarkers.isNotEmpty) {
-      final overlayMarkers = [...axis.overlayMarkers];
-      overlayMarkers.sort((a, b) => a.layer.compareTo(b.layer));
-      for (var marker in overlayMarkers) {
+      final overlayMarkers = [...axis.overlayMarkers]
+        ..sort((a, b) => a.layer.compareTo(b.layer));
+      for (final marker in overlayMarkers) {
         marker.getRender().renderMarker(
           canvas: canvas,
           chart: chart,
@@ -280,16 +279,16 @@ class GPointAxisRender extends GAxisRender<GPointAxis> {
 
     // draw selected range
     if (pointViewPort.selectedRange.isNotEmpty) {
-      Path selectedRangePath = addRectPath(
+      final selectedRangePath = addRectPath(
         rect: Rect.fromLTRB(
           pointViewPort.pointToPosition(
             area,
-            pointViewPort.selectedRange.first!.toDouble(),
+            pointViewPort.selectedRange.first!,
           ),
           area.top,
           pointViewPort.pointToPosition(
             area,
-            pointViewPort.selectedRange.last!.toDouble(),
+            pointViewPort.selectedRange.last!,
           ),
           area.bottom,
         ),
@@ -307,7 +306,7 @@ class GPointAxisRender extends GAxisRender<GPointAxis> {
         final point = rangePoint!.round();
         final pointValue = dataSource.getPointValue(point);
         if (pointValue != null) {
-          double pointPosition = pointViewPort.pointToPosition(
+          final pointPosition = pointViewPort.pointToPosition(
             area,
             point.toDouble(),
           );

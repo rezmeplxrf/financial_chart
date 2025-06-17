@@ -1,15 +1,55 @@
+// ignore_for_file: avoid_positional_boolean_parameters
+
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/viewport_resize.dart';
+import 'package:financial_chart/src/components/viewport_v_scaler.dart';
+import 'package:financial_chart/src/values/range.dart';
+import 'package:financial_chart/src/values/value.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 
-import '../chart.dart';
-import '../values/range.dart';
-import '../values/value.dart';
-import 'panel/panel.dart';
-import 'viewport_resize.dart';
-import 'viewport_v_scaler.dart';
-
 /// Viewport for value (vertical) axis
 class GValueViewPort extends ChangeNotifier with Diagnosticable {
+  /// Create a value viewport.
+  ///
+  /// Set proper [initialEndValue] and [initialStartValue] when [autoScaleStrategy] not provided.
+  GValueViewPort({
+    required this.valuePrecision,
+    this.id = '',
+    double? initialEndValue,
+    double? initialStartValue,
+    this.autoScaleStrategy,
+    GViewPortResizeMode? resizeMode,
+    int animationMilliseconds = 200,
+    this.onRangeUpdate,
+    this.maxRangeSize,
+    this.minRangeSize,
+  }) {
+    assert(
+      (initialStartValue == null && initialEndValue == null) ||
+          (initialStartValue != null && initialEndValue != null),
+    );
+    if (initialStartValue != null && initialEndValue != null) {
+      assert(initialEndValue > initialStartValue);
+      _autoScale.value = false;
+    }
+    if (maxRangeSize != null) {
+      assert(maxRangeSize! > 0);
+    }
+    if (maxRangeSize != null) {
+      assert(maxRangeSize! > 0);
+      if (minRangeSize != null) {
+        assert(minRangeSize! < maxRangeSize!);
+      }
+    }
+    _range.update(initialStartValue ?? 0, initialEndValue ?? 1);
+    _animationMilliseconds.value = animationMilliseconds;
+    if (resizeMode != null) {
+      _resizeMode.value = resizeMode;
+    }
+  }
+
   /// Identifier of the viewport which being referenced by components.
   final String id;
 
@@ -88,46 +128,6 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
   final GRange _animationStartRange = GRange.empty();
   final GRange _animationTargetRange = GRange.empty();
   bool get isAnimating => _animationStartRange.isNotEmpty;
-
-  /// Create a value viewport.
-  ///
-  /// Set proper [initialEndValue] and [initialStartValue] when [autoScaleStrategy] not provided.
-  GValueViewPort({
-    this.id = "",
-    double? initialEndValue,
-    double? initialStartValue,
-    required this.valuePrecision,
-    this.autoScaleStrategy,
-    GViewPortResizeMode? resizeMode,
-    int animationMilliseconds = 200,
-    this.onRangeUpdate,
-    this.maxRangeSize,
-    this.minRangeSize,
-    double? baseValue,
-  }) {
-    assert(
-      (initialStartValue == null && initialEndValue == null) ||
-          (initialStartValue != null && initialEndValue != null),
-    );
-    if (initialStartValue != null && initialEndValue != null) {
-      assert(initialEndValue > initialStartValue);
-      _autoScale.value = false;
-    }
-    if (maxRangeSize != null) {
-      assert(maxRangeSize! > 0);
-    }
-    if (maxRangeSize != null) {
-      assert(maxRangeSize! > 0);
-      if (minRangeSize != null) {
-        assert(minRangeSize! < maxRangeSize!);
-      }
-    }
-    _range.update(initialStartValue ?? 0, initialEndValue ?? 1);
-    _animationMilliseconds.value = animationMilliseconds;
-    if (resizeMode != null) {
-      _resizeMode.value = resizeMode;
-    }
-  }
 
   void initializeAnimation(TickerProvider vsync) {
     if (_rangeAnimationController == null && animationMilliseconds > 0) {
@@ -264,18 +264,14 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
         setRange(
           startValue: startValue,
           endValue: startValue + valueDensityCurrent * toSize,
-          finished: true,
           notify: notify,
         );
-        break;
       case GViewPortResizeMode.keepEnd:
         setRange(
           startValue: endValue - valueDensityCurrent * toSize,
           endValue: endValue,
-          finished: true,
           notify: notify,
         );
-        break;
       case GViewPortResizeMode.keepCenter:
         final centerValue = (endValue + startValue) / 2;
         final newStartValue = centerValue - valueDensityCurrent * toSize / 2;
@@ -283,10 +279,8 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
         setRange(
           startValue: newStartValue,
           endValue: newEndValue,
-          finished: true,
           notify: notify,
         );
-        break;
       case GViewPortResizeMode.keepRange:
         break;
     }
@@ -318,12 +312,12 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
     double startValue,
     double endValue,
   ) {
-    double endValueClamped = endValue;
-    double startValueClamped = startValue;
+    var endValueClamped = endValue;
+    var startValueClamped = startValue;
     if (minRangeSize != null) {
       if (endValueClamped - startValueClamped < minRangeSize!) {
         // expand from center
-        double centerValue = (endValue + startValue) / 2;
+        final centerValue = (endValue + startValue) / 2;
         endValueClamped = centerValue + minRangeSize! / 2;
         startValueClamped = centerValue - minRangeSize! / 2;
       }
@@ -331,7 +325,7 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
     if (maxRangeSize != null) {
       if (endValueClamped - startValueClamped > maxRangeSize!) {
         // shrink from center
-        double centerValue = (endValue + startValue) / 2;
+        final centerValue = (endValue + startValue) / 2;
         endValueClamped = centerValue + maxRangeSize! / 2;
         startValueClamped = centerValue - maxRangeSize! / 2;
       }
@@ -352,10 +346,10 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
       return;
     }
     autoScaleFlg = false;
-    double centerValue = (startRange.first! + startRange.last!) / 2;
-    double endValueNew =
+    final centerValue = (startRange.first! + startRange.last!) / 2;
+    var endValueNew =
         centerValue + (startRange.last! - centerValue) / zoomRatio;
-    double startValueNew =
+    var startValueNew =
         centerValue + (startRange.first! - centerValue) / zoomRatio;
     (startValueNew, endValueNew) = clampScaleRange(startValueNew, endValueNew);
     animateToRange(
@@ -433,18 +427,22 @@ class GValueViewPort extends ChangeNotifier with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(StringProperty('id', id));
-    properties.add(DiagnosticsProperty<GRange>('range', range));
-    properties.add(DoubleProperty('rangeSize', rangeSize));
-    properties.add(IntProperty('valuePrecision', valuePrecision));
-    properties.add(DiagnosticsProperty<GRange>('selectedRange', selectedRange));
-    properties.add(DiagnosticsProperty<bool>('autoScaleFlg', autoScaleFlg));
-    properties.add(
-      DiagnosticsProperty<bool>('autoScaleStrategy', autoScaleStrategy != null),
-    );
-    properties.add(IntProperty('animationMilliseconds', animationMilliseconds));
-    properties.add(
-      DiagnosticsProperty<GViewPortResizeMode>('resizeMode', resizeMode),
-    );
+    properties
+      ..add(StringProperty('id', id))
+      ..add(DiagnosticsProperty<GRange>('range', range))
+      ..add(DoubleProperty('rangeSize', rangeSize))
+      ..add(IntProperty('valuePrecision', valuePrecision))
+      ..add(DiagnosticsProperty<GRange>('selectedRange', selectedRange))
+      ..add(DiagnosticsProperty<bool>('autoScaleFlg', autoScaleFlg))
+      ..add(
+        DiagnosticsProperty<bool>(
+          'autoScaleStrategy',
+          autoScaleStrategy != null,
+        ),
+      )
+      ..add(IntProperty('animationMilliseconds', animationMilliseconds))
+      ..add(
+        DiagnosticsProperty<GViewPortResizeMode>('resizeMode', resizeMode),
+      );
   }
 }

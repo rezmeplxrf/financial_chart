@@ -1,39 +1,20 @@
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/graph/graph_render.dart';
+import 'package:financial_chart/src/components/graph/graph_theme.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker.dart';
+import 'package:financial_chart/src/components/render.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
 import 'package:flutter/foundation.dart';
-
-import '../marker/overlay_marker.dart';
-import '../render.dart';
-import 'graph_render.dart';
-import 'graph_theme.dart';
-import '../component.dart';
-import '../panel/panel.dart';
-import '../viewport_v.dart';
 
 /// Base class for graph components.
 ///
 /// This is not abstract so we can create a empty [GGraph] with only markers.
 class GGraph<T extends GGraphTheme> extends GComponent {
-  static const String typeName = 'graph';
-
-  /// The value viewport id of the graph.
-  ///
-  /// see [GValueViewPort] for more details.
-  /// point viewport is shared for the whole panel. see [GPanel.pointViewPortId]
-  final String valueViewPortId;
-
-  /// The keys of the series value in the data source that
-  /// will be highlighted by drawing a circle on the graph.
-  final List<String> crosshairHighlightValueKeys = [];
-
-  /// The graph markers of the graph.
-  List<GOverlayMarker> get overlayMarkers => List.unmodifiable(_overlayMarkers);
-  final List<GOverlayMarker> _overlayMarkers = [];
-
   GGraph({
     super.id,
-    this.valueViewPortId = "", // empty means the default view port id
+    this.valueViewPortId = '', // empty means the default view port id
     super.layer,
     super.visible,
-    super.hitTestMode,
     T? super.theme,
     GGraphRender? super.render,
     List<String>? crosshairHighlightValueKeys,
@@ -46,6 +27,20 @@ class GGraph<T extends GGraphTheme> extends GComponent {
       this.crosshairHighlightValueKeys.addAll(crosshairHighlightValueKeys);
     }
   }
+  static const String typeName = 'graph';
+
+  /// The value viewport id of the graph.
+  ///
+  /// see [GValueViewPort] for more details.
+  final String valueViewPortId;
+
+  /// The keys of the series value in the data source that
+  /// will be highlighted by drawing a circle on the graph.
+  final List<String> crosshairHighlightValueKeys = [];
+
+  /// The graph markers of the graph.
+  List<GOverlayMarker> get overlayMarkers => List.unmodifiable(_overlayMarkers);
+  final List<GOverlayMarker> _overlayMarkers = [];
 
   GOverlayMarker? findMarker(String id) {
     return _overlayMarkers.where((marker) => marker.id == id).firstOrNull;

@@ -1,15 +1,14 @@
 import 'dart:ui';
 
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/graph/graph.dart';
+import 'package:financial_chart/src/components/graph/graph_theme.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/render.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
+import 'package:financial_chart/src/vector/vectors/polygon.dart';
 import 'package:vector_math/vector_math.dart';
-
-import '../../chart.dart';
-import '../../vector/vectors/polygon.dart';
-import '../panel/panel.dart';
-import '../viewport_h.dart';
-import '../viewport_v.dart';
-import 'graph_theme.dart';
-import 'graph.dart';
-import '../render.dart';
 
 /// Base class for [GGraph] renderers.
 class GGraphRender<C extends GGraph, T extends GGraphTheme>
@@ -19,10 +18,10 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
   void render({
     required Canvas canvas,
     required GChart chart,
-    GPanel? panel,
     required C component,
     required Rect area,
     required T theme,
+    GPanel? panel,
   }) {
     if (component.visible == false) {
       return;
@@ -40,9 +39,10 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
 
     // Render the markers
     if (component.overlayMarkers.isNotEmpty) {
-      Rect area = panel!.graphArea();
-      canvas.save();
-      canvas.clipRect(area);
+      final area = panel!.graphArea();
+      canvas
+        ..save()
+        ..clipRect(area);
       doRenderMarkers(
         canvas: canvas,
         chart: chart,
@@ -55,9 +55,10 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
     }
 
     if (component.crosshairHighlightValueKeys.isNotEmpty) {
-      Rect area = panel!.graphArea();
-      canvas.save();
-      canvas.clipRect(area);
+      final area = panel!.graphArea();
+      canvas
+        ..save()
+        ..clipRect(area);
       doRenderCrosshairHighlightValues(
         canvas: canvas,
         chart: chart,
@@ -74,10 +75,10 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
   void doRender({
     required Canvas canvas,
     required GChart chart,
-    GPanel? panel,
     required C component,
     required Rect area,
     required T theme,
+    GPanel? panel,
   }) {
     assert(panel != null);
     if (component.visible == false) {
@@ -110,8 +111,8 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
     required T theme,
   }) {
     if (graph.overlayMarkers.isNotEmpty) {
-      final markers = [...graph.overlayMarkers];
-      markers.sort((a, b) => a.layer.compareTo(b.layer));
+      final markers = [...graph.overlayMarkers]
+        ..sort((a, b) => a.layer.compareTo(b.layer));
       for (final marker in markers) {
         marker.getRender().renderMarker(
           canvas: canvas,
@@ -121,9 +122,9 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
           marker: marker,
           area: panel.graphArea(),
           theme:
-              (marker.theme ??
-                  theme.overlayMarkerTheme ??
-                  chart.theme.overlayMarkerTheme),
+              marker.theme ??
+              theme.overlayMarkerTheme ??
+              chart.theme.overlayMarkerTheme,
           valueViewPort: panel.findValueViewPortById(graph.valueViewPortId),
         );
       }
@@ -150,7 +151,7 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
     if (!valueViewPort.isValid) {
       return;
     }
-    List<Vector2> crosshairHighlightMarks = [];
+    final crosshairHighlightMarks = <Vector2>[];
     for (final valueKey in graph.crosshairHighlightValueKeys) {
       final point = pointViewPort.nearestPoint(area, crossPosition);
       final pointPosition = pointViewPort.pointToPosition(
@@ -195,7 +196,7 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
     required Offset position,
     double? epsilon,
   }) {
-    for (int i = 0; i < lines.length; i++) {
+    for (var i = 0; i < lines.length; i++) {
       if (PolygonUtil.hitTest(
         vertices: lines[i],
         px: position.dx,
@@ -225,7 +226,7 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
         canvas: canvas,
         clipRect: area,
         render: () {
-          for (int i = 0; i < highlightMarks.length; i++) {
+          for (var i = 0; i < highlightMarks.length; i++) {
             final point = highlightMarks[i];
             final p = addOvalPath(
               rect: Rect.fromCircle(
@@ -255,7 +256,7 @@ class GGraphRender<C extends GGraph, T extends GGraphTheme>
         highlightMarks.isNotEmpty &&
         theme.highlightMarkerTheme != null &&
         theme.highlightMarkerTheme!.crosshairHighlightSize > 0) {
-      for (int i = 0; i < highlightMarks.length; i++) {
+      for (var i = 0; i < highlightMarks.length; i++) {
         final point = highlightMarks[i];
         final p = addOvalPath(
           rect: Rect.fromCircle(

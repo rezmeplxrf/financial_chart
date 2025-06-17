@@ -1,14 +1,14 @@
 import 'dart:math';
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../../components/component.dart';
-import '../../components/marker/overlay_marker_theme.dart';
-import '../../components/marker/overlay_marker_render.dart';
-import '../../components/panel/panel.dart';
-import '../../components/viewport_h.dart';
-import '../../components/viewport_v.dart';
-import 'arrow_marker.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_render.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
+import 'package:financial_chart/src/markers/arrow/arrow_marker.dart';
 
 class GArrowMarkerRender
     extends GOverlayMarkerRender<GArrowMarker, GOverlayMarkerTheme> {
@@ -58,16 +58,18 @@ class GArrowMarkerRender
         arrowStart2.dx + headWidth * cos(angle - pi / 2),
         arrowStart2.dy + headWidth * sin(angle - pi / 2),
       );
-      arrowPath.moveTo(end.dx, end.dy);
-      arrowPath.lineTo(arrowEnd.dx, arrowEnd.dy);
-      arrowPath.lineTo(arrowEnd2.dx, arrowEnd2.dy);
-      arrowPath.close();
+      arrowPath
+        ..moveTo(end.dx, end.dy)
+        ..lineTo(arrowEnd.dx, arrowEnd.dy)
+        ..lineTo(arrowEnd2.dx, arrowEnd2.dy)
+        ..close();
       drawPath(canvas: canvas, path: arrowPath, style: theme.markerStyle);
 
       // draw the line from start to middle of the arrow head
-      final linePath = Path();
-      linePath.moveTo(start.dx, start.dy);
-      linePath.lineTo(arrowStart.dx, arrowStart.dy);
+      final linePath =
+          Path()
+            ..moveTo(start.dx, start.dy)
+            ..lineTo(arrowStart.dx, arrowStart.dy);
       drawPath(canvas: canvas, path: linePath, style: theme.markerStyle);
     }
   }

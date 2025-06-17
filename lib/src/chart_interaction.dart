@@ -1,21 +1,22 @@
 import 'dart:math';
+
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/components.dart';
+import 'package:financial_chart/src/values/range.dart';
+import 'package:financial_chart/src/values/value.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/widgets.dart';
 
-import 'chart.dart';
-import 'components/components.dart';
-import 'values/range.dart';
-import 'values/value.dart';
-
-part 'chart_interaction_gesture_recognizers.dart';
 part 'chart_interaction_gesture_factory.dart';
+part 'chart_interaction_gesture_recognizers.dart';
 part 'chart_interaction_viewports.dart';
 
 /// [GChartInteractionHandler] for handling user interactions for the attached chart.
 // ignore: must_be_immutable
 class GChartInteractionHandler with Diagnosticable {
+  GChartInteractionHandler();
   late final GChart _chart;
 
   final GValue<bool> _isTouchEvent = GValue(false);
@@ -29,8 +30,6 @@ class GChartInteractionHandler with Diagnosticable {
       pointViewPortInteractionHelper.isScaling ||
       valueViewPortInteractionHelper.isScaling;
 
-  GChartInteractionHandler();
-
   void Function({
     required Offset position,
     required double scale,
@@ -40,6 +39,7 @@ class GChartInteractionHandler with Diagnosticable {
   void Function(int pointerCount, double scaleVelocity, Velocity? velocity)?
   _hookScaleEnd;
 
+  // ignore: use_setters_to_change_properties
   void attach(GChart chart) {
     _chart = chart;
   }
@@ -68,8 +68,8 @@ class GChartInteractionHandler with Diagnosticable {
           ? SystemMouseCursors.wait
           : SystemMouseCursors.basic;
     }
-    for (int p = 0; p < _chart.panels.length; p++) {
-      GPanel panel = _chart.panels[p];
+    for (var p = 0; p < _chart.panels.length; p++) {
+      final panel = _chart.panels[p];
       // test if hit resize splitter
       if (panel.resizable &&
           p < _chart.panels.length - 1 &&
@@ -78,8 +78,8 @@ class GChartInteractionHandler with Diagnosticable {
         return SystemMouseCursors.resizeUpDown;
       }
       // test if hit axes (in case the axes may be inside graph area we test before testing graph)
-      for (int n = 0; n < panel.valueAxes.length; n++) {
-        Rect axisArea = panel.valueAxisArea(n);
+      for (var n = 0; n < panel.valueAxes.length; n++) {
+        final axisArea = panel.valueAxisArea(n);
         if (axisArea.contains(position)) {
           if (panel.valueAxes[n].scaleMode == GAxisScaleMode.move) {
             return SystemMouseCursors.grab;
@@ -91,8 +91,8 @@ class GChartInteractionHandler with Diagnosticable {
           return SystemMouseCursors.basic;
         }
       }
-      for (int n = 0; n < panel.pointAxes.length; n++) {
-        Rect axisArea = panel.pointAxisArea(n);
+      for (var n = 0; n < panel.pointAxes.length; n++) {
+        final axisArea = panel.pointAxisArea(n);
         if (axisArea.contains(position)) {
           if (panel.pointAxes[n].scaleMode == GAxisScaleMode.move) {
             return SystemMouseCursors.grab;
@@ -123,9 +123,9 @@ class GChartInteractionHandler with Diagnosticable {
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
-    for (int p = 0; p < _chart.panels.length; p++) {
-      GPanel panel = _chart.panels[p];
-      for (int g = 0; g < panel.graphs.length; g++) {
+    for (var p = 0; p < _chart.panels.length; p++) {
+      final panel = _chart.panels[p];
+      for (var g = 0; g < panel.graphs.length; g++) {
         panel.graphs[g].highlight = false;
       }
     }
@@ -146,11 +146,10 @@ class GChartInteractionHandler with Diagnosticable {
     if (_chart.pointerScrollMode == GPointerScrollMode.none) {
       return;
     }
-    for (int n = 0; n < _chart.panels.length; n++) {
-      Rect area = _chart.panels[n].graphArea();
+    for (var n = 0; n < _chart.panels.length; n++) {
+      final area = _chart.panels[n].graphArea();
       if (area.contains(position)) {
-        final pointViewPort = _chart.pointViewPort;
-        pointViewPort.stopAnimation();
+        final pointViewPort = _chart.pointViewPort..stopAnimation();
         if (_chart.pointerScrollMode == GPointerScrollMode.move) {
           final pointSize = pointViewPort.pointSize(area.width);
           final distance = scrollDelta.dy / pointSize;
@@ -158,19 +157,19 @@ class GChartInteractionHandler with Diagnosticable {
             pointViewPort.startPoint - distance,
             pointViewPort.endPoint - distance,
           );
-          pointViewPort.autoScaleFlg = false;
-          pointViewPort.setRange(
-            startPoint: newRange.begin!,
-            endPoint: newRange.end!,
-            finished: true,
-            notify: true,
-          );
+          pointViewPort
+            ..autoScaleFlg = false
+            ..setRange(
+              startPoint: newRange.begin!,
+              endPoint: newRange.end!,
+              finished: true,
+            );
         } else if (_chart.pointerScrollMode == GPointerScrollMode.zoom) {
-          final centerPoint =
-              pointViewPort.positionToPoint(area, position.dx).toDouble();
+          final centerPoint = pointViewPort.positionToPoint(area, position.dx);
           final scaleRatio = 1 - scrollDelta.dy / area.height;
-          pointViewPort.autoScaleFlg = false;
-          pointViewPort.zoom(area, scaleRatio, centerPoint: centerPoint);
+          pointViewPort
+            ..autoScaleFlg = false
+            ..zoom(area, scaleRatio, centerPoint: centerPoint);
         }
         _notify();
         break;
@@ -189,36 +188,36 @@ class GChartInteractionHandler with Diagnosticable {
       trigger: GCrosshairTrigger.scaleStart,
     );
     // hit test splitters
-    for (int n = 0; n < _chart.panels.length; n++) {
-      GPanel panel = _chart.panels[n];
-      GPanel? nextPanel = _chart.nextVisiblePanel(startIndex: n + 1);
+    for (var n = 0; n < _chart.panels.length; n++) {
+      final panel = _chart.panels[n];
+      final nextPanel = _chart.nextVisiblePanel(startIndex: n + 1);
       if (nextPanel != null && panel.splitterArea().contains(start)) {
-        GPanel? splitterPanel = _tryScalingSplitter(n, panel, nextPanel, start);
+        final splitterPanel = _tryScalingSplitter(n, panel, nextPanel, start);
         if (splitterPanel != null) {
           _notify();
           return;
         }
       }
     }
-    for (int n = 0; n < _chart.panels.length; n++) {
-      GPanel panel = _chart.panels[n];
+    for (var n = 0; n < _chart.panels.length; n++) {
+      final panel = _chart.panels[n];
       if (panel.panelArea().contains(start)) {
         // hit test hAxis
-        GPointAxis? pointAxis = _tryScalingPointAxis(panel, start);
+        final pointAxis = _tryScalingPointAxis(panel, start);
         if (pointAxis != null) {
           _notify();
           return;
         }
         // hit test vAxis
-        GValueAxis? valueAxis = _tryScalingValueAxis(panel, start);
+        final valueAxis = _tryScalingValueAxis(panel, start);
         if (valueAxis != null) {
           _notify();
           return;
         }
       }
     }
-    for (int n = 0; n < _chart.panels.length; n++) {
-      GPanel panel = _chart.panels[n];
+    for (var n = 0; n < _chart.panels.length; n++) {
+      final panel = _chart.panels[n];
       // hit test graph
       if (panel.graphArea().contains(start)) {
         final graph = _tryScalingGraph(panel, start, pointerCount);
@@ -241,13 +240,13 @@ class GChartInteractionHandler with Diagnosticable {
       y: position.dy,
       trigger: GCrosshairTrigger.scaleUpdate,
     );
-    if (_hookScaleUpdate != null) {
-      _hookScaleUpdate!(
-        position: position,
-        scale: scale,
-        verticalScale: verticalScale,
-      );
-    }
+
+    _hookScaleUpdate?.call(
+      position: position,
+      scale: scale,
+      verticalScale: verticalScale,
+    );
+
     _notify();
   }
 
@@ -340,32 +339,31 @@ class GChartInteractionHandler with Diagnosticable {
     if (_chart.dataSource.isLoading || _chart.dataSource.isEmpty) {
       return;
     }
-    for (int p = 0; p < _chart.panels.length; p++) {
-      GPanel panel = _chart.panels[p];
+    for (var p = 0; p < _chart.panels.length; p++) {
+      final panel = _chart.panels[p];
       if (panel.panelArea().contains(position)) {
-        for (int a = 0; a < panel.valueAxes.length; a++) {
-          GValueAxis axis = panel.valueAxes[a];
-          Rect axisArea = panel.valueAxisArea(a);
+        for (var a = 0; a < panel.valueAxes.length; a++) {
+          final axis = panel.valueAxes[a];
+          final axisArea = panel.valueAxisArea(a);
           if (axisArea.contains(position)) {
-            GValueViewPort? valueViewPort = panel.findValueViewPortById(
-              axis.viewPortId,
-            );
-            valueViewPort.autoScaleReset(
-              chart: _chart,
-              panel: panel,
-              autoScaleFlg: true,
-            );
+            panel
+                .findValueViewPortById(
+                  axis.viewPortId,
+                )
+                .autoScaleReset(
+                  chart: _chart,
+                  panel: panel,
+                );
             break;
           }
         }
-        for (int a = 0; a < panel.pointAxes.length; a++) {
-          Rect axisArea = panel.pointAxisArea(a);
+        for (var a = 0; a < panel.pointAxes.length; a++) {
+          final axisArea = panel.pointAxisArea(a);
           if (axisArea.contains(position)) {
             _chart.pointViewPort.autoScaleReset(
               chart: _chart,
               panel: panel,
               finished: true,
-              animation: true,
             );
             break;
           }
@@ -386,11 +384,11 @@ class GChartInteractionHandler with Diagnosticable {
       return null;
     }
     if (panel1.splitterArea().contains(start)) {
-      double h1 = panel1.panelArea().height;
-      double h2 = panel2.panelArea().height;
-      double moveToleranceMin = -panel1.graphArea().height + 50;
-      double moveToleranceMax = panel2.graphArea().height - 50;
-      double weightDensity =
+      final h1 = panel1.panelArea().height;
+      final h2 = panel2.panelArea().height;
+      final moveToleranceMin = -panel1.graphArea().height + 50;
+      final moveToleranceMax = panel2.graphArea().height - 50;
+      final weightDensity =
           (panel1.heightWeight + panel2.heightWeight) / (h1 + h2);
       _chart.splitter.resizingPanelIndex = panel1Index;
       _hookScaleUpdate = ({
@@ -398,12 +396,12 @@ class GChartInteractionHandler with Diagnosticable {
         required double scale,
         required double verticalScale,
       }) {
-        double moveDistance = min(
-          max((position.dy - start.dy), moveToleranceMin),
+        final double moveDistance = min(
+          max(position.dy - start.dy, moveToleranceMin),
           moveToleranceMax,
         );
-        double h1New = h1 + moveDistance;
-        double h2New = h2 - moveDistance;
+        final h1New = h1 + moveDistance;
+        final h2New = h2 - moveDistance;
         panel1.heightWeight = h1New * weightDensity;
         panel2.heightWeight = h2New * weightDensity;
         _chart.resize(newArea: _chart.area, force: true);
@@ -421,15 +419,15 @@ class GChartInteractionHandler with Diagnosticable {
   }
 
   GPointAxis? _tryScalingPointAxis(GPanel panel, Offset start) {
-    for (int a = 0; a < panel.pointAxes.length; a++) {
-      GPointAxis axis = panel.pointAxes[a];
-      Rect axisArea = panel.pointAxisArea(a);
+    for (var a = 0; a < panel.pointAxes.length; a++) {
+      final axis = panel.pointAxes[a];
+      final axisArea = panel.pointAxisArea(a);
       if (axisArea.contains(start)) {
         if (axis.scaleMode != GAxisScaleMode.none) {
-          GPointViewPort pointViewPort = _chart.pointViewPort;
+          final pointViewPort = _chart.pointViewPort;
           pointViewPortInteractionHelper.interactionStart(pointViewPort);
           pointViewPort.autoScaleFlg = false;
-          double lastX = start.dx;
+          var lastX = start.dx;
           _hookScaleUpdate = ({
             required Offset position,
             required double scale,
@@ -437,7 +435,7 @@ class GChartInteractionHandler with Diagnosticable {
           }) {
             if (axis.scaleMode == GAxisScaleMode.zoom ||
                 (scale > 0 && scale != 1.0)) {
-              double scaleRatio =
+              final scaleRatio =
                   (axisArea.right - position.dx) / (axisArea.right - start.dx);
               if (scale > 0 && scale != 1.0) {
                 pointViewPortInteractionHelper.interactionZoomUpdate(
@@ -455,7 +453,7 @@ class GChartInteractionHandler with Diagnosticable {
                 );
               }
             } else if (axis.scaleMode == GAxisScaleMode.move) {
-              double moveDistance = (position.dx - start.dx);
+              final moveDistance = position.dx - start.dx;
               pointViewPortInteractionHelper.interactionMoveUpdate(
                 axisArea,
                 moveDistance,
@@ -465,7 +463,6 @@ class GChartInteractionHandler with Diagnosticable {
                 axisArea,
                 start.dx,
                 position.dx,
-                finished: false,
               );
             }
             lastX = position.dx;
@@ -494,24 +491,23 @@ class GChartInteractionHandler with Diagnosticable {
 
   GValueAxis? _tryScalingValueAxis(GPanel panel, Offset start) {
     // test if hit vAxis
-    for (int a = 0; a < panel.valueAxes.length; a++) {
-      GValueAxis axis = panel.valueAxes[a];
-      Rect axisArea = panel.valueAxisArea(a);
+    for (var a = 0; a < panel.valueAxes.length; a++) {
+      final axis = panel.valueAxes[a];
+      final axisArea = panel.valueAxisArea(a);
       if (axisArea.contains(start)) {
         if (axis.scaleMode != GAxisScaleMode.none) {
-          GValueViewPort? viewPort = panel.findValueViewPortById(
+          final viewPort = panel.findValueViewPortById(
             axis.viewPortId,
-          );
-          viewPort.autoScaleFlg = false;
+          )..autoScaleFlg = false;
           valueViewPortInteractionHelper.interactionStart(viewPort);
-          double lastY = start.dy;
+          var lastY = start.dy;
           _hookScaleUpdate = ({
             required Offset position,
             required double scale,
             required double verticalScale,
           }) {
             if (axis.scaleMode == GAxisScaleMode.zoom) {
-              double scaleRatio = min(
+              final double scaleRatio = min(
                 max(
                   (axisArea.bottom - start.dy) /
                       (axisArea.bottom - min(position.dy, axisArea.bottom - 1)),
@@ -524,7 +520,7 @@ class GChartInteractionHandler with Diagnosticable {
                 scaleRatio,
               );
             } else if (axis.scaleMode == GAxisScaleMode.move) {
-              double moveDistance = (position.dy - start.dy);
+              final moveDistance = position.dy - start.dy;
               valueViewPortInteractionHelper.interactionMoveUpdate(
                 axisArea,
                 moveDistance,
@@ -534,7 +530,6 @@ class GChartInteractionHandler with Diagnosticable {
                 axisArea,
                 start.dy,
                 position.dy,
-                finished: false,
               );
             }
             lastY = position.dy;
@@ -562,7 +557,7 @@ class GChartInteractionHandler with Diagnosticable {
   }
 
   GGraph? _tryScalingGraph(GPanel panel, Offset start, int pointerCount) {
-    Rect graphArea = panel.graphArea();
+    final graphArea = panel.graphArea();
     if (!graphArea.contains(start)) {
       return null;
     }
@@ -582,14 +577,15 @@ class GChartInteractionHandler with Diagnosticable {
           (int pointerCount, double scaleVelocity, Velocity? velocity) {};
       return graph;
     }
-    GPointViewPort pointViewPort = _chart.pointViewPort;
-    GValueViewPort? valueViewPort = panel.findValueViewPortById(
+    final pointViewPort = _chart.pointViewPort;
+    final valueViewPort = panel.findValueViewPortById(
       graph.valueViewPortId,
     );
     pointViewPortInteractionHelper.interactionStart(pointViewPort);
-    pointViewPort.stopAnimation();
-    pointViewPort.autoScaleFlg = false;
-    bool scaleValue = !valueViewPort.autoScaleFlg;
+    pointViewPort
+      ..stopAnimation()
+      ..autoScaleFlg = false;
+    final scaleValue = !valueViewPort.autoScaleFlg;
     if (scaleValue) {
       valueViewPortInteractionHelper.interactionStart(valueViewPort);
     }
@@ -599,7 +595,7 @@ class GChartInteractionHandler with Diagnosticable {
       required double verticalScale,
     }) {
       _chart.mouseCursor.value = SystemMouseCursors.grab;
-      double moveDistanceX = (position.dx - start.dx);
+      final moveDistanceX = position.dx - start.dx;
       if (scale != 1.0) {
         if (scale != 1.0 && scale > 0) {
           //pointViewPort.interactionMoveUpdate(graphArea, moveDistanceX);
@@ -620,7 +616,7 @@ class GChartInteractionHandler with Diagnosticable {
         moveDistanceX,
       );
       if (scaleValue) {
-        double moveDistanceY = (position.dy - start.dy);
+        final moveDistanceY = position.dy - start.dy;
         valueViewPortInteractionHelper.interactionMoveUpdate(
           graphArea,
           moveDistanceY,
@@ -634,7 +630,7 @@ class GChartInteractionHandler with Diagnosticable {
     ) {
       _hookScaleEnd = null;
       _chart.mouseCursor.value = SystemMouseCursors.precise;
-      bool momentum =
+      final momentum =
           velocity != null &&
           panel.momentumScrollSpeed > 0 &&
           velocity.pixelsPerSecond.dx.abs() > 1;
@@ -647,7 +643,7 @@ class GChartInteractionHandler with Diagnosticable {
         final pointSize = pointViewPort.pointSize(graphArea.width);
         final distance =
             velocity.pixelsPerSecond.dx / pointSize * panel.momentumScrollSpeed;
-        GRange newRange = GRange.range(
+        var newRange = GRange.range(
           pointViewPort.startPoint - distance,
           pointViewPort.endPoint - distance,
         );
@@ -681,11 +677,12 @@ class GChartInteractionHandler with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-      DiagnosticsProperty<bool>('isTouchEvent', _isTouchEvent.value),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>('isTouchCrossMode', _isTouchCrossMode.value),
-    );
+    properties
+      ..add(
+        DiagnosticsProperty<bool>('isTouchEvent', _isTouchEvent.value),
+      )
+      ..add(
+        DiagnosticsProperty<bool>('isTouchCrossMode', _isTouchCrossMode.value),
+      );
   }
 }

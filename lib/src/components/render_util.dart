@@ -1,12 +1,11 @@
 import 'dart:math';
 
+import 'package:financial_chart/src/components/axis/axis.dart';
+import 'package:financial_chart/src/components/axis/axis_theme.dart';
+import 'package:financial_chart/src/style/dash_path.dart';
+import 'package:financial_chart/src/style/label_style.dart';
+import 'package:financial_chart/src/style/paint_style.dart';
 import 'package:flutter/painting.dart';
-
-import '../style/dash_path.dart';
-import '../style/label_style.dart';
-import '../style/paint_style.dart';
-import 'axis/axis.dart';
-import 'axis/axis_theme.dart';
 
 /// Utility class for rendering.
 class GRenderUtil {
@@ -15,8 +14,9 @@ class GRenderUtil {
     required Rect clipRect,
     required void Function() render,
   }) {
-    canvas.save();
-    canvas.clipRect(clipRect);
+    canvas
+      ..save()
+      ..clipRect(clipRect);
     render();
     canvas.restore();
   }
@@ -31,10 +31,11 @@ class GRenderUtil {
       render();
       return;
     }
-    canvas.save();
-    canvas.translate(center.dx, center.dy);
-    canvas.rotate(theta);
-    canvas.translate(-center.dx, -center.dy);
+    canvas
+      ..save()
+      ..translate(center.dx, center.dy)
+      ..rotate(theta)
+      ..translate(-center.dx, -center.dy);
     render();
     canvas.restore();
   }
@@ -82,9 +83,9 @@ class GRenderUtil {
   static (TextPainter painter, Offset textPaintPoint, Rect blockArea)
   createTextPainter({
     required String text,
+    required LabelStyle style,
     Offset anchor = Offset.zero,
     Alignment defaultAlign = Alignment.center,
-    required LabelStyle style,
   }) {
     final painter = TextPainter(
       text:
@@ -100,8 +101,7 @@ class GRenderUtil {
       strutStyle: style.strutStyle,
       textWidthBasis: style.textWidthBasis ?? TextWidthBasis.parent,
       textHeightBehavior: style.textHeightBehavior,
-    );
-    painter.layout(
+    )..layout(
       minWidth: style.minWidth ?? 0.0,
       maxWidth: style.maxWidth ?? double.infinity,
     );
@@ -117,7 +117,7 @@ class GRenderUtil {
       style.align ?? defaultAlign,
     );
     final textPaintPoint =
-        point + Offset((padding?.left ?? 0), (padding?.top ?? 0));
+        point + Offset(padding?.left ?? 0, padding?.top ?? 0);
     return (
       painter,
       textPaintPoint,
@@ -128,9 +128,9 @@ class GRenderUtil {
   static Rect drawText({
     required Canvas canvas,
     required String text,
+    required LabelStyle style,
     Offset anchor = Offset.zero,
     Alignment defaultAlign = Alignment.center,
-    required LabelStyle style,
   }) {
     final (painter, textPaintPoint, blockArea) = createTextPainter(
       text: text,
@@ -144,7 +144,7 @@ class GRenderUtil {
       theta: style.rotation ?? 0,
       render: () {
         if (style.backgroundStyle != null) {
-          final Path blockPath = addRectPath(
+          final blockPath = addRectPath(
             rect: blockArea,
             cornerRadius: style.backgroundCornerRadius ?? 0,
           );
@@ -217,22 +217,23 @@ class GRenderUtil {
   }) => getBlockPaintPoint(axis, width, height, align, padding: padding);
 
   static Path addLinePath({
-    Path? toPath,
     required double x1,
     required double y1,
     required double x2,
     required double y2,
+    Path? toPath,
   }) {
-    Path path = Path();
-    path.moveTo(x1, y1);
-    path.lineTo(x2, y2);
+    final path =
+        Path()
+          ..moveTo(x1, y1)
+          ..lineTo(x2, y2);
     toPath?.addPath(path, Offset.zero);
     return toPath ?? path;
   }
 
-  static Path addLinesPath({Path? toPath, required List<Offset> points}) {
-    Path path = toPath ?? Path();
-    for (int i = 0; i < points.length - 1; i++) {
+  static Path addLinesPath({required List<Offset> points, Path? toPath}) {
+    var path = toPath ?? Path();
+    for (var i = 0; i < points.length - 1; i++) {
       path = addLinePath(
         toPath: path,
         x1: points[i].dx,
@@ -245,11 +246,11 @@ class GRenderUtil {
   }
 
   static Path addRectPath({
-    Path? toPath,
     required Rect rect,
+    Path? toPath,
     double cornerRadius = 0,
   }) {
-    Path path = toPath ?? Path();
+    final path = toPath ?? Path();
     if (cornerRadius > 0) {
       path.addRRect(
         RRect.fromRectAndRadius(rect, Radius.circular(cornerRadius)),
@@ -261,33 +262,36 @@ class GRenderUtil {
   }
 
   static Path addOvalPath({
-    Path? toPath,
     required Rect rect,
+    Path? toPath,
     double cornerRadius = 0,
   }) {
-    Path path = toPath ?? Path();
-    path.addOval(rect);
+    final path =
+        toPath ?? Path()
+          ..addOval(rect);
     return path;
   }
 
   static Path addPolygonPath({
-    Path? toPath,
     required List<Offset> points,
     required bool close,
+    Path? toPath,
     double cornerRadius = 0,
   }) {
-    Path path = toPath ?? Path();
-    path.addPolygon(points, close);
+    final path =
+        toPath ?? Path()
+          ..addPolygon(points, close);
     return path;
   }
 
   static Path addSplinePath({
-    Path? toPath,
     required Offset start,
     required List<List<Offset>> cubicList,
+    Path? toPath,
   }) {
-    Path path = toPath ?? Path();
-    path.moveTo(start.dx, start.dy);
+    final path =
+        toPath ?? Path()
+          ..moveTo(start.dx, start.dy);
     for (final cubic in cubicList) {
       path.cubicTo(
         cubic[0].dx,
@@ -302,30 +306,31 @@ class GRenderUtil {
   }
 
   static Path addArcPath({
-    Path? toPath,
     required Offset center,
     required double radius,
     required double startAngle,
     required double endAngle,
+    Path? toPath,
     bool close = false,
   }) {
-    Path path = toPath ?? Path();
-    path.moveTo(
-      center.dx + radius * cos(startAngle),
-      center.dy + radius * sin(startAngle),
-    );
-    path.arcToPoint(
-      Offset(
-        center.dx + radius * cos(endAngle),
-        center.dy + radius * sin(endAngle),
-      ),
-      radius: Radius.circular(radius),
-      largeArc: endAngle - startAngle > pi,
-      clockwise: true,
-    );
+    final path =
+        toPath ?? Path()
+          ..moveTo(
+            center.dx + radius * cos(startAngle),
+            center.dy + radius * sin(startAngle),
+          )
+          ..arcToPoint(
+            Offset(
+              center.dx + radius * cos(endAngle),
+              center.dy + radius * sin(endAngle),
+            ),
+            radius: Radius.circular(radius),
+            largeArc: endAngle - startAngle > pi,
+          );
     if (close) {
-      path.lineTo(center.dx, center.dy);
-      path.close();
+      path
+        ..lineTo(center.dx, center.dy)
+        ..close();
     }
     return path;
   }
@@ -374,7 +379,7 @@ class GRenderUtil {
     required Alignment alignment,
     EdgeInsets? padding,
   }) {
-    Offset pt = getBlockPaintPoint(
+    final pt = getBlockPaintPoint(
       anchor,
       width,
       height,

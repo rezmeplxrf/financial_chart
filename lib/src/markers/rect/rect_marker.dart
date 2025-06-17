@@ -1,12 +1,42 @@
+import 'package:financial_chart/src/components/marker/overlay_marker.dart';
+import 'package:financial_chart/src/markers/rect/rect_marker_render.dart';
+import 'package:financial_chart/src/values/coord.dart';
+import 'package:financial_chart/src/values/size.dart';
+import 'package:financial_chart/src/values/value.dart';
 import 'package:flutter/painting.dart';
 
-import '../../components/marker/overlay_marker.dart';
-import '../../values/coord.dart';
-import '../../values/size.dart';
-import '../../values/value.dart';
-import 'rect_marker_render.dart';
-
 class GRectMarker extends GOverlayMarker {
+  GRectMarker({
+    required GCoordinate startCoord,
+    required GCoordinate endCoord,
+    super.id,
+    super.visible,
+    super.layer,
+    super.theme,
+    GSize? cornerRadiusSize,
+    super.render = const GRectMarkerRender(),
+  }) : _pointRadiusSize = GValue<GSize?>(null),
+       _valueRadiusSize = GValue<GSize?>(null),
+       _alignment = GValue<Alignment>(Alignment.center),
+       _cornerRadiusSize = GValue<GSize?>(cornerRadiusSize),
+       super(keyCoordinates: [startCoord, endCoord]);
+
+  GRectMarker.anchorAndRadius({
+    required GCoordinate anchorCoord,
+    required GSize pointRadiusSize,
+    required GSize valueRadiusSize,
+    super.id,
+    super.visible,
+    super.layer,
+    super.theme,
+    GSize? cornerRadiusSize,
+    Alignment alignment = Alignment.center,
+    super.render = const GRectMarkerRender(),
+  }) : _cornerRadiusSize = GValue<GSize?>(cornerRadiusSize),
+       _pointRadiusSize = GValue<GSize?>(pointRadiusSize),
+       _valueRadiusSize = GValue<GSize?>(valueRadiusSize),
+       _alignment = GValue<Alignment>(alignment),
+       super(keyCoordinates: [anchorCoord]);
   final GValue<GSize?> _cornerRadiusSize;
   GSize? get cornerRadiusSize => _cornerRadiusSize.value;
   set cornerRadiusSize(GSize? value) => _cornerRadiusSize.value = value;
@@ -29,38 +59,4 @@ class GRectMarker extends GOverlayMarker {
   final GValue<Alignment> _alignment;
   Alignment get alignment => _alignment.value;
   set alignment(Alignment value) => _alignment.value = value;
-
-  GRectMarker({
-    super.id,
-    super.visible,
-    super.layer,
-    super.hitTestMode,
-    super.theme,
-    required GCoordinate startCoord,
-    required GCoordinate endCoord,
-    GSize? cornerRadiusSize,
-    super.render = const GRectMarkerRender(),
-  }) : _pointRadiusSize = GValue<GSize?>(null),
-       _valueRadiusSize = GValue<GSize?>(null),
-       _alignment = GValue<Alignment>(Alignment.center),
-       _cornerRadiusSize = GValue<GSize?>(cornerRadiusSize),
-       super(keyCoordinates: [startCoord, endCoord]);
-
-  GRectMarker.anchorAndRadius({
-    super.id,
-    super.visible,
-    super.layer,
-    super.hitTestMode,
-    super.theme,
-    required GCoordinate anchorCoord,
-    required GSize pointRadiusSize,
-    required GSize valueRadiusSize,
-    GSize? cornerRadiusSize,
-    Alignment alignment = Alignment.center,
-    super.render = const GRectMarkerRender(),
-  }) : _cornerRadiusSize = GValue<GSize?>(cornerRadiusSize),
-       _pointRadiusSize = GValue<GSize?>(pointRadiusSize),
-       _valueRadiusSize = GValue<GSize?>(valueRadiusSize),
-       _alignment = GValue<Alignment>(alignment),
-       super(keyCoordinates: [anchorCoord]);
 }

@@ -1,28 +1,23 @@
-import '../../style/paint_style.dart';
-import '../component_theme.dart';
-import '../marker/axis_marker_theme.dart';
-import '../marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/components/component_theme.dart';
+import 'package:financial_chart/src/components/marker/axis_marker_theme.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/style/paint_style.dart';
 
 /// Base class for graph themes
 class GGraphTheme extends GComponentTheme {
-  final GAxisMarkerTheme? axisMarkerTheme;
-  final GOverlayMarkerTheme? overlayMarkerTheme;
-  final GGraphHighlightMarkerTheme? highlightMarkerTheme;
 
   const GGraphTheme({
     this.axisMarkerTheme,
     this.overlayMarkerTheme,
     this.highlightMarkerTheme,
   });
+  final GAxisMarkerTheme? axisMarkerTheme;
+  final GOverlayMarkerTheme? overlayMarkerTheme;
+  final GGraphHighlightMarkerTheme? highlightMarkerTheme;
 }
 
 /// Theme for the markers of the graph when highlighted.
 class GGraphHighlightMarkerTheme extends GComponentTheme {
-  final PaintStyle style;
-  final double size;
-  final double interval;
-  final PaintStyle? crosshairHighlightStyle;
-  final double crosshairHighlightSize;
 
   const GGraphHighlightMarkerTheme({
     required this.style,
@@ -31,6 +26,11 @@ class GGraphHighlightMarkerTheme extends GComponentTheme {
     this.crosshairHighlightStyle,
     this.crosshairHighlightSize = 4.0,
   });
+  final PaintStyle style;
+  final double size;
+  final double interval;
+  final PaintStyle? crosshairHighlightStyle;
+  final double crosshairHighlightSize;
 
   GGraphHighlightMarkerTheme copyWith({
     PaintStyle? style,

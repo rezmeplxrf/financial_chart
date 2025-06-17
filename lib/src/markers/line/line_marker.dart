@@ -1,16 +1,15 @@
-import '../../components/marker/overlay_marker.dart';
-import '../../values/coord.dart';
-import 'line_marker_render.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker.dart';
+import 'package:financial_chart/src/markers/line/line_marker_render.dart';
+import 'package:financial_chart/src/values/coord.dart';
 
 class GLineMarker extends GOverlayMarker {
-  List<GCoordinate> get coordinates => [...keyCoordinates];
   GLineMarker({
+    required List<GCoordinate> coordinates,
     super.id,
     super.visible,
     super.layer,
-    super.hitTestMode,
     super.theme,
-    required List<GCoordinate> coordinates,
     super.render = const GLineMarkerRender(),
   }) : super(keyCoordinates: [...coordinates]);
+  List<GCoordinate> get coordinates => [...keyCoordinates];
 }

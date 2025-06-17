@@ -1,14 +1,13 @@
 import 'dart:math';
 
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/render.dart';
+import 'package:financial_chart/src/components/render_util.dart';
+import 'package:financial_chart/src/components/tooltip/tooltip.dart';
+import 'package:financial_chart/src/components/tooltip/tooltip_theme.dart';
+import 'package:financial_chart/src/values/pair.dart';
 import 'package:flutter/widgets.dart';
-
-import '../../chart.dart';
-import '../../values/pair.dart';
-import '../panel/panel.dart';
-import '../render.dart';
-import '../render_util.dart';
-import 'tooltip.dart';
-import 'tooltip_theme.dart';
 
 /// [GTooltip] renderer
 class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
@@ -17,10 +16,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
   void doRender({
     required Canvas canvas,
     required GChart chart,
-    GPanel? panel,
-    required GTooltip component,
-    required Rect area,
-    required GTooltipTheme theme,
+    required GTooltip component, required Rect area, required GTooltipTheme theme, GPanel? panel,
   }) {
     final tooltip = component;
     if (tooltip.position == GTooltipPosition.none) {
@@ -143,7 +139,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
         if (valueViewPort.isValid) {
           final valuePosition = valueViewPort.valueToPosition(
             area,
-            value.toDouble(),
+            value,
           );
           final valueHighlightPath = addLinePath(
             x1: area.left,
@@ -191,7 +187,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
       _removeWidget(chart, tooltip);
       return;
     }
-    Offset anchorPosition = Offset.zero;
+    var anchorPosition = Offset.zero;
     if (tooltipPosition == GTooltipPosition.topLeft) {
       anchorPosition = area.topLeft;
     } else if (tooltipPosition == GTooltipPosition.topRight) {
@@ -204,7 +200,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
       // follow
       if (tooltip.followValueKey != null &&
           tooltip.followValueViewPortId != null) {
-        double pointPosition = pointViewPort.pointToPosition(
+        final pointPosition = pointViewPort.pointToPosition(
           area,
           point.toDouble(),
         );
@@ -219,7 +215,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
           );
           final valuePosition = valueViewPort.valueToPosition(
             area,
-            value.toDouble(),
+            value,
           );
           anchorPosition = Offset(pointPosition, valuePosition);
         }
@@ -258,8 +254,8 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
       );
       pointValuePainter = pointValueTextPainter;
     }
-    List<GPair<TextPainter>> textPainters = [];
-    for (var key in tooltip.dataKeys) {
+    final textPainters = <GPair<TextPainter>>[];
+    for (final key in tooltip.dataKeys) {
       final prop = dataSource.getSeriesProperty(key);
       final label = prop.label;
       final value = dataKeyValues[key];
@@ -286,12 +282,12 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
     labelsHeight = labelsHeight - theme.rowSpacing;
     valuesHeight = valuesHeight - theme.rowSpacing;
 
-    double frameWidth =
+    final frameWidth =
         max(labelsWidth + valuesWidth, pointValuePainter?.size.width ?? 0) +
         theme.labelValueSpacing +
         theme.framePadding * 2 +
         theme.frameMargin * 2;
-    double frameHeight =
+    final frameHeight =
         max(labelsHeight, valuesHeight) +
         (pointValuePainter != null
             ? (pointValuePainter.size.height + theme.pointRowSpacing)
@@ -299,7 +295,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
         theme.framePadding * 2 +
         theme.frameMargin * 2;
 
-    Rect tooltipArea = Rect.fromPoints(
+    var tooltipArea = Rect.fromPoints(
       anchorPosition,
       anchorPosition.translate(frameWidth, frameHeight),
     );
@@ -337,7 +333,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
     );
     drawPath(canvas: canvas, path: framePath, style: theme.frameStyle);
 
-    Offset anchor = anchorPosition.translate(
+    var anchor = anchorPosition.translate(
       theme.framePadding + theme.frameMargin,
       theme.framePadding + theme.frameMargin,
     );
@@ -348,7 +344,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
         pointValuePainter.size.height + theme.pointRowSpacing,
       );
     }
-    for (var labelValuePair in textPainters) {
+    for (final labelValuePair in textPainters) {
       labelValuePair.first!.paint(canvas, anchor);
       labelValuePair.last!.paint(
         canvas,
@@ -378,7 +374,7 @@ class GTooltipRender extends GRender<GTooltip, GTooltipTheme> {
       return;
     }
     WidgetsBinding.instance.addPostFrameCallback((f) {
-      for (var panel in panels) {
+      for (final panel in panels) {
         if (panel.tooltip?.tooltipNotifier != null) {
           panel.tooltip!.tooltipNotifier!.value = null;
         }

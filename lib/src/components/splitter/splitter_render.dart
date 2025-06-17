@@ -1,10 +1,10 @@
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../panel/panel.dart';
-import '../render.dart';
-import 'splitter.dart';
-import 'splitter_theme.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/render.dart';
+import 'package:financial_chart/src/components/splitter/splitter.dart';
+import 'package:financial_chart/src/components/splitter/splitter_theme.dart';
 
 /// The render for [GSplitter].
 class GSplitterRender extends GRender<GSplitter, GSplitterTheme> {
@@ -13,18 +13,16 @@ class GSplitterRender extends GRender<GSplitter, GSplitterTheme> {
   void doRender({
     required Canvas canvas,
     required GChart chart,
-    GPanel? panel,
     required GSplitter component,
     required Rect area,
     required GSplitterTheme theme,
+    GPanel? panel,
   }) {
-    final crossPosition =
-        chart.crosshair.getCrossPosition() ??
-        const Offset(double.infinity, double.infinity);
+    final crossPosition = chart.crosshair.getCrossPosition() ?? Offset.infinite;
     if (chart.isScaling) {
       return;
     }
-    for (int p = 0; p < chart.panels.length - 1; p++) {
+    for (var p = 0; p < chart.panels.length - 1; p++) {
       final panel = chart.panels[p];
       final nextPanel = chart.nextVisiblePanel(startIndex: p + 1);
       if (panel.splitterArea().contains(crossPosition) ||
@@ -50,11 +48,11 @@ class GSplitterRender extends GRender<GSplitter, GSplitterTheme> {
     required Rect area,
     required GSplitterTheme theme,
   }) {
-    Offset center = area.center;
-    double handleLineWidthHalf = theme.handleWidth * 0.5 * 0.6;
-    double handleLineOffset = area.height * 0.2;
+    final center = area.center;
+    final handleLineWidthHalf = theme.handleWidth * 0.5 * 0.6;
+    final handleLineOffset = area.height * 0.2;
 
-    Path linePath = Path();
+    final linePath = Path();
     addLinePath(
       toPath: linePath,
       x1: area.left,
@@ -64,7 +62,7 @@ class GSplitterRender extends GRender<GSplitter, GSplitterTheme> {
     );
     drawPath(canvas: canvas, path: linePath, style: theme.lineStyle);
 
-    Path rectPath = Path();
+    final rectPath = Path();
     addRectPath(
       toPath: rectPath,
       rect: Rect.fromCenter(
@@ -76,7 +74,7 @@ class GSplitterRender extends GRender<GSplitter, GSplitterTheme> {
     );
     drawPath(canvas: canvas, path: rectPath, style: theme.handleStyle);
 
-    Path handleLinesPath = Path();
+    final handleLinesPath = Path();
     addLinePath(
       toPath: handleLinesPath,
       x1: center.dx - handleLineWidthHalf,

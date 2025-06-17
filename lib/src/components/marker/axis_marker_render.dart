@@ -1,17 +1,17 @@
 import 'dart:math';
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../../values/range.dart';
-import '../axis/axis.dart';
-import '../component.dart';
-import '../panel/panel.dart';
-import '../viewport_h.dart';
-import '../viewport_v.dart';
-import 'axis_marker.dart';
-import 'axis_marker_theme.dart';
-import 'marker_theme.dart';
-import 'marker_render.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/axis/axis.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/marker/axis_marker.dart';
+import 'package:financial_chart/src/components/marker/axis_marker_theme.dart';
+import 'package:financial_chart/src/components/marker/marker_render.dart';
+import 'package:financial_chart/src/components/marker/marker_theme.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
+import 'package:financial_chart/src/values/range.dart';
 
 /// Render for [GAxisMarker].
 abstract class GAxisMarkerRender<M extends GAxisMarker>
@@ -31,7 +31,7 @@ abstract class GAxisMarkerRender<M extends GAxisMarker>
     if (valueRange.isEmpty) {
       return;
     }
-    Path valueRangePath = Path();
+    final valueRangePath = Path();
     final bottom = valueViewPort.valueToPosition(axisArea, valueRange.begin!);
     final top = valueViewPort.valueToPosition(axisArea, valueRange.end!);
     addRectPath(
@@ -82,14 +82,14 @@ abstract class GAxisMarkerRender<M extends GAxisMarker>
     if (pointRange.isEmpty) {
       return;
     }
-    Path pointRangePath = Path();
+    final pointRangePath = Path();
     final start = pointViewPort.pointToPosition(
       axisArea,
-      pointRange.begin!.toDouble(),
+      pointRange.begin!,
     );
     final end = pointViewPort.pointToPosition(
       axisArea,
-      pointRange.end!.toDouble(),
+      pointRange.end!,
     );
     addRectPath(
       toPath: pointRangePath,

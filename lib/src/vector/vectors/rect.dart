@@ -1,6 +1,6 @@
+import 'package:financial_chart/src/vector/vectors/extensions.dart';
+import 'package:financial_chart/src/vector/vectors/line.dart';
 import 'package:vector_math/vector_math.dart';
-import 'line.dart';
-import 'extensions.dart';
 
 class RectUtil {
   static (double left, double top, double right, double bottm) getLTRB(
@@ -9,10 +9,10 @@ class RectUtil {
     double x2,
     double y2,
   ) {
-    double left = x1 < x2 ? x1 : x2;
-    double right = x1 > x2 ? x1 : x2;
-    double top = y1 < y2 ? y1 : y2;
-    double bottom = y1 > y2 ? y1 : y2;
+    final left = x1 < x2 ? x1 : x2;
+    final right = x1 > x2 ? x1 : x2;
+    final top = y1 < y2 ? y1 : y2;
+    final bottom = y1 > y2 ? y1 : y2;
     return (left, top, right, bottom);
   }
 
@@ -26,12 +26,12 @@ class RectUtil {
     double rotationTheta = 0,
   }) {
     final (left, top, right, bottom) = getLTRB(x1, y1, x2, y2);
-    Vector2 center = Vector2((left + right) / 2, (top + bottom) / 2);
-    Vector2 point = Vector2(px, py);
+    final center = Vector2((left + right) / 2, (top + bottom) / 2);
+    final point = Vector2(px, py);
     if (rotationTheta != 0) {
       point.rotate(-rotationTheta, center: center);
     }
-    Vector2 result = Vector2(0, 0);
+    final result = Vector2(0, 0);
 
     if (point.x <= center.x) {
       if (point.y <= center.y) {
@@ -147,7 +147,7 @@ class RectUtil {
     double py, {
     double rotationTheta = 0,
   }) {
-    Vector2 nearestPoint = nearestPointOnRect(
+    final nearestPoint = nearestPointOnRect(
       x1,
       y1,
       x2,
@@ -168,9 +168,9 @@ class RectUtil {
     double py, {
     double rotationTheta = 0,
   }) {
-    Vector2 point = Vector2(px, py);
+    final point = Vector2(px, py);
     final (left, top, right, bottom) = getLTRB(x1, y1, x2, y2);
-    Vector2 center = Vector2((left + right) / 2, (top + bottom) / 2);
+    final center = Vector2((left + right) / 2, (top + bottom) / 2);
     if (rotationTheta != 0) {
       point.rotate(-rotationTheta, center: center);
     }
@@ -203,6 +203,6 @@ class RectUtil {
       py,
       rotationTheta: rotationTheta,
     );
-    return (distance <= (epsilon ?? 5.0));
+    return distance <= (epsilon ?? 5.0);
   }
 }

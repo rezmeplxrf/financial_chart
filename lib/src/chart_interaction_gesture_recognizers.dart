@@ -2,12 +2,12 @@ part of 'chart_interaction.dart';
 
 /// Custom gesture recognizers for handling events on the chart.
 class GChartScaleGestureRecognizer extends ScaleGestureRecognizer {
-  GChart? chart;
   GChartScaleGestureRecognizer({
     super.supportedDevices,
     this.chart,
     super.dragStartBehavior = DragStartBehavior.down,
   });
+  GChart? chart;
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
@@ -54,8 +54,8 @@ class GChartScaleGestureRecognizer extends ScaleGestureRecognizer {
 /// Custom gesture recognizer for handling vertical drag events on the chart.
 class GChartVerticalDragGestureRecognizer
     extends VerticalDragGestureRecognizer {
-  GChart? chart;
   GChartVerticalDragGestureRecognizer({super.supportedDevices, this.chart});
+  GChart? chart;
 
   GestureArenaMember? _hijackedCaptain;
   @override
@@ -107,7 +107,7 @@ class GChartVerticalDragGestureRecognizer
     for (final panel in (chart?.panels ?? <GPanel>[])) {
       if (panel.graphArea().contains(event.localPosition) &&
           panel.graphPanMode != GGraphPanMode.none) {
-        GGraph? graph =
+        final graph =
             chart?.hitTestPanelGraphs(
               panel: panel,
               position: event.localPosition,
@@ -126,8 +126,8 @@ class GChartVerticalDragGestureRecognizer
 /// Custom gesture recognizer for handling horizontal drag events on the chart.
 class GChartHorizontalDragGestureRecognizer
     extends HorizontalDragGestureRecognizer {
-  GChart? chart;
   GChartHorizontalDragGestureRecognizer({super.supportedDevices, this.chart});
+  GChart? chart;
   GestureArenaMember? _hijackedCaptain;
 
   @override
@@ -157,8 +157,11 @@ class GChartHorizontalDragGestureRecognizer
   @override
   void addAllowedPointer(PointerDownEvent event) {
     // splitters do not allow horizontal drag
-    for (final panel in (chart?.panels ?? [])) {
-      if (panel.resizable &&
+    if (chart?.panels == null) {
+      return;
+    }
+    for (final panel in chart!.panels) {
+      if (panel.resizable == true &&
           panel.splitterArea().contains(event.localPosition)) {
         return;
       }
@@ -187,9 +190,8 @@ class GChartHorizontalDragGestureRecognizer
 }
 
 class GChartLongPressGestureRecognizer extends LongPressGestureRecognizer {
-  GChart? chart;
-
   GChartLongPressGestureRecognizer({super.supportedDevices, this.chart});
+  GChart? chart;
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
@@ -211,9 +213,8 @@ class GChartLongPressGestureRecognizer extends LongPressGestureRecognizer {
 }
 
 class GChartTapGestureRecognizer extends TapGestureRecognizer {
-  GChart? chart;
-
   GChartTapGestureRecognizer({super.supportedDevices, this.chart});
+  GChart? chart;
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
@@ -223,9 +224,8 @@ class GChartTapGestureRecognizer extends TapGestureRecognizer {
 }
 
 class GChartDoubleTapGestureRecognizer extends DoubleTapGestureRecognizer {
-  GChart? chart;
-
   GChartDoubleTapGestureRecognizer({super.supportedDevices, this.chart});
+  GChart? chart;
 
   @override
   void addAllowedPointer(PointerDownEvent event) {

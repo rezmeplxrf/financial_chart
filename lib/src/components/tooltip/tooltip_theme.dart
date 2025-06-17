@@ -1,10 +1,25 @@
-import '../../style/label_style.dart';
-import '../../style/paint_style.dart';
-import '../component_theme.dart';
-import 'tooltip.dart';
+import 'package:financial_chart/src/components/component_theme.dart';
+import 'package:financial_chart/src/components/tooltip/tooltip.dart';
+import 'package:financial_chart/src/style/label_style.dart';
+import 'package:financial_chart/src/style/paint_style.dart';
 
 /// Theme for [GTooltip] component.
 class GTooltipTheme extends GComponentTheme {
+
+  const GTooltipTheme({
+    required this.frameStyle,
+    required this.pointStyle,
+    required this.labelStyle,
+    required this.valueStyle,
+    this.pointHighlightStyle,
+    this.valueHighlightStyle,
+    this.frameCornerRadius = 2,
+    this.framePadding = 6,
+    this.frameMargin = 6,
+    this.labelValueSpacing = 16,
+    this.rowSpacing = 2,
+    this.pointRowSpacing = 6,
+  });
   /// Style of the tooltip frame.
   final PaintStyle frameStyle;
 
@@ -40,21 +55,6 @@ class GTooltipTheme extends GComponentTheme {
 
   /// Style of the highlighted value line.
   final PaintStyle? valueHighlightStyle;
-
-  const GTooltipTheme({
-    required this.frameStyle,
-    required this.pointStyle,
-    required this.labelStyle,
-    required this.valueStyle,
-    this.pointHighlightStyle,
-    this.valueHighlightStyle,
-    this.frameCornerRadius = 2,
-    this.framePadding = 6,
-    this.frameMargin = 6,
-    this.labelValueSpacing = 16,
-    this.rowSpacing = 2,
-    this.pointRowSpacing = 6,
-  });
 
   GTooltipTheme copyWith({
     PaintStyle? frameStyle,

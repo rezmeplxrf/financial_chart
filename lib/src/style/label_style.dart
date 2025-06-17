@@ -24,8 +24,11 @@
 // SOFTWARE.
 
 import 'package:equatable/equatable.dart';
+import 'package:financial_chart/src/style/paint_style.dart';
+import 'package:flutter/cupertino.dart' show MediaQuery;
+import 'package:flutter/material.dart' show MediaQuery;
 import 'package:flutter/painting.dart';
-import 'paint_style.dart';
+import 'package:flutter/widgets.dart' show MediaQuery;
 
 /// The style of a text label.
 class LabelStyle extends Equatable {

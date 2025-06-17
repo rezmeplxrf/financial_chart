@@ -1,9 +1,8 @@
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/components.dart';
+import 'package:financial_chart/src/markers/callout/callout_marker.dart';
+import 'package:financial_chart/src/vector/vectors/circle.dart';
 import 'package:flutter/painting.dart';
-
-import '../../chart.dart';
-import '../../components/components.dart';
-import '../../vector/vectors/circle.dart';
-import 'callout_marker.dart';
 
 class GCalloutMarkerRender
     extends GOverlayMarkerRender<GCalloutMarker, GOverlayMarkerTheme> {
@@ -36,8 +35,8 @@ class GCalloutMarkerRender
     );
     if (theme.labelStyle?.backgroundStyle != null) {
       final alignment = marker.alignment;
-      double pointerMargin = marker.pointerMargin;
-      Rect rect = blockArea.translate(
+      final pointerMargin = marker.pointerMargin;
+      final rect = blockArea.translate(
         alignment.x * pointerMargin,
         alignment.y * pointerMargin,
       );
@@ -65,21 +64,27 @@ class GCalloutMarkerRender
     Offset anchor,
     Rect textRect,
   ) {
-    double pointerSize = marker.pointerSize;
-    double borderRadius = theme.labelStyle?.backgroundCornerRadius ?? 0;
+    final pointerSize = marker.pointerSize;
+    final borderRadius = theme.labelStyle?.backgroundCornerRadius ?? 0;
     final alignment = marker.alignment;
-    Rect rect = textRect;
+    final rect = textRect;
 
-    Path path1 = Path();
-    path1.addRRect(
-      RRect.fromRectAndRadius(rect, Radius.circular(borderRadius)),
-    );
+    final path1 =
+        Path()..addRRect(
+          RRect.fromRectAndRadius(rect, Radius.circular(borderRadius)),
+        );
 
-    Path path2 = Path();
-    double triangleX1 = 0, triangleY1 = 0, triangleX2 = 0, triangleY2 = 0;
-    double cornerCx1 = 0, cornerCy1 = 0, cornerCx2 = 0, cornerCy2 = 0;
-    double targetX = anchor.dx;
-    double targetY = anchor.dy;
+    final path2 = Path();
+    double triangleX1 = 0;
+    double triangleY1 = 0;
+    double triangleX2 = 0;
+    double triangleY2 = 0;
+    double cornerCx1 = 0;
+    double cornerCy1 = 0;
+    double cornerCx2 = 0;
+    double cornerCy2 = 0;
+    final targetX = anchor.dx;
+    final targetY = anchor.dy;
     switch (alignment) {
       case Alignment.topLeft:
         triangleX1 = rect.right - pointerSize;
@@ -91,8 +96,9 @@ class GCalloutMarkerRender
         cornerCx2 = rect.right - borderRadius;
         cornerCy2 = rect.bottom - borderRadius;
         if (pointerSize >= borderRadius) {
-          path2.moveTo(triangleX1, triangleY1);
-          path2.lineTo(triangleX2, triangleY2);
+          path2
+            ..moveTo(triangleX1, triangleY1)
+            ..lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
             cornerCx1,
@@ -112,10 +118,10 @@ class GCalloutMarkerRender
             targetX,
             targetY,
           );
-          path2.moveTo(points1[0].x, points1[0].y);
-          path2.lineTo(points2[0].x, points2[0].y);
+          path2
+            ..moveTo(points1[0].x, points1[0].y)
+            ..lineTo(points2[0].x, points2[0].y);
         }
-        break;
       case Alignment.topCenter:
         triangleX1 = rect.left + rect.width / 2 - pointerSize;
         triangleY1 = rect.bottom;
@@ -126,8 +132,9 @@ class GCalloutMarkerRender
         cornerCx2 = rect.right - borderRadius;
         cornerCy2 = rect.bottom - borderRadius;
         if ((rect.width / 2 - pointerSize) >= borderRadius) {
-          path2.moveTo(triangleX1, triangleY1);
-          path2.lineTo(triangleX2, triangleY2);
+          path2
+            ..moveTo(triangleX1, triangleY1)
+            ..lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
             cornerCx1,
@@ -147,10 +154,10 @@ class GCalloutMarkerRender
             targetX,
             targetY,
           );
-          path2.moveTo(points1[0].x, points1[0].y);
-          path2.lineTo(points2[0].x, points2[0].y);
+          path2
+            ..moveTo(points1[0].x, points1[0].y)
+            ..lineTo(points2[0].x, points2[0].y);
         }
-        break;
       case Alignment.topRight:
         triangleX1 = rect.left;
         triangleY1 = rect.bottom - pointerSize;
@@ -161,8 +168,9 @@ class GCalloutMarkerRender
         cornerCx2 = rect.left + borderRadius;
         cornerCy2 = rect.bottom - borderRadius;
         if (pointerSize >= borderRadius) {
-          path2.moveTo(triangleX1, triangleY1);
-          path2.lineTo(triangleX2, triangleY2);
+          path2
+            ..moveTo(triangleX1, triangleY1)
+            ..lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
             cornerCx1,
@@ -182,10 +190,10 @@ class GCalloutMarkerRender
             targetX,
             targetY,
           );
-          path2.moveTo(points1[0].x, points1[0].y);
-          path2.lineTo(points2[0].x, points2[0].y);
+          path2
+            ..moveTo(points1[0].x, points1[0].y)
+            ..lineTo(points2[0].x, points2[0].y);
         }
-        break;
       case Alignment.centerLeft:
         triangleX1 = rect.right;
         triangleY1 = rect.top + rect.height / 2 - pointerSize;
@@ -196,8 +204,9 @@ class GCalloutMarkerRender
         cornerCx2 = rect.right - borderRadius;
         cornerCy2 = rect.bottom - borderRadius;
         if (pointerSize >= borderRadius) {
-          path2.moveTo(triangleX1, triangleY1);
-          path2.lineTo(triangleX2, triangleY2);
+          path2
+            ..moveTo(triangleX1, triangleY1)
+            ..lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
             cornerCx1,
@@ -217,10 +226,10 @@ class GCalloutMarkerRender
             targetX,
             targetY,
           );
-          path2.moveTo(points1[0].x, points1[0].y);
-          path2.lineTo(points2[0].x, points2[0].y);
+          path2
+            ..moveTo(points1[0].x, points1[0].y)
+            ..lineTo(points2[0].x, points2[0].y);
         }
-        break;
       case Alignment.centerRight:
         triangleX1 = rect.left;
         triangleY1 = rect.top + rect.height / 2 - pointerSize;
@@ -231,8 +240,9 @@ class GCalloutMarkerRender
         cornerCx2 = rect.left + borderRadius;
         cornerCy2 = rect.bottom - borderRadius;
         if (pointerSize >= borderRadius) {
-          path2.moveTo(triangleX1, triangleY1);
-          path2.lineTo(triangleX2, triangleY2);
+          path2
+            ..moveTo(triangleX1, triangleY1)
+            ..lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
             cornerCx1,
@@ -252,10 +262,10 @@ class GCalloutMarkerRender
             targetX,
             targetY,
           );
-          path2.moveTo(points1[0].x, points1[0].y);
-          path2.lineTo(points2[0].x, points2[0].y);
+          path2
+            ..moveTo(points1[0].x, points1[0].y)
+            ..lineTo(points2[0].x, points2[0].y);
         }
-        break;
       case Alignment.bottomLeft:
         triangleX1 = rect.right;
         triangleY1 = rect.top + pointerSize;
@@ -266,8 +276,9 @@ class GCalloutMarkerRender
         cornerCx2 = rect.right - borderRadius;
         cornerCy2 = rect.top + borderRadius;
         if (pointerSize >= borderRadius) {
-          path2.moveTo(triangleX1, triangleY1);
-          path2.lineTo(triangleX2, triangleY2);
+          path2
+            ..moveTo(triangleX1, triangleY1)
+            ..lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
             cornerCx1,
@@ -287,10 +298,10 @@ class GCalloutMarkerRender
             targetX,
             targetY,
           );
-          path2.moveTo(points1[0].x, points1[0].y);
-          path2.lineTo(points2[0].x, points2[0].y);
+          path2
+            ..moveTo(points1[0].x, points1[0].y)
+            ..lineTo(points2[0].x, points2[0].y);
         }
-        break;
       case Alignment.bottomCenter:
         triangleX1 = rect.left + rect.width / 2 + pointerSize;
         triangleY1 = rect.top;
@@ -301,8 +312,9 @@ class GCalloutMarkerRender
         cornerCx2 = rect.right - borderRadius;
         cornerCy2 = rect.top + borderRadius;
         if ((rect.width / 2 - pointerSize) >= borderRadius) {
-          path2.moveTo(triangleX1, triangleY1);
-          path2.lineTo(triangleX2, triangleY2);
+          path2
+            ..moveTo(triangleX1, triangleY1)
+            ..lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
             cornerCx1,
@@ -322,10 +334,10 @@ class GCalloutMarkerRender
             targetX,
             targetY,
           );
-          path2.moveTo(points1[0].x, points1[0].y);
-          path2.lineTo(points2[0].x, points2[0].y);
+          path2
+            ..moveTo(points1[0].x, points1[0].y)
+            ..lineTo(points2[0].x, points2[0].y);
         }
-        break;
       case Alignment.bottomRight:
         triangleX1 = rect.left;
         triangleY1 = rect.top + pointerSize;
@@ -336,8 +348,9 @@ class GCalloutMarkerRender
         cornerCx2 = rect.left + borderRadius;
         cornerCy2 = rect.top + borderRadius;
         if (pointerSize >= borderRadius) {
-          path2.moveTo(triangleX1, triangleY1);
-          path2.lineTo(triangleX2, triangleY2);
+          path2
+            ..moveTo(triangleX1, triangleY1)
+            ..lineTo(triangleX2, triangleY2);
         } else {
           final points1 = CircleUtil.intersectionPointsToLine(
             cornerCx1,
@@ -357,17 +370,18 @@ class GCalloutMarkerRender
             targetX,
             targetY,
           );
-          path2.moveTo(points1[0].x, points1[0].y);
-          path2.lineTo(points2[0].x, points2[0].y);
+          path2
+            ..moveTo(points1[0].x, points1[0].y)
+            ..lineTo(points2[0].x, points2[0].y);
         }
-        break;
       case Alignment.center:
         path2.moveTo(targetX, targetY);
     }
-    path2.lineTo(targetX, targetY);
-    path2.close();
+    path2
+      ..lineTo(targetX, targetY)
+      ..close();
 
-    Path path = Path.combine(PathOperation.union, path1, path2);
+    final path = Path.combine(PathOperation.union, path1, path2);
 
     return path;
   }

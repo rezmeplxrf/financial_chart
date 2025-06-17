@@ -1,14 +1,14 @@
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../../components/component.dart';
-import '../../components/marker/overlay_marker_theme.dart';
-import '../../components/marker/overlay_marker_render.dart';
-import '../../components/panel/panel.dart';
-import '../../components/render_util.dart';
-import '../../components/viewport_h.dart';
-import '../../components/viewport_v.dart';
-import 'oval_marker.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_render.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/render_util.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
+import 'package:financial_chart/src/markers/oval/oval_marker.dart';
 
 class GOvalMarkerRender
     extends GOverlayMarkerRender<GOvalMarker, GOverlayMarkerTheme> {
@@ -36,7 +36,7 @@ class GOvalMarkerRender
         valueViewPort: valueViewPort,
         pointViewPort: pointViewPort,
       );
-      Path path = addOvalPath(rect: Rect.fromPoints(start, end));
+      final path = addOvalPath(rect: Rect.fromPoints(start, end));
       drawPath(canvas: canvas, path: path, style: theme.markerStyle);
     } else if (marker.keyCoordinates.length == 1 &&
         marker.pointRadiusSize != null &&
@@ -56,13 +56,13 @@ class GOvalMarkerRender
         pointViewPort: pointViewPort,
         valueViewPort: valueViewPort,
       );
-      Rect rect = GRenderUtil.rectFromAnchorAndAlignment(
+      final rect = GRenderUtil.rectFromAnchorAndAlignment(
         anchor: anchor,
         width: pointRadius * 2,
         height: valueRadius * 2,
         alignment: marker.alignment,
       );
-      Path path = addOvalPath(rect: rect);
+      final path = addOvalPath(rect: rect);
       drawPath(canvas: canvas, path: path, style: theme.markerStyle);
     }
   }

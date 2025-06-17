@@ -1,20 +1,18 @@
 import 'dart:ui';
-import '../component.dart';
-import 'marker_render.dart';
-import 'marker_theme.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/marker/marker_render.dart';
+import 'package:financial_chart/src/components/marker/marker_theme.dart';
 
 /// Base class for markers.
 class GMarker extends GComponent {
-  static const int kDefaultLayer = 1000;
-
   GMarker({
     super.id,
     super.visible = true,
     super.theme,
     super.render,
     super.layer,
-    super.hitTestMode,
   });
+  static const int kDefaultLayer = 1000;
 
   @override
   GMarkerRender<GMarker, GMarkerTheme> getRender() {
@@ -24,12 +22,12 @@ class GMarker extends GComponent {
   bool hitTest({
     required Offset position,
     double? epsilon,
-    autoHighlight = true,
+    bool autoHighlight = true,
   }) {
     if (hitTestMode == GHitTestMode.none) {
       return false;
     }
-    bool test = getRender().hitTest(position: position, epsilon: epsilon);
+    final test = getRender().hitTest(position: position, epsilon: epsilon);
     if (autoHighlight) {
       highlight = test;
     }

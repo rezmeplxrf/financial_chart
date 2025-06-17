@@ -1,29 +1,16 @@
+import 'package:financial_chart/src/components/axis/axis_theme.dart';
+import 'package:financial_chart/src/components/background/background_theme.dart';
+import 'package:financial_chart/src/components/crosshair/crosshair_theme.dart';
+import 'package:financial_chart/src/components/graph/graph_theme.dart';
+import 'package:financial_chart/src/components/marker/axis_marker_theme.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/components/panel/panel_theme.dart';
+import 'package:financial_chart/src/components/splitter/splitter_theme.dart';
+import 'package:financial_chart/src/components/tooltip/tooltip_theme.dart';
 import 'package:flutter/foundation.dart';
-
-import '../components/background/background_theme.dart';
-import '../components/marker/overlay_marker_theme.dart';
-import '../components/marker/axis_marker_theme.dart';
-import '../components/panel/panel_theme.dart';
-
-import '../components/tooltip/tooltip_theme.dart';
-import '../components/axis/axis_theme.dart';
-import '../components/crosshair/crosshair_theme.dart';
-import '../components/graph/graph_theme.dart';
-import '../components/splitter/splitter_theme.dart';
 
 /// Theme container for all chart components.
 class GTheme with Diagnosticable {
-  final String name;
-  final GBackgroundTheme backgroundTheme;
-  final GPanelTheme panelTheme;
-  final GAxisTheme pointAxisTheme;
-  final GAxisTheme valueAxisTheme;
-  final GCrosshairTheme crosshairTheme;
-  final GTooltipTheme tooltipTheme;
-  final GSplitterTheme splitterTheme;
-  final GAxisMarkerTheme axisMarkerTheme;
-  final GOverlayMarkerTheme overlayMarkerTheme;
-  final Map<String, GGraphTheme> graphThemes;
 
   const GTheme({
     required this.name,
@@ -38,6 +25,17 @@ class GTheme with Diagnosticable {
     required this.axisMarkerTheme,
     required this.overlayMarkerTheme,
   });
+  final String name;
+  final GBackgroundTheme backgroundTheme;
+  final GPanelTheme panelTheme;
+  final GAxisTheme pointAxisTheme;
+  final GAxisTheme valueAxisTheme;
+  final GCrosshairTheme crosshairTheme;
+  final GTooltipTheme tooltipTheme;
+  final GSplitterTheme splitterTheme;
+  final GAxisMarkerTheme axisMarkerTheme;
+  final GOverlayMarkerTheme overlayMarkerTheme;
+  final Map<String, GGraphTheme> graphThemes;
 
   GTheme extend({
     String? name,

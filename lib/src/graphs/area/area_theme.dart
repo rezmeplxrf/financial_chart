@@ -1,10 +1,19 @@
-import '../../components/graph/graph_theme.dart';
-import '../../components/marker/axis_marker_theme.dart';
-import '../../components/marker/overlay_marker_theme.dart';
-import '../../style/paint_style.dart';
+import 'package:financial_chart/src/components/graph/graph_theme.dart';
+import 'package:financial_chart/src/components/marker/axis_marker_theme.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/style/paint_style.dart';
 
 /// Theme for area graph
 class GGraphAreaTheme extends GGraphTheme {
+
+  const GGraphAreaTheme({
+    required this.styleAboveBase,
+    required this.styleBelowBase,
+    this.styleBaseLine,
+    super.axisMarkerTheme,
+    super.overlayMarkerTheme,
+    super.highlightMarkerTheme,
+  });
   /// The style for the area above the base line.
   ///
   /// If stroke styles specified the border of the area will be drawn with stroke style.
@@ -19,15 +28,6 @@ class GGraphAreaTheme extends GGraphTheme {
   ///
   /// if null, base lines will be drawn with stroke styles in [styleAboveBase] / [styleBelowBase]
   final PaintStyle? styleBaseLine;
-
-  const GGraphAreaTheme({
-    required this.styleAboveBase,
-    required this.styleBelowBase,
-    this.styleBaseLine,
-    super.axisMarkerTheme,
-    super.overlayMarkerTheme,
-    super.highlightMarkerTheme,
-  });
 
   GGraphAreaTheme copyWith({
     PaintStyle? styleBaseLine,

@@ -1,10 +1,10 @@
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../../components/graph/graph_render.dart';
-import '../../components/graph/graph_theme.dart';
-import '../../components/panel/panel.dart';
-import 'group.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/graph/graph_render.dart';
+import 'package:financial_chart/src/components/graph/graph_theme.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/graphs/group/group.dart';
 
 class GGraphGroupRender extends GGraphRender<GGraphGroup, GGraphTheme> {
   GGraphGroupRender();
@@ -12,23 +12,23 @@ class GGraphGroupRender extends GGraphRender<GGraphGroup, GGraphTheme> {
   void doRender({
     required Canvas canvas,
     required GChart chart,
-    GPanel? panel,
     required GGraphGroup component,
     required Rect area,
     required GGraphTheme theme,
+    GPanel? panel,
   }) {
     if (childrenRenders.isEmpty) {
-      for (var child in component.graphs) {
+      for (final child in component.graphs) {
         final render = child.getRender() as GGraphRender;
         childrenRenders.add(render);
       }
     }
-    for (var child in component.graphs) {
+    for (final child in component.graphs) {
       if (child.visible == false) {
         continue;
       }
-      final render = child.getRender() as GGraphRender;
-      render.doRender(
+
+      (child.getRender() as GGraphRender).doRender(
         canvas: canvas,
         chart: chart,
         panel: panel,
@@ -46,7 +46,7 @@ class GGraphGroupRender extends GGraphRender<GGraphGroup, GGraphTheme> {
 
   @override
   bool hitTest({required Offset position, double? epsilon}) {
-    for (var child in childrenRenders) {
+    for (final child in childrenRenders) {
       if (child.hitTest(position: position, epsilon: epsilon)) {
         return true;
       }

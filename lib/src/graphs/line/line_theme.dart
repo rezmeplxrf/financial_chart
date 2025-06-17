@@ -1,23 +1,22 @@
-import '../../components/marker/axis_marker_theme.dart';
-import '../../components/marker/overlay_marker_theme.dart';
-import '../../style/paint_style.dart';
-import '../../components/graph/graph_theme.dart';
+import 'package:financial_chart/src/components/graph/graph_theme.dart';
+import 'package:financial_chart/src/components/marker/axis_marker_theme.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/style/paint_style.dart';
 
 /// Theme for line graph
 class GGraphLineTheme extends GGraphTheme {
-  final double pointRadius;
-
-  final PaintStyle lineStyle;
-  final PaintStyle pointStyle;
 
   const GGraphLineTheme({
     required this.lineStyle,
-    this.pointRadius = 0,
-    required this.pointStyle,
+    required this.pointStyle, this.pointRadius = 0,
     super.axisMarkerTheme,
     super.overlayMarkerTheme,
     super.highlightMarkerTheme,
   }) : assert(pointRadius >= 0);
+  final double pointRadius;
+
+  final PaintStyle lineStyle;
+  final PaintStyle pointStyle;
 
   GGraphLineTheme copyWith({
     PaintStyle? lineStyle,

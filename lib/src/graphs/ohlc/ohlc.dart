@@ -1,12 +1,27 @@
+import 'package:financial_chart/src/components/components.dart';
+import 'package:financial_chart/src/graphs/ohlc/ohlc_render.dart';
+import 'package:financial_chart/src/values/value.dart';
 import 'package:flutter/foundation.dart';
-
-import '../../components/components.dart';
-import '../../values/value.dart';
-import 'ohlc_render.dart';
 
 /// OHLC (and Candle) graph
 class GGraphOhlc<T extends GGraphTheme> extends GGraph<T> {
-  static const String typeName = "ohlc";
+  GGraphOhlc({
+    required this.ohlcValueKeys,
+    super.id,
+    super.valueViewPortId,
+    bool drawAsCandle = true,
+    super.layer,
+    super.visible,
+    super.crosshairHighlightValueKeys,
+    super.overlayMarkers,
+    T? theme,
+    super.render,
+  }) : _drawAsCandle = GValue(drawAsCandle) {
+    assert(ohlcValueKeys.length == 4, 'The length of ohlcValueKeys must be 4.');
+    super.theme = theme;
+    super.render = render ?? GGraphOhlcRender();
+  }
+  static const String typeName = 'ohlc';
 
   /// The four keys of the OHLC values in the data source.
   final List<String> ohlcValueKeys;
@@ -19,28 +34,11 @@ class GGraphOhlc<T extends GGraphTheme> extends GGraph<T> {
   @override
   String get type => typeName;
 
-  GGraphOhlc({
-    super.id,
-    super.valueViewPortId,
-    required this.ohlcValueKeys,
-    bool drawAsCandle = true,
-    super.layer,
-    super.visible,
-    super.hitTestMode,
-    super.crosshairHighlightValueKeys,
-    super.overlayMarkers,
-    T? theme,
-    super.render,
-  }) : _drawAsCandle = GValue(drawAsCandle) {
-    assert(ohlcValueKeys.length == 4, "The length of ohlcValueKeys must be 4.");
-    super.theme = theme;
-    super.render = render ?? GGraphOhlcRender();
-  }
-
   @override
-  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(IterableProperty<String>('ohlcValueKeys', ohlcValueKeys));
-    properties.add(DiagnosticsProperty<bool>('drawAsCandle', drawAsCandle));
+    properties
+      ..add(IterableProperty<String>('ohlcValueKeys', ohlcValueKeys))
+      ..add(DiagnosticsProperty<bool>('drawAsCandle', drawAsCandle));
   }
 }

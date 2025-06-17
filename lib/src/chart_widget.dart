@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/chart_interaction.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'chart.dart';
-import 'chart_interaction.dart';
 
 Widget _defaultLoadingWidgetBuilder(BuildContext context, GChart chart) {
   return Container(
@@ -20,7 +20,7 @@ Widget _defaultLoadingWidgetBuilder(BuildContext context, GChart chart) {
 Widget _defaultNoDataWidgetBuilder(BuildContext context, GChart chart) {
   return Center(
     child: Text(
-      "No data",
+      'No data',
       style: TextStyle(
         color:
             chart.theme.pointAxisTheme.labelTheme.labelStyle.textStyle?.color,
@@ -32,6 +32,16 @@ Widget _defaultNoDataWidgetBuilder(BuildContext context, GChart chart) {
 
 // ignore_for_file: avoid_print
 class GChartWidget extends StatefulWidget {
+  const GChartWidget({
+    required this.chart,
+    required this.tickerProvider,
+    super.key,
+    this.noDataWidgetBuilder = _defaultNoDataWidgetBuilder,
+    this.loadingWidgetBuilder = _defaultLoadingWidgetBuilder,
+    this.onPointerDown,
+    this.onPointerUp,
+    this.supportedDevices,
+  });
   final GChart chart;
   final TickerProvider tickerProvider;
   final Widget Function(BuildContext context, GChart chart)
@@ -40,16 +50,6 @@ class GChartWidget extends StatefulWidget {
   final PointerDownEventListener? onPointerDown;
   final PointerUpEventListener? onPointerUp;
   final Set<PointerDeviceKind>? supportedDevices;
-  const GChartWidget({
-    super.key,
-    required this.chart,
-    required this.tickerProvider,
-    this.noDataWidgetBuilder = _defaultNoDataWidgetBuilder,
-    this.loadingWidgetBuilder = _defaultLoadingWidgetBuilder,
-    this.onPointerDown,
-    this.onPointerUp,
-    this.supportedDevices,
-  });
 
   @override
   GChartWidgetState createState() => GChartWidgetState();
@@ -67,11 +67,10 @@ class GChartWidgetState extends State<GChartWidget> {
   late GChartInteractionHandler _interactionHandler;
 
   void initializeChart() {
-    _interactionHandler = GChartInteractionHandler();
-    _interactionHandler.attach(widget.chart);
-    if (widget.chart.initialized) {
-      return;
-    }
+    _interactionHandler = GChartInteractionHandler()..attach(widget.chart);
+    // if (widget.chart.initialized) {
+    //   return;
+    // }
     widget.chart.internalInitialize(
       vsync: widget.tickerProvider,
       interactionHandler: _interactionHandler,
@@ -107,8 +106,8 @@ class GChartWidgetState extends State<GChartWidget> {
     final controller = _interactionHandler;
     return LayoutBuilder(
       builder: (context, constraints) {
-        Size viewSize = MediaQuery.of(context).size;
-        Rect rect = Rect.fromLTRB(
+        final viewSize = MediaQuery.of(context).size;
+        final rect = Rect.fromLTRB(
           0,
           0,
           (constraints.maxWidth == double.infinity)
@@ -292,8 +291,8 @@ class _TooltipSingleChildLayoutDelegate extends SingleChildLayoutDelegate {
 }
 
 class GChartPainter extends CustomPainter {
-  final GChart chart;
   GChartPainter({required this.chart}) : super(repaint: chart);
+  final GChart chart;
 
   @override
   void paint(Canvas canvas, Size size) {

@@ -1,14 +1,10 @@
-import '../../components/graph/graph_theme.dart';
-import '../../components/marker/axis_marker_theme.dart';
-import '../../components/marker/overlay_marker_theme.dart';
-import '../../style/paint_style.dart';
+import 'package:financial_chart/src/components/graph/graph_theme.dart';
+import 'package:financial_chart/src/components/marker/axis_marker_theme.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/style/paint_style.dart';
 
 /// Theme for grid lines
 class GGraphBarTheme extends GGraphTheme {
-  final double barWidthRatio;
-
-  final PaintStyle barStyleAboveBase;
-  final PaintStyle barStyleBelowBase;
 
   const GGraphBarTheme({
     required this.barStyleAboveBase,
@@ -18,6 +14,10 @@ class GGraphBarTheme extends GGraphTheme {
     super.overlayMarkerTheme,
     super.highlightMarkerTheme,
   }) : assert(barWidthRatio > 0 && barWidthRatio <= 1);
+  final double barWidthRatio;
+
+  final PaintStyle barStyleAboveBase;
+  final PaintStyle barStyleBelowBase;
 
   GGraphBarTheme copyWith({
     PaintStyle? barStyleAboveBase,

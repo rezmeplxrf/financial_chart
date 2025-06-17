@@ -1,11 +1,10 @@
 import 'dart:ui';
 
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/components.dart';
+import 'package:financial_chart/src/values/pair.dart';
+import 'package:financial_chart/src/values/value.dart';
 import 'package:flutter/foundation.dart';
-
-import '../../chart.dart';
-import '../../values/value.dart';
-import '../../values/pair.dart';
-import '../components.dart';
 
 /// The crosshair trigger events.
 ///
@@ -27,6 +26,7 @@ enum GCrosshairTrigger {
 }
 
 /// The crosshair position update strategy.
+// ignore: one_member_abstracts
 abstract class GCrosshairUpdateStrategy {
   /// show / hide /update position of the crosshair in this method.
   void update({
@@ -40,16 +40,16 @@ abstract class GCrosshairUpdateStrategy {
 /// The crosshair update strategy which
 /// update the crosshair position based on the provided on/off triggers.
 class GCrosshairUpdateStrategyByTriggers implements GCrosshairUpdateStrategy {
+  GCrosshairUpdateStrategyByTriggers({
+    required this.onTriggers,
+    required this.offTriggers,
+  });
+
   /// The triggers that will show the crosshair.
   final Set<GCrosshairTrigger> onTriggers;
 
   /// The triggers that will hide the crosshair.
   final Set<GCrosshairTrigger> offTriggers;
-
-  GCrosshairUpdateStrategyByTriggers({
-    required this.onTriggers,
-    required this.offTriggers,
-  });
 
   @override
   void update({
@@ -59,8 +59,8 @@ class GCrosshairUpdateStrategyByTriggers implements GCrosshairUpdateStrategy {
     double? y,
   }) {
     final crossPosition = chart.crosshair.crossPosition;
-    double? newX = x ?? crossPosition.first;
-    double? newY = y ?? crossPosition.last;
+    final newX = x ?? crossPosition.first;
+    final newY = y ?? crossPosition.last;
     if (newX == null || newY == null) {
       crossPosition.clear();
     } else {
@@ -117,6 +117,28 @@ class GCrosshairUpdateStrategyNone implements GCrosshairUpdateStrategy {
 
 /// Crosshair with vertical and horizontal lines over the chart when pointer is moving over it.
 class GCrosshair extends GComponent {
+  GCrosshair({
+    super.id,
+    super.visible,
+    super.theme,
+    GRender? render,
+    bool snapToPoint = true,
+    bool pointLinesVisible = true,
+    bool valueLinesVisible = true,
+    bool pointLabelsVisible = true,
+    bool valueLabelsVisible = true,
+    GCrosshairUpdateStrategy? updateStrategy,
+  }) : _snapToPoint = GValue<bool>(snapToPoint),
+       _pointLinesVisible = GValue<bool>(pointLinesVisible),
+       _valueLinesVisible = GValue<bool>(valueLinesVisible),
+       _pointAxisLabelsVisible = GValue<bool>(pointLabelsVisible),
+       _valueAxisLabelsVisible = GValue<bool>(valueLabelsVisible) {
+    this.render = render ?? const GCrosshairRender();
+    if (updateStrategy != null) {
+      _updateStrategy.value = updateStrategy;
+    }
+  }
+
   /// the pointer position.
   final GDoublePair crossPosition = GDoublePair.empty();
 
@@ -154,28 +176,6 @@ class GCrosshair extends GComponent {
   set updateStrategy(GCrosshairUpdateStrategy value) =>
       _updateStrategy.value = value;
 
-  GCrosshair({
-    super.id,
-    super.visible,
-    super.theme,
-    GRender? render,
-    bool snapToPoint = true,
-    bool pointLinesVisible = true,
-    bool valueLinesVisible = true,
-    bool pointLabelsVisible = true,
-    bool valueLabelsVisible = true,
-    GCrosshairUpdateStrategy? updateStrategy,
-  }) : _snapToPoint = GValue<bool>(snapToPoint),
-       _pointLinesVisible = GValue<bool>(pointLinesVisible),
-       _valueLinesVisible = GValue<bool>(valueLinesVisible),
-       _pointAxisLabelsVisible = GValue<bool>(pointLabelsVisible),
-       _valueAxisLabelsVisible = GValue<bool>(valueLabelsVisible) {
-    this.render = render ?? const GCrosshairRender();
-    if (updateStrategy != null) {
-      _updateStrategy.value = updateStrategy;
-    }
-  }
-
   /// update the crosshair position by provided [updateStrategy]
   void updateCrossPosition({
     required GChart chart,
@@ -192,7 +192,7 @@ class GCrosshair extends GComponent {
   }
 
   /// clear the crosshair position
-  clearCrossPosition() {
+  void clearCrossPosition() {
     if (crossPosition.isEmpty) {
       return;
     }
@@ -210,30 +210,31 @@ class GCrosshair extends GComponent {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-      DiagnosticsProperty<GCrosshairUpdateStrategy>(
-        'updateStrategy',
-        updateStrategy,
-      ),
-    );
-    properties.add(DiagnosticsProperty<bool>('snapToPoint', snapToPoint));
-    properties.add(
-      DiagnosticsProperty<bool>('pointLinesVisible', pointLinesVisible),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>('valueLinesVisible', valueLinesVisible),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>(
-        'pointAxisLabelsVisible',
-        pointAxisLabelsVisible,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>(
-        'valueAxisLabelsVisible',
-        valueAxisLabelsVisible,
-      ),
-    );
+    properties
+      ..add(
+        DiagnosticsProperty<GCrosshairUpdateStrategy>(
+          'updateStrategy',
+          updateStrategy,
+        ),
+      )
+      ..add(DiagnosticsProperty<bool>('snapToPoint', snapToPoint))
+      ..add(
+        DiagnosticsProperty<bool>('pointLinesVisible', pointLinesVisible),
+      )
+      ..add(
+        DiagnosticsProperty<bool>('valueLinesVisible', valueLinesVisible),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'pointAxisLabelsVisible',
+          pointAxisLabelsVisible,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'valueAxisLabelsVisible',
+          valueAxisLabelsVisible,
+        ),
+      );
   }
 }

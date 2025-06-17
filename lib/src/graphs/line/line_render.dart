@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../../components/components.dart';
-import '../../vector/vectors.dart';
-import '../graphs.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/components.dart';
+import 'package:financial_chart/src/graphs/graphs.dart';
+import 'package:financial_chart/src/vector/vectors.dart';
 
 class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
   @override
@@ -20,10 +20,10 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
   }) {
     final dataSource = chart.dataSource;
 
-    final List<Vector2> linePoints = <Vector2>[];
-    final List<Vector2> highlightMarks = <Vector2>[];
-    double highlightInterval = theme.highlightMarkerTheme?.interval ?? 1000.0;
-    int highlightIntervalPoints =
+    final linePoints = <Vector2>[];
+    final highlightMarks = <Vector2>[];
+    final highlightInterval = theme.highlightMarkerTheme?.interval ?? 1000.0;
+    final highlightIntervalPoints =
         (highlightInterval / pointViewPort.pointSize(area.width)).round();
     _hitTestLinePoints.clear();
     for (
@@ -31,15 +31,15 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
       point <= pointViewPort.endPoint.ceil();
       point++
     ) {
-      double? value = dataSource.getSeriesValue(
+      final value = dataSource.getSeriesValue(
         point: point,
         key: graph.valueKey,
       );
       if (value == null || value.isNaN || value.isInfinite) {
         continue;
       }
-      double x = pointViewPort.pointToPosition(area, point.toDouble());
-      double y = valueViewPort.valueToPosition(area, value);
+      final x = pointViewPort.pointToPosition(area, point.toDouble());
+      final y = valueViewPort.valueToPosition(area, value);
       linePoints.add(Vector2(x, y));
       if (graph.highlight && (point % highlightIntervalPoints == 0)) {
         highlightMarks.add(Vector2(x, y));
@@ -75,37 +75,40 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
     required List<Vector2> linePoints,
     required bool smoothing,
   }) {
-    List<Vector2> resultLinePoints = [];
-    Paint? linePaint = theme.lineStyle.getStrokePaint(
+    final resultLinePoints = <Vector2>[];
+    final linePaint = theme.lineStyle.getStrokePaint(
       gradientBounds: theme.lineStyle.gradientBounds ?? area,
     );
-    Paint? pointStrokePaint = theme.pointStyle.getStrokePaint(
+    final pointStrokePaint = theme.pointStyle.getStrokePaint(
       gradientBounds: theme.pointStyle.gradientBounds ?? area,
     );
-    Paint? pointFillPaint = theme.pointStyle.getFillPaint(
+    final pointFillPaint = theme.pointStyle.getFillPaint(
       gradientBounds: theme.pointStyle.gradientBounds ?? area,
     );
     if (pointFillPaint != null) {
-      pointFillPaint.strokeWidth = theme.pointRadius * 2;
-      pointFillPaint.style = PaintingStyle.fill;
-      pointFillPaint.strokeCap = pointStrokePaint?.strokeCap ?? StrokeCap.round;
+      pointFillPaint
+        ..strokeWidth = theme.pointRadius * 2
+        ..style = PaintingStyle.fill
+        ..strokeCap = pointStrokePaint?.strokeCap ?? StrokeCap.round;
     }
 
     // batch draw line segments
-    List<double> linesToDraw = [];
+    final linesToDraw = <double>[];
     if (smoothing) {
       final spline = SplineUtil.catmullRomSpline(linePoints, false);
       final splinePoints = SplineUtil.sampleSplines(spline, 10, false);
-      for (int i = 0; i < splinePoints.length; i++) {
-        linesToDraw.add(splinePoints[i].x);
-        linesToDraw.add(splinePoints[i].y);
+      for (var i = 0; i < splinePoints.length; i++) {
+        linesToDraw
+          ..add(splinePoints[i].x)
+          ..add(splinePoints[i].y);
       }
       resultLinePoints.addAll(splinePoints);
     } else {
-      for (int i = 0; i < linePoints.length; i++) {
+      for (var i = 0; i < linePoints.length; i++) {
         if (linePaint != null) {
-          linesToDraw.add(linePoints[i].x);
-          linesToDraw.add(linePoints[i].y);
+          linesToDraw
+            ..add(linePoints[i].x)
+            ..add(linePoints[i].y);
         }
       }
       resultLinePoints.addAll(linePoints);
@@ -118,9 +121,9 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
       );
     }
 
-    List<double> pointsToDraw = [];
+    final pointsToDraw = <double>[];
     // batch draw points fill
-    for (int i = 0; i < linePoints.length; i++) {
+    for (var i = 0; i < linePoints.length; i++) {
       if (theme.pointRadius > 0 &&
           theme.pointStyle.isNotEmpty &&
           i < linePoints.length - 1) {
@@ -142,7 +145,7 @@ class GGraphLineRender extends GGraphRender<GGraphLine, GGraphLineTheme> {
 
     // draw points stroke
     if (pointStrokePaint != null) {
-      for (int i = 0; i < linePoints.length; i++) {
+      for (var i = 0; i < linePoints.length; i++) {
         canvas.drawCircle(
           Offset(linePoints[i].x, linePoints[i].y),
           theme.pointRadius,

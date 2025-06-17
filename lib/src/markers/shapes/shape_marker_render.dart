@@ -1,16 +1,15 @@
 import 'dart:ui';
 
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_render.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/render_util.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
+import 'package:financial_chart/src/markers/shapes/shape_marker.dart';
 import 'package:flutter/painting.dart';
-
-import '../../chart.dart';
-import '../../components/component.dart';
-import '../../components/marker/overlay_marker_theme.dart';
-import '../../components/marker/overlay_marker_render.dart';
-import '../../components/panel/panel.dart';
-import '../../components/render_util.dart';
-import '../../components/viewport_h.dart';
-import '../../components/viewport_v.dart';
-import 'shape_marker.dart';
 
 class GShapeMarkerRender
     extends GOverlayMarkerRender<GShapeMarker, GOverlayMarkerTheme> {
@@ -51,12 +50,13 @@ class GShapeMarkerRender
       );
       final center = rect.center;
       //Path path = addOvalPath(rect: rect);
-      canvas.save();
-      canvas.translate(center.dx, center.dy);
+      canvas
+        ..save()
+        ..translate(center.dx, center.dy);
       if (marker.rotation != 0) {
         canvas.rotate(marker.rotation);
       }
-      Path path = marker.pathGenerator(radius);
+      final path = marker.pathGenerator(radius);
       drawPath(canvas: canvas, path: path, style: theme.markerStyle);
       canvas.restore();
     }

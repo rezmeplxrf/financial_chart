@@ -24,16 +24,16 @@
 // SOFTWARE.
 
 import 'dart:ui';
-import 'package:equatable/equatable.dart';
-import 'package:flutter/painting.dart' as painting;
 
-import 'dash_path.dart';
+import 'package:equatable/equatable.dart';
+import 'package:financial_chart/src/style/dash_path.dart';
+import 'package:flutter/painting.dart' as painting;
 
 /// Checks whether only one of the parameters is set. if [allowNone], none is set
 /// also returns true.
-bool isSingle(List params, {allowNone = false}) {
-  int count = 0;
-  for (var param in params) {
+bool isSingle(List<dynamic> params, {bool allowNone = false}) {
+  var count = 0;
+  for (final param in params) {
     if (param != null) {
       count++;
     }
@@ -75,14 +75,14 @@ class PaintStyle extends Equatable {
     _fillPaint = _createFillPaint();
     _strokePaint = _createStrokePaint();
     isSimple =
-        (fillGradient == null &&
-            fillShader == null &&
-            strokeGradient == null &&
-            strokeShader == null &&
-            gradientBounds == null &&
-            dash == null &&
-            dashOffset == null);
-    isEmpty = (_fillPaint == null && _strokePaint == null);
+        fillGradient == null &&
+        fillShader == null &&
+        strokeGradient == null &&
+        strokeShader == null &&
+        gradientBounds == null &&
+        dash == null &&
+        dashOffset == null;
+    isEmpty = _fillPaint == null && _strokePaint == null;
   }
 
   PaintStyle copyWith({
@@ -135,7 +135,7 @@ class PaintStyle extends Equatable {
 
   Paint? _createFillPaint({Rect? gradientBounds}) {
     if (fillColor != null || fillGradient != null || fillShader != null) {
-      Paint fillPaint = Paint();
+      final fillPaint = Paint();
 
       if (fillShader != null) {
         fillPaint.shader = fillShader;
@@ -165,8 +165,7 @@ class PaintStyle extends Equatable {
 
   Paint? _createStrokePaint({Rect? gradientBounds}) {
     if (strokeColor != null || strokeGradient != null) {
-      Paint strokePaint = Paint();
-      strokePaint.style = PaintingStyle.stroke;
+      final strokePaint = Paint()..style = PaintingStyle.stroke;
 
       if (strokeShader != null) {
         strokePaint.shader = strokeShader;

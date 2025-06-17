@@ -1,14 +1,14 @@
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../../components/component.dart';
-import '../../components/marker/overlay_marker_theme.dart';
-import '../../components/marker/overlay_marker_render.dart';
-import '../../components/panel/panel.dart';
-import '../../components/render_util.dart';
-import '../../components/viewport_h.dart';
-import '../../components/viewport_v.dart';
-import 'rect_marker.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_render.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/render_util.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
+import 'package:financial_chart/src/markers/rect/rect_marker.dart';
 
 class GRectMarkerRender
     extends GOverlayMarkerRender<GRectMarker, GOverlayMarkerTheme> {
@@ -43,7 +43,7 @@ class GRectMarkerRender
             valueViewPort: valueViewPort,
           ) ??
           0;
-      Path path = addRectPath(
+      final path = addRectPath(
         rect: Rect.fromPoints(start, end),
         cornerRadius: cornerRadius,
       );
@@ -73,13 +73,13 @@ class GRectMarkerRender
             valueViewPort: valueViewPort,
           ) ??
           0;
-      Rect rect = GRenderUtil.rectFromAnchorAndAlignment(
+      final rect = GRenderUtil.rectFromAnchorAndAlignment(
         anchor: anchor,
         width: pointRadius * 2,
         height: valueRadius * 2,
         alignment: marker.alignment,
       );
-      Path path = addRectPath(rect: rect, cornerRadius: cornerRadius);
+      final path = addRectPath(rect: rect, cornerRadius: cornerRadius);
       drawPath(canvas: canvas, path: path, style: theme.markerStyle);
     }
   }

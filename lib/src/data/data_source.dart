@@ -2,19 +2,17 @@ import 'dart:math';
 
 import 'package:equatable/equatable.dart';
 import 'package:financial_chart/financial_chart.dart';
+import 'package:financial_chart/src/values/value.dart';
 import 'package:flutter/foundation.dart';
-
-import '../values/value.dart';
 
 /// class for a single data point.
 ///
 /// [P] is the type of the point value. usually it is int type with time in seconds since epoch as value.
 /// [seriesValues] is a list of double values for each series.
 class GData<P> extends Equatable {
+  const GData({required this.pointValue, required this.seriesValues});
   final P pointValue;
   final List<double> seriesValues;
-
-  const GData({required this.pointValue, required this.seriesValues});
 
   double operator [](int index) => seriesValues[index];
   void operator []=(int index, double value) => seriesValues[index] = value;
@@ -25,17 +23,16 @@ class GData<P> extends Equatable {
 
 /// Property of a series.
 class GDataSeriesProperty {
-  final String key;
-  final String label;
-  final int precision;
-  final String Function(double seriesValue)? valueFormater;
-
   const GDataSeriesProperty({
     required this.key,
     required this.label,
     required this.precision,
     this.valueFormater,
   });
+  final String key;
+  final String label;
+  final int precision;
+  final String Function(double seriesValue)? valueFormater;
 }
 
 /// Default formatter for point value which format it as yyyy-MM-dd assumes the value is milliseconds since epoch.
@@ -64,9 +61,24 @@ String defaultSeriesValueFormater(double seriesValue, int precision) {
 }
 
 /// Data container for the chart.
-/// ignore: must_be_immutable
+
 class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     with Diagnosticable {
+  GDataSource({
+    required this.dataList,
+    required this.seriesProperties,
+    this.initialDataLoader,
+    this.priorDataLoader,
+    this.afterDataLoader,
+    this.dataLoadMargin = 50,
+    this.dataLoaded,
+    this.pointValueFormater = defaultPointValueFormater,
+    this.seriesValueFormater = defaultSeriesValueFormater,
+  }) : _seriesKeyIndexMap = Map.fromIterables(
+         seriesProperties.map((p) => p.key),
+         List.generate(seriesProperties.length, (i) => i),
+       );
+
   /// Current start point of the data (point value of the first data in [dataList]).
   ///
   /// Use point instead of index to access data so we can append data to both ends dynamically without breaking data access.
@@ -96,21 +108,6 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
 
   /// Default formatter for series value.
   final String Function(double seriesValue, int precision) seriesValueFormater;
-
-  GDataSource({
-    required this.dataList,
-    required this.seriesProperties,
-    this.initialDataLoader,
-    this.priorDataLoader,
-    this.afterDataLoader,
-    this.dataLoadMargin = 50,
-    this.dataLoaded,
-    this.pointValueFormater = defaultPointValueFormater,
-    this.seriesValueFormater = defaultSeriesValueFormater,
-  }) : _seriesKeyIndexMap = Map.fromIterables(
-         seriesProperties.map((p) => p.key),
-         List.generate(seriesProperties.length, (i) => i),
-       );
 
   bool get isEmpty => dataList.isEmpty;
   bool get isNotEmpty => dataList.isNotEmpty;
@@ -159,7 +156,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     );
     seriesProperties.add(property);
     _seriesKeyIndexMap[property.key] = seriesProperties.length - 1;
-    for (int i = 0; i < dataList.length; i++) {
+    for (var i = 0; i < dataList.length; i++) {
       dataList[i].seriesValues.add(values[i]);
     }
     _notify();
@@ -176,7 +173,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     for (final data in dataList) {
       data.seriesValues.removeAt(index);
     }
-    for (int i = index; i < seriesProperties.length; i++) {
+    for (var i = index; i < seriesProperties.length; i++) {
       _seriesKeyIndexMap[seriesProperties[i].key] = i;
     }
     _notify();
@@ -258,8 +255,8 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
   }) {
     var fromIndex = pointToIndex(fromPoint);
     var toIndex = pointToIndex(toPoint);
-    double minValue = double.infinity;
-    double maxValue = double.negativeInfinity;
+    var minValue = double.infinity;
+    var maxValue = double.negativeInfinity;
     if (fromIndex < 0) {
       fromIndex = 0;
     }
@@ -287,8 +284,8 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     required List<String> keys,
     bool ignoreInvalid = true,
   }) {
-    double minValue = double.infinity;
-    double maxValue = double.negativeInfinity;
+    var minValue = double.infinity;
+    var maxValue = double.negativeInfinity;
     for (final key in keys) {
       final rangeOfKey = getSeriesMinMax(
         fromPoint: fromPoint,
@@ -394,7 +391,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
     }
   }
 
-  _notify() {
+  void _notify() {
     if (super.hasListeners) {
       notifyListeners();
     }
@@ -425,10 +422,11 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
   @mustCallSuper
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(IntProperty('minPoint', _minPoint.value));
-    properties.add(IntProperty('maxPoint', _maxPoint.value));
-    properties.add(IntProperty('length', length));
-    properties.add(IntProperty('firstPoint', firstPoint));
-    properties.add(IntProperty('lastPoint', lastPoint));
+    properties
+      ..add(IntProperty('minPoint', _minPoint.value))
+      ..add(IntProperty('maxPoint', _maxPoint.value))
+      ..add(IntProperty('length', length))
+      ..add(IntProperty('firstPoint', firstPoint))
+      ..add(IntProperty('lastPoint', lastPoint));
   }
 }

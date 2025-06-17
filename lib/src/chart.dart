@@ -1,21 +1,22 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:financial_chart/financial_chart.dart' show GChartWidget;
+import 'package:financial_chart/src/chart_interaction.dart';
+import 'package:financial_chart/src/chart_render.dart';
+import 'package:financial_chart/src/chart_widget.dart' show GChartWidget;
+import 'package:financial_chart/src/components/components.dart';
+import 'package:financial_chart/src/data/data_source.dart';
+import 'package:financial_chart/src/theme/theme.dart';
+import 'package:financial_chart/src/values/value.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
-import 'chart_interaction.dart';
-import 'chart_render.dart';
-import 'components/components.dart';
-import 'data/data_source.dart';
-import 'theme/theme.dart';
-import 'values/value.dart';
-
 class DebounceHelper {
+  DebounceHelper({required this.milliseconds});
   final int milliseconds;
   Timer? _timer;
-  DebounceHelper({required this.milliseconds});
   void run(VoidCallback action) {
     if (_timer != null) {
       _timer!.cancel();
@@ -38,8 +39,33 @@ enum GPointerScrollMode {
 
 /// Chart model.
 class GChart extends ChangeNotifier with Diagnosticable {
+  GChart({
+    required this.dataSource,
+    required this.panels,
+    required GTheme theme,
+    this.render = const GChartRender(),
+    GPointViewPort? pointViewPort,
+    GBackground? background,
+    GSplitter? splitter,
+    GCrosshair? crosshair,
+    GPointerScrollMode pointerScrollMode = GPointerScrollMode.zoom,
+    Rect area = const Rect.fromLTWH(0, 0, 500, 500),
+    this.minSize = const Size(200, 200),
+    this.preRender,
+    this.postRender,
+    bool hitTestEnable = true,
+  }) : background = background ?? GBackground(),
+       crosshair = crosshair ?? GCrosshair(),
+       splitter = splitter ?? GSplitter(),
+       _pointerScrollMode = GValue(pointerScrollMode),
+       pointViewPort = pointViewPort ?? GPointViewPort(),
+       _theme = GValue(theme),
+       _area = GValue(area) {
+    _hitTestEnable.value = hitTestEnable;
+  }
+
   /// The data source.
-  final GDataSource dataSource;
+  final GDataSource<int, GData<int>> dataSource;
 
   /// The only one point viewport of the panel which shared by all the components in the panel.
   final GPointViewPort pointViewPort;
@@ -133,39 +159,10 @@ class GChart extends ChangeNotifier with Diagnosticable {
 
   bool get isScaling => _interactionHandler?.isScalingViewPort == true;
 
-  GChart({
-    required this.dataSource,
-    required this.panels,
-    required GTheme theme,
-    this.render = const GChartRender(),
-    GPointViewPort? pointViewPort,
-    GBackground? background,
-    GSplitter? splitter,
-    GCrosshair? crosshair,
-    GPointerScrollMode pointerScrollMode = GPointerScrollMode.zoom,
-    Rect area = const Rect.fromLTWH(0, 0, 500, 500),
-    this.minSize = const Size(200, 200),
-    this.preRender,
-    this.postRender,
-    bool hitTestEnable = true,
-  }) : background = (background ?? GBackground()),
-       crosshair = (crosshair ?? GCrosshair()),
-       splitter = (splitter ?? GSplitter()),
-       _pointerScrollMode = GValue(pointerScrollMode),
-       pointViewPort =
-           pointViewPort ??
-           GPointViewPort(
-             autoScaleStrategy: const GPointViewPortAutoScaleStrategyLatest(),
-           ),
-       _theme = GValue(theme),
-       _area = GValue(area) {
-    _hitTestEnable.value = hitTestEnable;
-  }
-
   /// Initialization of the chart. (should be called only once internally by [GChartWidget])
   void internalInitialize({
-    TickerProvider? vsync,
     required GChartInteractionHandler interactionHandler,
+    TickerProvider? vsync,
   }) {
     assert(!_initialized, 'Chart is already initialized');
     _tickerProvider = vsync;
@@ -176,8 +173,8 @@ class GChart extends ChangeNotifier with Diagnosticable {
       pointViewPort.initializeAnimation(vsync);
     }
     pointViewPort.addListener(_pointViewPortChanged);
-    for (var panel in panels) {
-      for (var valueViewPort in panel.valueViewPorts) {
+    for (final panel in panels) {
+      for (final valueViewPort in panel.valueViewPorts) {
         valueViewPort.addListener(
           () => _valueViewPortChanged(updatedViewPort: valueViewPort),
         );
@@ -191,7 +188,7 @@ class GChart extends ChangeNotifier with Diagnosticable {
   /// Add a new panel to the chart.
   void addPanel(GPanel panel) {
     panels.add(panel);
-    for (var valueViewPort in panel.valueViewPorts) {
+    for (final valueViewPort in panel.valueViewPorts) {
       valueViewPort.addListener(
         () => _valueViewPortChanged(updatedViewPort: valueViewPort),
       );
@@ -245,7 +242,6 @@ class GChart extends ChangeNotifier with Diagnosticable {
       }
       autoScaleViewports(
         resetPointViewPort: false,
-        resetValueViewPort: true,
         animation: false,
       );
     });
@@ -257,7 +253,7 @@ class GChart extends ChangeNotifier with Diagnosticable {
       _paintCount.value += 1;
       if (_paintCount.value % 100 == 0) {
         // ignore: avoid_print
-        print("paintCount = ${_paintCount.value}");
+        print('paintCount = ${_paintCount.value}');
       }
     }
     preRender?.call(this, canvas, area);
@@ -279,7 +275,7 @@ class GChart extends ChangeNotifier with Diagnosticable {
     if (newArea == _area.value && !force) {
       return;
     }
-    Rect refinedArea = newArea.translate(0, 0);
+    var refinedArea = newArea.translate(0, 0);
     if (refinedArea.width < minSize.width) {
       refinedArea = Rect.fromLTWH(
         refinedArea.left,
@@ -298,16 +294,16 @@ class GChart extends ChangeNotifier with Diagnosticable {
     }
     if (_area.value != refinedArea || force) {
       final visiblePanel = panels.where((p) => p.visible).first;
-      double graphWidthBefore =
+      final graphWidthBefore =
           visiblePanel.isLayoutReady ? visiblePanel.graphArea().width : 0;
-      double graphHeightBefore =
+      final graphHeightBefore =
           visiblePanel.isLayoutReady ? visiblePanel.graphArea().height : 0;
       crosshair.updateCrossPosition(
         chart: this,
         trigger: GCrosshairTrigger.resized,
       );
       _area.value = refinedArea;
-      List<double> panelsGraphHeightBefore = panels
+      final panelsGraphHeightBefore = panels
           .map(
             (panel) => (panel.isLayoutReady ? panel.graphArea().height : 0.0),
           )
@@ -319,13 +315,12 @@ class GChart extends ChangeNotifier with Diagnosticable {
         if (graphWidthBefore > 0 &&
             graphWidthBefore != visiblePanel.graphArea().width) {
           pointViewPort.resize(
-            graphWidthBefore,
+            graphWidthBefore.toDouble(),
             visiblePanel.graphArea().width,
             false,
           );
           autoScaleViewports(
             resetPointViewPort: false,
-            resetValueViewPort: true,
             animation: false,
           );
           _debounceHelper.run(() {
@@ -334,15 +329,15 @@ class GChart extends ChangeNotifier with Diagnosticable {
           });
         }
         if (graphHeightBefore > 0) {
-          for (int p = 0; p < panels.length; p++) {
+          for (var p = 0; p < panels.length; p++) {
             final panel = panels[p];
             final panelGraphHeightBefore = panelsGraphHeightBefore[p];
-            for (var valueViewPort in panel.valueViewPorts) {
+            for (final valueViewPort in panel.valueViewPorts) {
               if (!valueViewPort.autoScaleFlg &&
                   panelGraphHeightBefore > 0 &&
                   panelGraphHeightBefore != panel.graphArea().height) {
                 valueViewPort.resize(
-                  graphHeightBefore,
+                  graphHeightBefore.toDouble(),
                   panel.graphArea().height,
                   true,
                 );
@@ -353,7 +348,6 @@ class GChart extends ChangeNotifier with Diagnosticable {
       } else {
         autoScaleViewports(
           resetPointViewPort: false,
-          resetValueViewPort: true,
           animation: false,
         );
         _notify();
@@ -368,26 +362,27 @@ class GChart extends ChangeNotifier with Diagnosticable {
   /// - Decide the graph areas of each panel from panel area and axis areas.
   void layout([Rect? toArea]) {
     final area = toArea ?? _area.value;
-    double totalHeightWeight = panels.fold(
-      0,
+    final totalHeightWeight = panels.fold(
+      // ignore: prefer_int_literals
+      0.0,
       (sum, panel) => sum + (panel.visible ? panel.heightWeight : 0),
     );
-    double y = area.top;
-    List<Rect> panelAreas =
+    var y = area.top;
+    final panelAreas =
         panels.map((panel) {
           if (!panel.visible) {
             return Rect.zero;
           }
-          double height = area.height * panel.heightWeight / totalHeightWeight;
-          Rect panelArea = Rect.fromLTRB(area.left, y, area.right, y + height);
+          final height = area.height * panel.heightWeight / totalHeightWeight;
+          final panelArea = Rect.fromLTRB(area.left, y, area.right, y + height);
           y += height;
           return panelArea;
         }).toList();
-    for (int p = 0; p < panels.length; p++) {
-      GPanel? nextPanel = nextVisiblePanel(startIndex: p + 1);
-      bool hasSplitter =
+    for (var p = 0; p < panels.length; p++) {
+      final nextPanel = nextVisiblePanel(startIndex: p + 1);
+      final hasSplitter =
           nextPanel != null && panels[p].resizable && nextPanel.resizable;
-      panels[p].layout(panelAreas[p], hasSplitter);
+      panels[p].layout(panelAreas[p], hasSplitter: hasSplitter);
     }
   }
 
@@ -407,12 +402,12 @@ class GChart extends ChangeNotifier with Diagnosticable {
         animation: animation,
       );
     }
-    for (int p = 0; p < panels.length; p++) {
-      var panel = panels[p];
+    for (var p = 0; p < panels.length; p++) {
+      final panel = panels[p];
       if (!panel.visible) {
         continue;
       }
-      for (var valueViewPort in panel.valueViewPorts) {
+      for (final valueViewPort in panel.valueViewPorts) {
         if (resetValueViewPort &&
             valueViewPort.autoScaleFlg &&
             valueViewPort.autoScaleStrategy != null) {
@@ -430,8 +425,8 @@ class GChart extends ChangeNotifier with Diagnosticable {
     required GPanel panel,
     required Offset position,
   }) {
-    for (int g = panel.graphs.length - 1; g > 0; g--) {
-      GGraph graph = panel.graphs[g];
+    for (var g = panel.graphs.length - 1; g > 0; g--) {
+      final graph = panel.graphs[g];
       if (graph.visible && graph.getRender().hitTest(position: position)) {
         return graph;
       }
@@ -443,10 +438,10 @@ class GChart extends ChangeNotifier with Diagnosticable {
     if (dataSource.isLoading || dataSource.isEmpty) {
       return null;
     }
-    for (int p = 0; p < panels.length; p++) {
-      GPanel panel = panels[p];
+    for (var p = 0; p < panels.length; p++) {
+      final panel = panels[p];
       if (panel.panelArea().contains(position)) {
-        GGraph? graph = hitTestPanelGraphs(panel: panel, position: position);
+        final graph = hitTestPanelGraphs(panel: panel, position: position);
         if (graph != null) {
           return (panel, graph);
         }
@@ -456,8 +451,8 @@ class GChart extends ChangeNotifier with Diagnosticable {
   }
 
   GPanel? nextVisiblePanel({int startIndex = 0}) {
-    for (int p = startIndex; p < panels.length; p++) {
-      GPanel panel = panels[p];
+    for (var p = startIndex; p < panels.length; p++) {
+      final panel = panels[p];
       if (panel.visible) {
         return panel;
       }
@@ -477,14 +472,11 @@ class GChart extends ChangeNotifier with Diagnosticable {
           .then((_) {
             autoScaleViewports(
               resetPointViewPort: false,
-              resetValueViewPort: true,
-              animation: true,
             );
           });
     } else {
       autoScaleViewports(
         resetPointViewPort: false,
-        resetValueViewPort: true,
         animation: false,
       );
     }
@@ -513,7 +505,7 @@ class GChart extends ChangeNotifier with Diagnosticable {
   @override
   void dispose() {
     pointViewPort.dispose();
-    for (var panel in panels) {
+    for (final panel in panels) {
       panel.dispose();
     }
     dataSource.removeListener(_notify);
@@ -523,17 +515,24 @@ class GChart extends ChangeNotifier with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<GDataSource>('dataSource', dataSource));
-    properties.add(
-      DiagnosticsProperty<GPointViewPort>('pointViewPort', pointViewPort),
-    );
-    properties.add(DiagnosticsProperty<GBackground>('background', background));
-    for (int n = 0; n < panels.length; n++) {
+    properties
+      ..add(
+        DiagnosticsProperty<GDataSource<int, GData<int>>>(
+          'dataSource',
+          dataSource,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<GPointViewPort>('pointViewPort', pointViewPort),
+      )
+      ..add(DiagnosticsProperty<GBackground>('background', background));
+    for (var n = 0; n < panels.length; n++) {
       properties.add(DiagnosticsProperty<GPanel>('panel[$n]', panels[n]));
     }
-    properties.add(DiagnosticsProperty<GSplitter>('splitter', splitter));
-    properties.add(DiagnosticsProperty<GCrosshair>('crosshair', crosshair));
-    properties.add(DiagnosticsProperty<GTheme>('theme', theme));
-    properties.add(DiagnosticsProperty<Rect>('area', area));
+    properties
+      ..add(DiagnosticsProperty<GSplitter>('splitter', splitter))
+      ..add(DiagnosticsProperty<GCrosshair>('crosshair', crosshair))
+      ..add(DiagnosticsProperty<GTheme>('theme', theme))
+      ..add(DiagnosticsProperty<Rect>('area', area));
   }
 }

@@ -1,4 +1,4 @@
-import 'pair.dart';
+import 'package:financial_chart/src/values/pair.dart';
 
 /// A double range with [begin] and [end] values.
 ///
@@ -23,6 +23,7 @@ class GRange extends GDoublePair {
   GRange clone() => isEmpty ? GRange.empty() : GRange.range(begin!, end!);
 
   /// linear interpolation between two ranges.
+  // ignore: prefer_constructors_over_static_methods
   static GRange lerp(GRange a, GRange b, double t) {
     if (a.isEmpty || b.isEmpty) {
       return b;

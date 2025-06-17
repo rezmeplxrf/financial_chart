@@ -3,7 +3,7 @@ import 'package:vector_math/vector_math.dart';
 
 class ArcUtil {
   static double _normalizeStartTheta(double startTheta, double endTheta) {
-    double theta = startTheta;
+    var theta = startTheta;
     if (theta < 0) {
       theta += 2 * pi;
     }
@@ -21,8 +21,8 @@ class ArcUtil {
     double endX,
     double endY,
   ) {
-    double startTheta = atan2(startY - cy, startX - cx);
-    double endTheta = atan2(endY - cy, endX - cx);
+    var startTheta = atan2(startY - cy, startX - cx);
+    var endTheta = atan2(endY - cy, endX - cx);
     if (endTheta < 0) {
       endTheta += 2 * pi;
     }
@@ -39,18 +39,18 @@ class ArcUtil {
     double px,
     double py,
   ) {
-    double theta = atan2(py - cy, px - cx);
+    var theta = atan2(py - cy, px - cx);
     theta = _normalizeStartTheta(theta, endTheta);
     if (theta >= startTheta && theta <= endTheta) {
       return Vector2(cx + r * cos(theta), cy + r * sin(theta));
     } else {
       // return start or end point
-      Vector2 point = Vector2(px, py);
-      Vector2 start = Vector2(
+      final point = Vector2(px, py);
+      final start = Vector2(
         cx + r * cos(startTheta),
         cy + r * sin(startTheta),
       );
-      Vector2 end = Vector2(cx + r * cos(endTheta), cy + r * sin(endTheta));
+      final end = Vector2(cx + r * cos(endTheta), cy + r * sin(endTheta));
       return point.distanceTo(start) < point.distanceTo(end) ? start : end;
     }
   }
@@ -64,7 +64,7 @@ class ArcUtil {
     double px,
     double py,
   ) {
-    Vector2 nearestPoint = nearestPointOn(
+    final nearestPoint = nearestPointOn(
       cx,
       cy,
       r,
@@ -85,13 +85,13 @@ class ArcUtil {
     double px,
     double py,
   ) {
-    Vector2 point = Vector2(px, py);
+    final point = Vector2(px, py);
     if (point.distanceTo(Vector2(cx, cy)) > r) {
       return false;
     }
-    double theta = atan2(point.y - cy, point.x - cx);
+    var theta = atan2(point.y - cy, point.x - cx);
     theta = _normalizeStartTheta(theta, endTheta);
-    return (theta >= startTheta && theta <= endTheta);
+    return theta >= startTheta && theta <= endTheta;
   }
 
   static bool hitTest({

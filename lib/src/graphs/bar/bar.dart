@@ -1,12 +1,27 @@
+import 'package:financial_chart/src/components/components.dart';
+import 'package:financial_chart/src/graphs/bar/bar_render.dart';
+import 'package:financial_chart/src/values/value.dart';
 import 'package:flutter/foundation.dart';
-
-import '../../components/components.dart';
-import '../../values/value.dart';
-import 'bar_render.dart';
 
 /// Bar graph.
 class GGraphBar<T extends GGraphTheme> extends GGraph<T> {
-  static const String typeName = "bar";
+  GGraphBar({
+    required this.valueKey,
+    super.id,
+    double? baseValue,
+    super.layer,
+    super.visible,
+    super.valueViewPortId,
+    super.crosshairHighlightValueKeys,
+    super.overlayMarkers,
+    T? theme,
+    super.render,
+  }) {
+    _baseValue.value = baseValue;
+    super.theme = theme;
+    super.render = super.render ?? GGraphBarRender();
+  }
+  static const String typeName = 'bar';
 
   /// The key of the series value in the data source.
   final String valueKey;
@@ -19,31 +34,14 @@ class GGraphBar<T extends GGraphTheme> extends GGraph<T> {
   double? get baseValue => _baseValue.value;
   set baseValue(double? value) => _baseValue.value = value;
 
-  GGraphBar({
-    super.id,
-    required this.valueKey,
-    double? baseValue,
-    super.layer,
-    super.visible,
-    super.valueViewPortId,
-    super.hitTestMode,
-    super.crosshairHighlightValueKeys,
-    super.overlayMarkers,
-    T? theme,
-    super.render,
-  }) {
-    _baseValue.value = baseValue;
-    super.theme = theme;
-    super.render = super.render ?? GGraphBarRender();
-  }
-
   @override
   String get type => typeName;
 
   @override
-  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(StringProperty('valueKey', valueKey));
-    properties.add(DoubleProperty('baseValue', baseValue));
+    properties
+      ..add(StringProperty('valueKey', valueKey))
+      ..add(DoubleProperty('baseValue', baseValue));
   }
 }

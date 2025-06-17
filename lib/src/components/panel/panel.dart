@@ -1,18 +1,19 @@
+// ignore_for_file: inference_failure_on_function_return_type
+
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:financial_chart/src/components/axis/axis.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/graph/graph.dart';
+import 'package:financial_chart/src/components/panel/panel_render.dart';
+import 'package:financial_chart/src/components/panel/panel_theme.dart';
+import 'package:financial_chart/src/components/tooltip/tooltip.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
+import 'package:financial_chart/src/values/coord.dart';
+import 'package:financial_chart/src/values/value.dart';
 import 'package:flutter/foundation.dart';
-
-import 'panel_render.dart';
-import 'panel_theme.dart';
-import '../component.dart';
-import '../../values/coord.dart';
-import '../../values/value.dart';
-import '../tooltip/tooltip.dart';
-import '../graph/graph.dart';
-import '../axis/axis.dart';
-import '../viewport_h.dart';
-import '../viewport_v.dart';
 
 /// The action mode when panning the graph area of the panel.
 enum GGraphPanMode {
@@ -28,6 +29,46 @@ enum GGraphPanMode {
 /// A chart is composed of multiple panels with vertical layout.
 /// A panel is a container for [GPointAxis], [GValueAxis], [GGraph], [GPointViewPort], [GValueViewPort] and [GTooltip].
 class GPanel extends GComponent {
+  GPanel({
+    required this.pointAxes,
+    required this.valueAxes,
+    required this.valueViewPorts,
+    required this.graphs,
+    super.id,
+    this.tooltip,
+    double heightWeight = 1.0,
+    bool resizable = true,
+    GGraphPanMode graphPanMode = GGraphPanMode.auto,
+    this.splitterHeight = 16.0,
+    double momentumScrollSpeed = 0.5,
+    Function(Offset)? onTapGraphArea,
+    Function(Offset)? onDoubleTapGraphArea,
+    Function(Offset)? onLongPressDownGraphArea,
+    Function(Offset)? onLongPressUpGraphArea,
+    Function(Offset)? onLongPressMoveGraphArea,
+    GPanelTheme? theme,
+    GPanelRender? render,
+  }) : super(render: render ?? const GPanelRender(), theme: theme) {
+    assert(heightWeight >= 0);
+    _heightWeight.value = heightWeight;
+    _resizable.value = resizable;
+    _momentumScrollSpeed.value = min(max(momentumScrollSpeed, 0), 1);
+    _graphPanMode.value = graphPanMode;
+    _onTapGraphArea.value = onTapGraphArea;
+    _onDoubleTapGraphArea.value = onDoubleTapGraphArea;
+    _onLongPressStartGraphArea.value = onLongPressDownGraphArea;
+    _onLongPressEndGraphArea.value = onLongPressUpGraphArea;
+    _onLongPressMoveGraphArea.value = onLongPressMoveGraphArea;
+    // at least one value viewport is required
+    assert(valueViewPorts.isNotEmpty);
+    // no duplicate id for value viewport
+    assert(
+      valueViewPorts.map((e) => e.id).toSet().length == valueViewPorts.length,
+      'Duplicate id for value viewport is not allowed.',
+    );
+    // only one value viewport with empty id is allowed
+  }
+
   /// The only one point viewport of the panel which shared by all the components in the panel.
   /// final GPointViewPort pointViewPort;
 
@@ -54,7 +95,7 @@ class GPanel extends GComponent {
   set resizable(bool value) => _resizable.value = value;
 
   /// The height weight of the panel. height will be chart.height * [_heightWeight].
-  final GValue<double> _heightWeight = GValue(1.0);
+  final GValue<double> _heightWeight = GValue(1);
   double get heightWeight => _heightWeight.value;
   set heightWeight(double value) => _heightWeight.value = value;
 
@@ -64,7 +105,7 @@ class GPanel extends GComponent {
   final GValue<double> _momentumScrollSpeed = GValue(0.5);
   double get momentumScrollSpeed => _momentumScrollSpeed.value;
   set momentumScrollSpeed(double value) =>
-      _momentumScrollSpeed.value = min(max(value, 0), 1.0);
+      _momentumScrollSpeed.value = min(max(value, 0), 1);
 
   /// The action mode when panning the graph area of the panel.
   final GValue<GGraphPanMode> _graphPanMode = GValue(GGraphPanMode.auto);
@@ -142,47 +183,7 @@ class GPanel extends GComponent {
   set onLongPressMoveGraphArea(Function(Offset)? value) =>
       _onLongPressMoveGraphArea.value = value;
 
-  GPanel({
-    super.id,
-    required this.pointAxes,
-    required this.valueAxes,
-    required this.valueViewPorts,
-    required this.graphs,
-    this.tooltip,
-    double heightWeight = 1.0,
-    bool resizable = true,
-    GGraphPanMode graphPanMode = GGraphPanMode.auto,
-    this.splitterHeight = 16.0,
-    double momentumScrollSpeed = 0.5,
-    Function(Offset)? onTapGraphArea,
-    Function(Offset)? onDoubleTapGraphArea,
-    Function(Offset)? onLongPressDownGraphArea,
-    Function(Offset)? onLongPressUpGraphArea,
-    Function(Offset)? onLongPressMoveGraphArea,
-    GPanelTheme? theme,
-    GPanelRender? render,
-  }) : super(render: render ?? const GPanelRender(), theme: theme) {
-    assert(heightWeight >= 0);
-    _heightWeight.value = heightWeight;
-    _resizable.value = resizable;
-    _momentumScrollSpeed.value = min(max(momentumScrollSpeed, 0), 1.0);
-    _graphPanMode.value = graphPanMode;
-    _onTapGraphArea.value = onTapGraphArea;
-    _onDoubleTapGraphArea.value = onDoubleTapGraphArea;
-    _onLongPressStartGraphArea.value = onLongPressDownGraphArea;
-    _onLongPressEndGraphArea.value = onLongPressUpGraphArea;
-    _onLongPressMoveGraphArea.value = onLongPressMoveGraphArea;
-    // at least one value viewport is required
-    assert(valueViewPorts.isNotEmpty);
-    // no duplicate id for value viewport
-    assert(
-      valueViewPorts.map((e) => e.id).toSet().length == valueViewPorts.length,
-      "Duplicate id for value viewport is not allowed.",
-    );
-    // only one value viewport with empty id is allowed
-  }
-
-  void layout(Rect panelArea, bool hasSplitter) {
+  void layout(Rect panelArea, {required bool hasSplitter}) {
     _areas.clear();
     final (axesAreas, graphArea) = GAxis.placeAxes(panelArea, [
       ...pointAxes,
@@ -208,7 +209,7 @@ class GPanel extends GComponent {
         valueViewPorts.where((element) => element.id == id).firstOrNull;
     if (found == null) {
       throw Exception(
-        "Value viewport with id $id not found. Available ids: ${valueViewPorts.map((e) => e.id).toList()}",
+        'Value viewport with id $id not found. Available ids: ${valueViewPorts.map((e) => e.id).toList()}',
       );
     }
     return found;
@@ -217,7 +218,7 @@ class GPanel extends GComponent {
   GViewPortCoord? positionToViewPortCoord({
     required Offset position,
     required GPointViewPort pointViewPort,
-    String valueViewPortId = "",
+    String valueViewPortId = '',
   }) {
     if (!graphArea().contains(position)) {
       return null;
@@ -239,8 +240,8 @@ class GPanel extends GComponent {
     return graphs.where((element) => element.id == id).firstOrNull;
   }
 
-  dispose() {
-    for (var valueViewPort in valueViewPorts) {
+  void dispose() {
+    for (final valueViewPort in valueViewPorts) {
       valueViewPort.dispose();
     }
     tooltip?.dispose();
@@ -249,71 +250,73 @@ class GPanel extends GComponent {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-      DiagnosticsProperty<List<GValueViewPort>>(
-        'valueViewPorts',
-        valueViewPorts,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<List<GPointAxis>>('pointAxes', pointAxes),
-    );
-    properties.add(
-      DiagnosticsProperty<List<GValueAxis>>('valueAxes', valueAxes),
-    );
-    properties.add(DiagnosticsProperty<List<GGraph>>('graphs', graphs));
-    properties.add(DiagnosticsProperty<GTooltip>('tooltip', tooltip));
-    properties.add(DiagnosticsProperty<bool>('resizable', resizable));
-    properties.add(DoubleProperty('heightWeight', heightWeight));
-    properties.add(DoubleProperty('momentumScrollSpeed', momentumScrollSpeed));
-    properties.add(EnumProperty<GGraphPanMode>('graphPanMode', graphPanMode));
-    properties.add(
-      DiagnosticsProperty<bool>('onTapGraphArea', onTapGraphArea != null),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>(
-        'onDoubleTapGraphArea',
-        onDoubleTapGraphArea != null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>(
-        'onLongPressDownGraphArea',
-        onLongPressStartGraphArea != null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>(
-        'onLongPressUpGraphArea',
-        onLongPressEndGraphArea != null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>(
-        'onLongPressMoveGraphArea',
-        onLongPressMoveGraphArea != null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<double>('splitterHeight', splitterHeight),
-    );
-    properties.add(DiagnosticsProperty<bool>('isLayoutReady', isLayoutReady));
+    properties
+      ..add(
+        DiagnosticsProperty<List<GValueViewPort>>(
+          'valueViewPorts',
+          valueViewPorts,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<List<GPointAxis>>('pointAxes', pointAxes),
+      )
+      ..add(
+        DiagnosticsProperty<List<GValueAxis>>('valueAxes', valueAxes),
+      )
+      ..add(DiagnosticsProperty<List<GGraph>>('graphs', graphs))
+      ..add(DiagnosticsProperty<GTooltip>('tooltip', tooltip))
+      ..add(DiagnosticsProperty<bool>('resizable', resizable))
+      ..add(DoubleProperty('heightWeight', heightWeight))
+      ..add(DoubleProperty('momentumScrollSpeed', momentumScrollSpeed))
+      ..add(EnumProperty<GGraphPanMode>('graphPanMode', graphPanMode))
+      ..add(
+        DiagnosticsProperty<bool>('onTapGraphArea', onTapGraphArea != null),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'onDoubleTapGraphArea',
+          onDoubleTapGraphArea != null,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'onLongPressDownGraphArea',
+          onLongPressStartGraphArea != null,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'onLongPressUpGraphArea',
+          onLongPressEndGraphArea != null,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'onLongPressMoveGraphArea',
+          onLongPressMoveGraphArea != null,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<double>('splitterHeight', splitterHeight),
+      )
+      ..add(DiagnosticsProperty<bool>('isLayoutReady', isLayoutReady));
     if (isLayoutReady) {
-      properties.add(DiagnosticsProperty<Rect>('graphArea', graphArea()));
-      properties.add(DiagnosticsProperty<Rect>('panelArea', panelArea()));
-      properties.add(DiagnosticsProperty<Rect>('splitterArea', splitterArea()));
-      properties.add(
-        IterableProperty<Rect>(
-          'pointAxisAreas',
-          pointAxes.map((a) => pointAxisAreaOf(a)).toList(),
-        ),
-      );
-      properties.add(
-        IterableProperty<Rect>(
-          'valueAxisAreas',
-          valueAxes.map((a) => valueAxisAreaOf(a)).toList(),
-        ),
-      );
+      properties
+        ..add(DiagnosticsProperty<Rect>('graphArea', graphArea()))
+        ..add(DiagnosticsProperty<Rect>('panelArea', panelArea()))
+        ..add(DiagnosticsProperty<Rect>('splitterArea', splitterArea()))
+        ..add(
+          IterableProperty<Rect>(
+            'pointAxisAreas',
+            pointAxes.map(pointAxisAreaOf).toList(),
+          ),
+        )
+        ..add(
+          IterableProperty<Rect>(
+            'valueAxisAreas',
+            valueAxes.map(valueAxisAreaOf).toList(),
+          ),
+        );
     }
   }
 }

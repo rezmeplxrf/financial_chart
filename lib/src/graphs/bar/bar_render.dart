@@ -2,8 +2,8 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import '../../../financial_chart.dart';
-import '../../vector/vectors.dart';
+import 'package:financial_chart/financial_chart.dart';
+import 'package:financial_chart/src/vector/vectors.dart';
 
 class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
   @override
@@ -26,28 +26,28 @@ class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
       ),
       valueViewPort.endValue,
     );
-    double barBottom = valueViewPort.valueToPosition(area, baseValue);
+    final barBottom = valueViewPort.valueToPosition(area, baseValue);
     _hitTestRectangles.clear();
-    final List<Vector2> highlightMarks = <Vector2>[];
-    double highlightInterval = theme.highlightMarkerTheme?.interval ?? 1000.0;
-    int highlightIntervalPoints =
+    final highlightMarks = <Vector2>[];
+    final highlightInterval = theme.highlightMarkerTheme?.interval ?? 1000.0;
+    final highlightIntervalPoints =
         (highlightInterval / pointViewPort.pointSize(area.width)).round();
-    List<Rect> graphValuesAbove = [];
-    List<Rect> graphValuesBelow = [];
+    final graphValuesAbove = <Rect>[];
+    final graphValuesBelow = <Rect>[];
     for (
       var point = pointViewPort.startPoint.floor();
       point <= pointViewPort.endPoint.ceil();
       point++
     ) {
-      double? value = dataSource.getSeriesValue(
+      final value = dataSource.getSeriesValue(
         point: point,
         key: graph.valueKey,
       );
       if (value == null) {
         continue;
       }
-      double x = pointViewPort.pointToPosition(area, point.toDouble());
-      double barTop = valueViewPort.valueToPosition(area, value);
+      final x = pointViewPort.pointToPosition(area, point.toDouble());
+      final barTop = valueViewPort.valueToPosition(area, value);
       final rect = Rect.fromLTRB(
         x - barWidth / 2,
         barTop,
@@ -118,7 +118,7 @@ class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
     double barWidth,
   ) {
     for (var i = 0; i < graphValues.length; i++) {
-      final Path barsAbovePath = Path()..addRect(graphValues[i]);
+      final barsAbovePath = Path()..addRect(graphValues[i]);
       drawPath(canvas: canvas, path: barsAbovePath, style: barStyle);
     }
   }
@@ -130,10 +130,10 @@ class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
     List<Rect> graphValues,
     double barWidth,
   ) {
-    final bool drawBorder = barStyle.getStrokePaint() != null;
-    final bool drawBars = barStyle.getFillPaint() != null;
-    List<double> borderPoints = [];
-    List<double> fillPoints = [];
+    final drawBorder = barStyle.getStrokePaint() != null;
+    final drawBars = barStyle.getFillPaint() != null;
+    final borderPoints = <double>[];
+    final fillPoints = <double>[];
     for (var i = 0; i < graphValues.length; i++) {
       final bar = graphValues[i];
       if (drawBorder) {
@@ -155,7 +155,7 @@ class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
     }
     // draw the rectangles
     if (fillPoints.isNotEmpty) {
-      Paint fillAbovePaint =
+      final fillAbovePaint =
           Paint()
             ..color = barStyle.fillColor ?? const Color.fromARGB(0, 0, 0, 0)
             ..style = PaintingStyle.fill
@@ -168,13 +168,13 @@ class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
     }
     // draw the rectangle borders
     if (borderPoints.isNotEmpty) {
-      Paint borderAbovePaint =
+      final borderAbovePaint =
           Paint()
             ..color =
                 (barStyle.strokeColor ??
                     barStyle.fillColor ??
                     const Color.fromARGB(0, 0, 0, 0))
-            ..strokeWidth = min(max(1.0, barStyle.strokeWidth ?? 0), barWidth)
+            ..strokeWidth = min(max(1, barStyle.strokeWidth ?? 0), barWidth)
             ..strokeCap = barStyle.strokeCap ?? StrokeCap.round;
       canvas.drawRawPoints(
         PointMode.lines,
@@ -192,7 +192,7 @@ class GGraphBarRender extends GGraphRender<GGraphBar, GGraphBarTheme> {
     if (_hitTestRectangles.isEmpty) {
       return false;
     }
-    for (var rect in _hitTestRectangles) {
+    for (final rect in _hitTestRectangles) {
       if (RectUtil.hitTest(
         x1: rect.left,
         y1: rect.top,

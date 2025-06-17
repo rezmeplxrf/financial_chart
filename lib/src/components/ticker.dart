@@ -1,6 +1,8 @@
+// ignore_for_file: one_member_abstracts
+
 import 'dart:math';
-import 'viewport_h.dart';
-import 'viewport_v.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
 
 /// Strategy to calculate value ticks for axis and grids.
 abstract class GValueTickerStrategy {
@@ -20,10 +22,10 @@ abstract class GPointTickerStrategy {
 
 /// Default strategy to calculate point ticks.
 class GPointTickerStrategyDefault implements GPointTickerStrategy {
+  const GPointTickerStrategyDefault({this.tickerMinSize = 100});
+
   /// The minimum interval between two ticks in pixel.
   final double tickerMinSize;
-
-  const GPointTickerStrategyDefault({this.tickerMinSize = 100});
 
   @override
   List<int> pointTicks({
@@ -33,14 +35,14 @@ class GPointTickerStrategyDefault implements GPointTickerStrategy {
     if (viewSize <= 0) {
       return [];
     }
-    List<int> points = <int>[];
-    int pointTickInterval = max(
+    final points = <int>[];
+    final int pointTickInterval = max(
       (tickerMinSize / viewPort.pointSize(viewSize)).ceil(),
       1,
     ); // how many points per tick
-    int left = viewPort.startPoint.toInt();
-    int right = viewPort.endPoint.toInt();
-    for (int point = left; point < right; point++) {
+    final left = viewPort.startPoint.toInt();
+    final right = viewPort.endPoint.toInt();
+    for (var point = left; point < right; point++) {
       if ((point % pointTickInterval) != 0) {
         continue;
       }
@@ -52,12 +54,12 @@ class GPointTickerStrategyDefault implements GPointTickerStrategy {
 
 /// Default strategy to calculate value ticks.
 class GValueTickerStrategyDefault implements GValueTickerStrategy {
+  const GValueTickerStrategyDefault({this.tickerMinSize = 60});
+
   /// The minimum size of a tick in pixel.
   ///
   /// the final tick size will in range valueTickMinSize ~ valueTickMinSize*2
   final double tickerMinSize;
-
-  const GValueTickerStrategyDefault({this.tickerMinSize = 60});
 
   double _defaultTickerValueInterval(double valueRange) {
     if (valueRange <= 0) {
@@ -85,11 +87,11 @@ class GValueTickerStrategyDefault implements GValueTickerStrategy {
       return [];
     }
 
-    double tickInterval = _defaultTickerValueInterval(viewPort.rangeSize);
+    var tickInterval = _defaultTickerValueInterval(viewPort.rangeSize);
     if (tickInterval <= 0) {
       return [];
     }
-    double tickSize = viewPort.valueToSize(viewSize, tickInterval);
+    var tickSize = viewPort.valueToSize(viewSize, tickInterval);
     while (tickSize < tickerMinSize) {
       tickInterval *= 2;
       tickSize *= 2;
@@ -98,12 +100,12 @@ class GValueTickerStrategyDefault implements GValueTickerStrategy {
       tickInterval /= 2;
       tickSize /= 2;
     }
-    List<double> valueTicks = [];
-    double valueHigh = viewPort.endValue;
-    double valueLow = viewPort.startValue;
-    double baseValue = _defaultBaseValue(viewPort.centerValue, tickInterval);
+    final valueTicks = <double>[];
+    final valueHigh = viewPort.endValue;
+    final valueLow = viewPort.startValue;
+    final baseValue = _defaultBaseValue(viewPort.centerValue, tickInterval);
 
-    double tickValue = baseValue;
+    var tickValue = baseValue;
     while (tickValue <= valueHigh) {
       if (tickValue >= valueLow) {
         valueTicks.add(tickValue);

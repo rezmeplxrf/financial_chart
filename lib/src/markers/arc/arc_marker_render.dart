@@ -1,12 +1,12 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/components.dart';
+import 'package:financial_chart/src/markers/markers.dart';
+import 'package:financial_chart/src/values/coord.dart';
+import 'package:financial_chart/src/vector/vectors.dart';
 import 'package:flutter/painting.dart';
-import '../../chart.dart';
-import '../../components/components.dart';
-import '../../values/coord.dart';
-import '../../vector/vectors.dart';
-import '../markers.dart';
 
 class GArcMarkerRender
     extends GOverlayMarkerRender<GArcMarker, GOverlayMarkerTheme> {
@@ -56,7 +56,7 @@ class GArcMarkerRender
           ),
         ];
       }
-      Path path = GRenderUtil.addArcPath(
+      final path = GRenderUtil.addArcPath(
         center: center,
         radius: radius,
         startAngle: marker.startTheta,
@@ -83,7 +83,7 @@ class GArcMarkerRender
       final alignment =
           marker
               .alignment; // where anchor point located on the bound rect of the circle
-      Rect rect = GRenderUtil.rectFromAnchorAndAlignment(
+      final rect = GRenderUtil.rectFromAnchorAndAlignment(
         anchor: anchor,
         width: radius * 2,
         height: radius * 2,
@@ -108,7 +108,7 @@ class GArcMarkerRender
           ),
         ];
       }
-      Path path = GRenderUtil.addArcPath(
+      final path = GRenderUtil.addArcPath(
         center: rect.center,
         radius: radius,
         startAngle: marker.startTheta,
@@ -124,7 +124,7 @@ class GArcMarkerRender
 
     if (marker.highlight && marker.controlCoordinates.isNotEmpty) {
       // draw control points
-      for (var control in marker.controlCoordinates) {
+      for (final control in marker.controlCoordinates) {
         final controlPoint = control.toPosition(
           area: area,
           valueViewPort: valueViewPort,

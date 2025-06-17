@@ -1,9 +1,16 @@
-import '../../style/label_style.dart';
-import '../../style/paint_style.dart';
-import '../components.dart';
+import 'package:financial_chart/src/components/components.dart';
+import 'package:financial_chart/src/style/label_style.dart';
+import 'package:financial_chart/src/style/paint_style.dart';
 
 /// Theme for the axis component.
 class GAxisTheme extends GComponentTheme {
+
+  GAxisTheme({
+    required this.lineStyle,
+    required this.tickerStyle, required this.selectionStyle, required this.labelTheme, this.tickerLength = 5.0,
+    this.axisMarkerTheme,
+    this.overlayMarkerTheme,
+  });
   /// Style of the line (vertical or horizontal) of the axis
   final PaintStyle lineStyle;
 
@@ -26,16 +33,6 @@ class GAxisTheme extends GComponentTheme {
 
   /// Theme for the overlay markers
   GOverlayMarkerTheme? overlayMarkerTheme;
-
-  GAxisTheme({
-    required this.lineStyle,
-    this.tickerLength = 5.0,
-    required this.tickerStyle,
-    required this.selectionStyle,
-    required this.labelTheme,
-    this.axisMarkerTheme,
-    this.overlayMarkerTheme,
-  });
 
   GAxisTheme copyWith({
     PaintStyle? lineStyle,
@@ -60,13 +57,13 @@ class GAxisTheme extends GComponentTheme {
 
 /// Theme for the labels of the axis.
 class GAxisLabelTheme {
+
+  const GAxisLabelTheme({required this.labelStyle, this.spacing = 5});
   /// Style of the labels
   final LabelStyle labelStyle;
 
   /// Spacing between the label and the axis line
   final double spacing;
-
-  const GAxisLabelTheme({required this.labelStyle, this.spacing = 5});
 
   GAxisLabelTheme copyWith({LabelStyle? labelStyle, double? spacing}) {
     return GAxisLabelTheme(

@@ -1,13 +1,13 @@
 import 'dart:ui';
 
-import '../../chart.dart';
-import '../../components/component.dart';
-import '../../components/marker/overlay_marker_theme.dart';
-import '../../components/marker/overlay_marker_render.dart';
-import '../../components/panel/panel.dart';
-import '../../components/viewport_h.dart';
-import '../../components/viewport_v.dart';
-import 'line_marker.dart';
+import 'package:financial_chart/src/chart.dart';
+import 'package:financial_chart/src/components/component.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_render.dart';
+import 'package:financial_chart/src/components/marker/overlay_marker_theme.dart';
+import 'package:financial_chart/src/components/panel/panel.dart';
+import 'package:financial_chart/src/components/viewport_h.dart';
+import 'package:financial_chart/src/components/viewport_v.dart';
+import 'package:financial_chart/src/markers/line/line_marker.dart';
 
 class GLineMarkerRender
     extends GOverlayMarkerRender<GLineMarker, GOverlayMarkerTheme> {
@@ -28,7 +28,7 @@ class GLineMarkerRender
     if (marker.keyCoordinates.length < 2) {
       return;
     }
-    for (int i = 0; i < marker.keyCoordinates.length - 1; i++) {
+    for (var i = 0; i < marker.keyCoordinates.length - 1; i++) {
       final startPosition = marker.keyCoordinates[i].toPosition(
         area: area,
         valueViewPort: valueViewPort,
@@ -39,7 +39,7 @@ class GLineMarkerRender
         valueViewPort: valueViewPort,
         pointViewPort: pointViewPort,
       );
-      Path path = addLinePath(
+      final path = addLinePath(
         x1: startPosition.dx,
         y1: startPosition.dy,
         x2: endPosition.dx,
