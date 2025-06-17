@@ -127,7 +127,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
       final borderPlus = <double>[];
       final borderMinus = <double>[];
       final fillPlus = <double>[];
-      final  fillMinus = <double>[];
+      final fillMinus = <double>[];
 
       final strokePlus =
           theme.barStylePlus.getStrokePaint() != null &&
@@ -141,7 +141,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
         final x2 = x + barRenderWidth / 2;
         final open = graphValues[i][1]; // this is position not price value
         final high = graphValues[i][2];
-        final  low = graphValues[i][3];
+        final low = graphValues[i][3];
         final close = graphValues[i][4];
 
         if (open >= close) {
@@ -269,7 +269,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
       return;
     }
     for (var i = 0; i < graphValues.length; i++) {
-      final  barPosition = graphValues[i][0];
+      final barPosition = graphValues[i][0];
       final op = graphValues[i][1];
       final hp = graphValues[i][2];
       final lp = graphValues[i][3];
@@ -307,7 +307,7 @@ class GGraphOhlcRender extends GGraphRender<GGraphOhlc, GGraphOhlcTheme> {
           strokeOnly: true,
         );
       } else {
-        final  fillPath =
+        final fillPath =
             Path()
               ..moveTo(barPosition - barRenderWidth / 2, op)
               ..lineTo(barPosition - barRenderWidth / 2, cp)

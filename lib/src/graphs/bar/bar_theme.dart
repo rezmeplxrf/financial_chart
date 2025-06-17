@@ -5,7 +5,6 @@ import 'package:financial_chart/src/style/paint_style.dart';
 
 /// Theme for grid lines
 class GGraphBarTheme extends GGraphTheme {
-
   const GGraphBarTheme({
     required this.barStyleAboveBase,
     required this.barStyleBelowBase,

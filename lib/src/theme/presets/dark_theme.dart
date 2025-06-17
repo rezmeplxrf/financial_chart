@@ -169,14 +169,14 @@ class GThemeDark extends GTheme {
 
   static final GGraphOhlcTheme ohlcGraphTheme = GGraphOhlcTheme(
     barStylePlus: PaintStyle(
-      fillColor: Colors.redAccent,
-      strokeWidth: 1,
-      strokeColor: Colors.redAccent,
-    ),
-    barStyleMinus: PaintStyle(
       fillColor: Colors.teal,
       strokeWidth: 1,
       strokeColor: Colors.teal,
+    ),
+    barStyleMinus: PaintStyle(
+      fillColor: Colors.redAccent,
+      strokeWidth: 1,
+      strokeColor: Colors.redAccent,
     ),
     axisMarkerTheme: axisMarkerThemeDefault,
     highlightMarkerTheme: graphHighlightMarkThemeDefault,
