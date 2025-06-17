@@ -77,7 +77,9 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
   }) : _seriesKeyIndexMap = Map.fromIterables(
          seriesProperties.map((p) => p.key),
          List.generate(seriesProperties.length, (i) => i),
-       );
+       ) {
+    _buildPointValueToIndexMap();
+  }
 
   /// Current start point of the data (point value of the first data in [dataList]).
   ///
@@ -108,6 +110,9 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
 
   /// Default formatter for series value.
   final String Function(double seriesValue, int precision) seriesValueFormater;
+
+  /// Map of point value to index for efficient lookups.
+  final Map<P, int> _pointValueToIndexMap = <P, int>{};
 
   bool get isEmpty => dataList.isEmpty;
   bool get isNotEmpty => dataList.isNotEmpty;
@@ -142,6 +147,38 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
       return null;
     }
     return dataList[index];
+  }
+
+  /// Find the index of data by point value efficiently.
+  int findIndexByPointValue(P pointValue) {
+    return _pointValueToIndexMap[pointValue] ?? -1;
+  }
+
+  /// Update data at the given point value or add new data.
+  /// Returns true if data was updated, false if new data was added.
+  bool updateOrAddData(D newData) {
+    final existingIndex = findIndexByPointValue(newData.pointValue);
+
+    if (existingIndex != -1) {
+      // Update existing data
+      dataList[existingIndex] = newData;
+      _notify();
+      return true;
+    } else {
+      // Add new data
+      dataList.add(newData);
+      _pointValueToIndexMap[newData.pointValue] = dataList.length - 1;
+      _notify();
+      return false;
+    }
+  }
+
+  /// Build the point value to index mapping from current data.
+  void _buildPointValueToIndexMap() {
+    _pointValueToIndexMap.clear();
+    for (var i = 0; i < dataList.length; i++) {
+      _pointValueToIndexMap[dataList[i].pointValue] = i;
+    }
   }
 
   /// add a new series to the data source.
@@ -324,6 +361,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
         await initialDataLoader!(pointCount: expectedCount).then((data) async {
           if (data.isNotEmpty) {
             dataList.addAll(data);
+            _buildPointValueToIndexMap();
             if (data.length < expectedCount) {
               _minPoint.value = firstPoint;
               _maxPoint.value = lastPoint;
@@ -352,6 +390,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
                 if (data.isNotEmpty) {
                   dataList.insertAll(0, data);
                   _basePoint.value = _basePoint.value - data.length;
+                  _buildPointValueToIndexMap();
                   await dataLoaded?.call(this);
                 }
                 if (data.length < expectedCount) {
@@ -375,6 +414,7 @@ class GDataSource<P, D extends GData<P>> extends ChangeNotifier
               .then((data) async {
                 if (data.isNotEmpty) {
                   dataList.addAll(data);
+                  _buildPointValueToIndexMap();
                   await dataLoaded?.call(this);
                 }
                 if (data.length < expectedCount) {
