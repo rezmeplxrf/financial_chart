@@ -147,21 +147,23 @@ class SplineUtil {
       throw ArgumentError('At least 2 control points are required');
     }
 
+    List<Vector2> localTmps;
     if (tmps.isEmpty) {
-      tmps = curve.map((pt) => pt.clone()).toList();
+      localTmps = curve.map((pt) => pt.clone()).toList();
     } else {
+      localTmps = tmps;
       for (var i = 0; i < curve.length; i++) {
-        tmps[i].setFrom(curve[i]);
+        localTmps[i].setFrom(curve[i]);
       }
     }
 
     for (var degree = curve.length - 1; degree-- > 0;) {
       for (var i = 0; i <= degree; ++i) {
-        tmps[i].lerp(tmps[i + 1], t);
+        localTmps[i].lerp(localTmps[i + 1], t);
       }
     }
 
-    out.setFrom(tmps[0]);
+    out.setFrom(localTmps[0]);
     return out;
   }
 
